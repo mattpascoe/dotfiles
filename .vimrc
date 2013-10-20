@@ -70,7 +70,7 @@ set statusline +=%-2.2n             " buffer number
 set statusline +=\ %<%F             " full path
 set statusline +=\ [%Y%R%W]         " filetype, readonly?, preview?
 set statusline +=%{'~'[&pm=='']}    " patch mode?
- set statusline +=%M                 " Modified?
+set statusline +=%M                 " Modified?
 "set statusline +=%#warningmsg#%{SyntasticStatuslineFlag()}%* " syntax check
 set statusline +=%=                 " float right
 set statusline +=%#error#%{&paste?'[paste]':''}%* " Paste mode?
@@ -93,7 +93,8 @@ set fileformats=unix,dos,mac  " preferred file format order
 
 " syntax highlighting {{{
 syntax enable           " enable syntax highlighting
-color desert            " set color scheme
+"colorscheme desert      " set color scheme
+colorscheme slate       " set color scheme
 set background=dark     " on a dark background
 " }}}
 

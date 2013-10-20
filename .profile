@@ -1,3 +1,4 @@
+# Settings for login shells
 # Set up a prompt with spaces around the path so you can easily double click to select it
 PS1='\u@\h: \w \$ '
 
@@ -23,3 +24,17 @@ alias lt='ls -lt'
 
 # Turn on vi mode
 set -o vi
+
+# if running bash
+if [ -n "$BASH_VERSION" ]; then
+    # include .bashrc if it exists
+    if [ -f "$HOME/.bashrc" ]; then
+        . "$HOME/.bashrc"
+    fi
+fi
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$PATH"
+fi
+
