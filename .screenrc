@@ -14,7 +14,8 @@ startup_message off # don't display the copyright page
 autodetach on       # detach on hangup
 defscrollback 10000 # lots of scrollback
 defutf8 on          # utf-8 please
-alterscreen off     # disable smcup/rmcup terminfo behavior
+monitor on          # Turn on tab update monitoring
+altscreen off       # disable smcup/rmcup terminfo behavior??
 
 # emulate .logout message
 pow_detach_msg "Screen session of \$LOGNAME \$:cr:\$:nl:ended."
@@ -25,6 +26,10 @@ caption always "%-Lw%{= Yk}%50>%n%f*%t%{-}%+Lw%<%-012= %?%F%?%{b}%c %m/%d%?"
 
 # pass the regular shell setting through
 shell -$SHELL
+
+# make the title use shell info
+# TODO: not sure that I'll use this.. goal was to rename tabs automatically
+#shelltitle "$ |bash"
 
 ################
 # keybindings

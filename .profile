@@ -1,11 +1,24 @@
 # Settings for login shells
 # Set up a prompt with spaces around the path so you can easily double click to select it
-PS1='\u@\h: \w \$ '
+PS1='[\u@\h \w]\$ '
 
 # If this is an xterm set the title to user@hostname
 case $TERM in
     xterm*|rxvt*)
         TITLEBAR="\[\033]0;${USER}@${HOSTNAME}\007\]"
+        ;;
+    screen*)
+        TITLEBAR="\[\033]0;${USER}@${HOSTNAME}\007\]"
+        # Set the screen tab title to hostname when sshing
+        # TODO: how does this work in a ssh -> ssh -> ssh scenario?
+        function ssh () {
+          args=$@
+          printf %bk%s%b%b \\033 "${args##* }" \\033 \\0134
+          command ssh $@;
+          printf %bk%s%b%b \\033 "${HOSTNAME}" \\033 \\0134
+        }
+        # Set screen tab title initially for new windows:
+        printf %bk%s%b%b \\033 "${HOSTNAME}" \\033 \\0134
         ;;
     *)
         TITLEBAR=""
