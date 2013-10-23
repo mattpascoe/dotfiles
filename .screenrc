@@ -97,6 +97,7 @@ termcapinfo xterm* 'XC=K%,%\E(B,[\304,\\\\\326,]\334,{\344,|\366,}\374,~\337'
 termcapinfo xterm* ut
 
 # do not use alt buffer mode
+# Iterm2 requres the "save lines when app title bar is present" to be checked
 termcapinfo xterm* ti@:te@
 
 # 265 color mode!
