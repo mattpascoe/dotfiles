@@ -1,3 +1,8 @@
+source ~/.vim/.vimrc
+
+" Exclude specific puppet-lint checks
+let g:syntastic_puppet_puppetlint_args='--no-80chars-check --no-nested_classes_or_defines-check --no-autoloader_layout-check'
+
 " Took bd808s stuff..........
 " bd808's handy vimrc
 
@@ -7,6 +12,7 @@
 
 
 " basic formatting {{{
+set scrolloff=5
 set shiftwidth=2        " I have no idea why you would use anything else
 set softtabstop=2       " backspace over a shift width
 set tabstop=2           " tabs are for shifting
@@ -106,3 +112,4 @@ set colorcolumn=80
 
 " Set the linenumber color
 highlight LineNr ctermfg=black
+

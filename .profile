@@ -29,6 +29,9 @@ esac
 PS1="$TITLEBAR$PS1"
 
 # Set up some command aliases
+# color for linux
+##alias ls='ls -F --color=auto'
+# color for mac
 alias ls='ls -F -G'
 alias la='ls -a'
 alias ll='ls -l'
@@ -51,3 +54,5 @@ if [ -d "$HOME/bin" ] ; then
     PATH="$HOME/bin:$PATH"
 fi
 
+
+test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
