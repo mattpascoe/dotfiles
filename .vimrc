@@ -1,4 +1,6 @@
-source ~/.vim/.vimrc
+if filereadable(glob("~/.vim/.vimrc")) 
+  source ~/.vim/.vimrc
+endif
 
 " Exclude specific puppet-lint checks
 let g:syntastic_puppet_puppetlint_args='--no-80chars-check --no-nested_classes_or_defines-check --no-autoloader_layout-check'
