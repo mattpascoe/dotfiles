@@ -15,7 +15,7 @@ Periodically save the preferences (or check the box) to this file and check it i
 
 MISC MAC
 --------
-start using the .macos file or similar from https://github.com/mathiasbynens/dotfiles
+Started using the .macos file or similar from https://github.com/mathiasbynens/dotfiles
 
 The following is a list of 'crap I do' to a new mac, maybe one day this is a set of 'default' plist settings.
 
@@ -23,7 +23,7 @@ The following is a list of 'crap I do' to a new mac, maybe one day this is a set
 	* iCloud - contacts, cal, reminder, safari, keychain, fmm
 	* google - contacts, cal, notes
 	* exchange? mail, contacts, cal, reminder, notes
-* general
+* general setting
 	* allow handoff.. decide per instance
 * copy .ssh dir from previous box
 * copy .gnupg dir from previous box
@@ -51,8 +51,6 @@ Apps to install
 * atom - https://atom.io
 * GPGtools - https://gpgtools.org
 * iterm2 - https://www.iterm2.com/downloads.html
-* keepassx
-* GitUp
-
-MISC
+* keepassx - https://www.keepassx.org/downloads
+* GitUp - http://gitup.co/
 
