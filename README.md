@@ -44,11 +44,10 @@ Apps to install
 
 * virtualbox - https://www.virtualbox.org/wiki/Downloads
 * vagrant - https://www.vagrantup.com/downloads.html
-* xcode - app store
+* xcode - app store.. just type git from CLI
 * itsycal - https://www.mowglii.com/itsycal/
-* clipy - https://github.com/Clipy/Clipy/releases/download/1.1.3/Clipy_1.1.3.dmg
+* clipy - https://github.com/Clipy/Clipy/releases
 * postman - https://www.getpostman.com
-* atom - https://atom.io
 * GPGtools - https://gpgtools.org
 * iterm2 - https://www.iterm2.com/downloads.html
 * keepassx
