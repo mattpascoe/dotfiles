@@ -12,12 +12,12 @@ sudo -v
 # Keep-alive: update existing `sudo` time stamp until `.macos` has finished
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
-# ensure /data exists, for later
-if [ ! -e "/data" ] 
+# ensure ~/data exists, for later
+if [ ! -e "~/data" ] 
 then
-  sudo mkdir /data
-  sudo chown $USER /data
-  sudo chmod 755 /data
+  sudo mkdir ~/data
+  sudo chown $USER ~/data
+  sudo chmod 755 ~/data
 fi
 
 
@@ -983,11 +983,11 @@ defaults write com.clipy-app.Clipy.plist kCPYPrefShowStatusItemKey -int 2
 ###############################################################################
 
 # My personal settings
-defaults write com.mowglii.ItsycalApp.plist ShowWeeks -bool true
-defaults write com.mowglii.ItsycalApp.plist UseOutlineIcon -bool true
-defaults write com.mowglii.ItsycalApp.plist ShowWeeks -bool true
-defaults write com.mowglii.ItsycalApp.plist "NSStatusItem Preferred Position ItsycalStatusItem" -string "122.5352"
-defaults write com.mowglii.ItsycalApp.plist ClockFormat -string "E hh:mm a"
+#defaults write com.mowglii.ItsycalApp.plist ShowWeeks -bool true
+#defaults write com.mowglii.ItsycalApp.plist UseOutlineIcon -bool true
+#defaults write com.mowglii.ItsycalApp.plist ShowWeeks -bool true
+#defaults write com.mowglii.ItsycalApp.plist "NSStatusItem Preferred Position ItsycalStatusItem" -string "122.5352"
+#defaults write com.mowglii.ItsycalApp.plist ClockFormat -string "E hh:mm a"
 
 ###############################################################################
 # Kill affected applications                                                  #

@@ -26,13 +26,15 @@ The following is a list of 'crap I do' to a new mac, maybe one day this is a set
 * general setting
 	* allow handoff.. decide per instance
 * copy .ssh dir from previous box
+  * rsync -avh "10.1.1.206:.ssh" ~/
 * copy .gnupg dir from previous box
+  * rsync -avh "10.1.1.206:.gnupg" ~/
 * rsync /data from a previous box (remove the n option as needed)
-  * sudo rsync -avzn mdp@10.100.13.10:/data/ /data
+  * sudo rsync -avzn mdp@10.1.1.206:/data/ /data
   * do it several times to ensure all is copied, I noticed some files didnt move????
 * rsync Virtualbox systems
-  * rsync -avh "10.100.13.10:.vagrant.d" ~/
-  * rsync -avh "10.100.13.10:VirtualBox\ VMS" ~/
+  * rsync -avh "10.1.1.206:.vagrant.d" ~/
+  * rsync -avh "10.1.1.206:VirtualBox\ VMS" ~/
   * in virtualbox do a machine->add of each vm.
   * more info here: https://stackoverflow.com/questions/20679054/how-to-export-a-vagrant-virtual-machine-to-transfer-it
 * set capslock to escape.. stupid thing is hard to add using .macos/defaults
