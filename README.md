@@ -8,7 +8,7 @@ iTerm2
 ------
 
 I have a file called `com.googlecode.iterm2.plist` in this repo. This is the iterm preferences file.
-Just set iterm to load preferences from folder. Usually I set `/Users/$USERS/dotfiles` as my location
+Just set iterm to load preferences from folder. Usually I set `/Users/$USER/dotfiles` as my location
 
 Periodically save the preferences (or check the box) to this file and check it into Git.
 
@@ -42,15 +42,18 @@ The following is a list of 'crap I do' to a new mac, maybe one day this is a set
 Apps to install
 ---------------
 
+* iterm2 - https://www.iterm2.com/downloads.html
 * virtualbox - https://www.virtualbox.org/wiki/Downloads
 * vagrant - https://www.vagrantup.com/downloads.html
-* xcode - app store
-* itsycal - https://www.mowglii.com/itsycal/
-* clipy - https://github.com/Clipy/Clipy/releases/download/1.1.3/Clipy_1.1.3.dmg
-* postman - https://www.getpostman.com
-* atom - https://atom.io
+* xcode - app store.. just type 'git' from CLI
+* istatmenus - https://bjango.com/mac/istatmenus/ (replaces itsycal)
+* clipy - https://github.com/Clipy/Clipy/releases
+* postman - https://www.getpostman.com/downloads
 * GPGtools - https://gpgtools.org
-* iterm2 - https://www.iterm2.com/downloads.html
-* keepassx - https://www.keepassx.org/downloads
-* GitUp - http://gitup.co/
+* keepassxc - https://keepassxc.org/download/
+* 1password X - browser exension.. just start with this https://chrome.google.com/webstore/detail/1password-x-%E2%80%93-password-ma/aeblfdkhhhdcdjpifhhbdiojplfjncoa
 
+OLD APPS
+* itsycal - https://www.mowglii.com/itsycal/
+* 1password.com - https://1password.com/downloads/mac/
+* GitUp - http://gitup.co/
