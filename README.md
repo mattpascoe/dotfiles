@@ -17,6 +17,8 @@ MISC MAC
 --------
 Started using the .macos file or similar from https://github.com/mathiasbynens/dotfiles
 
+Simply run the .macos file to enable its settings
+
 The following is a list of 'crap I do' to a new mac, maybe one day this is a set of 'default' plist settings.
 
 * enable internet accounts
@@ -41,7 +43,7 @@ The following is a list of 'crap I do' to a new mac, maybe one day this is a set
 * in dual monitor mode, set big one as default by dragging menubar over
 
 
-Apps to install
+MAC Apps to install
 ---------------
 
 * iterm2 - https://www.iterm2.com/downloads.html
@@ -57,5 +59,5 @@ Apps to install
 
 OLD APPS
 * itsycal - https://www.mowglii.com/itsycal/
-* 1password.com - https://1password.com/downloads/mac/
+* 1password.com - https://1password.com/downloads/mac/ -- If you want/need the full native app
 * GitUp - http://gitup.co/
