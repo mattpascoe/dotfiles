@@ -4,6 +4,9 @@ dotfiles
 A way to keep track of my common dotfile settings.. patterned of of bpd808s stuff
 Mostly useful on macs but should work on linux boxes as well
 
+run setup.sh to print out symlink commands to map your homedir to the dotfiles
+newer macs may need .zprofile linked to .profile
+
 iTerm2
 ------
 
