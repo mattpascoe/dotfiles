@@ -64,3 +64,13 @@ OLD APPS
 * itsycal - https://www.mowglii.com/itsycal/
 * 1password.com - https://1password.com/downloads/mac/ -- If you want/need the full native app
 * GitUp - http://gitup.co/
+
+KERI APPS
+* logos - 
+* silhouette studio deluxe
+* dropbox
+* quicken
+* cleanmymac
+* Go to appstore and download already purchased apps (click on user account to see what you have).. mostly just get browser plugins and office apps)
+
+-- Also had to rsync safari as it is a pain to keep the bookmarks and history stuff
