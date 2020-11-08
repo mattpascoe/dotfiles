@@ -74,3 +74,4 @@ KERI APPS
 * Go to appstore and download already purchased apps (click on user account to see what you have).. mostly just get browser plugins and office apps)
 
 -- Also had to rsync safari as it is a pain to keep the bookmarks and history stuff
+-- copy Library/Fonts/ this is where all the extra fonts live.
