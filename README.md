@@ -4,6 +4,8 @@ dotfiles
 A way to keep track of my common dotfile settings.. patterned of of bpd808s stuff
 Mostly useful on macs but should work on linux boxes as well
 
+Run setup.sh and it will perform a few setup options for you.
+
 iTerm2
 ------
 

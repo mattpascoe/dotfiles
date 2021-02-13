@@ -27,3 +27,9 @@ then
 
 fi
 
+# download the vim plug module
+if [ ! -f ~/.vim/autoload/plug.vim ]
+then
+  echo "Downloading vim-plug module..."
+  curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+fi
