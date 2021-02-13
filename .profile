@@ -37,6 +37,9 @@ alias la='ls -a'
 alias ll='ls -l'
 alias lla='ls -la'
 alias lt='ls -lt'
+alias cdd='cd $HOME/data'
+# let diff know the width of my screen
+alias diff='diff -W $(( $(tput cols) - 2 ))'
 
 # Turn on vi mode
 set -o vi
