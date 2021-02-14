@@ -1,6 +1,26 @@
+call plug#begin('~/.vim/plugged')
+Plug 'jlanzarotta/bufexplorer'
+Plug 'scrooloose/syntastic'    " syntax and lint checker
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'bitc/vim-bad-whitespace'
+Plug 'tpope/vim-fugitive'      " Git integrations
+"Plug 'crusoexia/vim-monokai'
+Plug 'vim-pandoc/vim-pandoc'
+Plug 'vim-pandoc/vim-pandoc-syntax'
+Plug 'majutsushi/tagbar'
+Plug 'mileszs/ack.vim'
+Plug 'tpope/vim-surround'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }  "fuzzy finder
+call plug#end()
+
 if filereadable(glob("~/.vim/.vimrc")) 
   source ~/.vim/.vimrc
 endif
+
+let g:syntastic_check_on_open = 0
+let g:syntastic_javascript_checkers = ['jsl', 'jshint']
+let g:syntastic_php_checkers=['php', 'phpcs']
+let g:syntastic_php_phpcs_args='--standard=PSR2 -n'
 
 " Exclude specific puppet-lint checks
 let g:syntastic_puppet_puppetlint_args='--no-80chars-check --no-nested_classes_or_defines-check --no-autoloader_layout-check'
@@ -12,8 +32,11 @@ let g:syntastic_puppet_puppetlint_args='--no-80chars-check --no-nested_classes_o
 " This must be first, because it changes other options as a side effect.
 "" set nocompatible
 
+" Automatically close NERDTree when you open a file
+let NERDTreeQuitOnOpen=1
 
 " basic formatting {{{
+"set autoread            " Auto load file when changed from outside vim
 set scrolloff=5
 set shiftwidth=2        " I have no idea why you would use anything else
 set softtabstop=2       " backspace over a shift width
@@ -25,6 +48,7 @@ set textwidth=78        " I hate long lines
 set autoindent          " always set autoindenting on
 set smartindent         " be smart about indenting new lines
 set number              " turn on linenumbers
+set relativenumber      " line numbers relative to current position
 " but be smarter about indenting comments
 inoremap # #
 " cindent settings
@@ -41,8 +65,9 @@ set formatoptions+=b    " don't break existing long lines
 set formatoptions+=t    " auto-wrap text too
 " }}}
 
-
-
+set wildchar=<Tab> wildmenu wildmode=full
+nnoremap fh :bprev<CR>  " previous buffer
+nnoremap fl :bnext<CR>  " next buffer
 
 
 " backups, swap and history {{{
@@ -58,7 +83,6 @@ set history=50          " keep 50 lines of command line history
 " }}}
 
 set pastetoggle=<C-P>   " easy paste switch
-
 set paste               " turn on paste mode by default
 
 " status line, commands and splitters {{{
@@ -113,5 +137,31 @@ highlight ColorColumn ctermbg=0
 set colorcolumn=80
 
 " Set the linenumber color
-highlight LineNr ctermfg=black
+"""highlight LineNr ctermfg=black
 
+
+
+" DEFINE SOME KEYMAPS
+
+let mapleader=","
+
+" Tab management
+nnoremap tl :tabnext<CR>
+nnoremap th :tabprev<CR>
+nnoremap tn :tabnew<CR>
+nnoremap tc :tabclose<CR>
+
+nnoremap <leader>s :<C-u>FZF<CR>
+nnoremap <leader>W :w !sudo tee % > /dev/null
+
+" setup shortcut to toggle numbers
+noremap <leader>r :call ToggleLineNumber()<CR>
+
+
+" Toggle the linenumbers
+function! ToggleLineNumber()
+  if v:version > 703
+    set norelativenumber!
+  endif
+  set nonumber!
+endfunction
