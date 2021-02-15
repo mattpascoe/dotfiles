@@ -1,19 +1,19 @@
 call plug#begin('~/.vim/plugged')
 Plug 'jlanzarotta/bufexplorer'
-Plug 'scrooloose/syntastic'    " syntax and lint checker
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
-Plug 'bitc/vim-bad-whitespace'
 Plug 'tpope/vim-fugitive'      " Git integrations
+Plug 'scrooloose/syntastic'    " syntax and lint checker
+Plug 'bitc/vim-bad-whitespace'
+"Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 "Plug 'crusoexia/vim-monokai'
-Plug 'vim-pandoc/vim-pandoc'
-Plug 'vim-pandoc/vim-pandoc-syntax'
+"Plug 'vim-pandoc/vim-pandoc'  " Tools for various markdown styles
+"Plug 'vim-pandoc/vim-pandoc-syntax'
 Plug 'majutsushi/tagbar'
 Plug 'mileszs/ack.vim'
 Plug 'tpope/vim-surround'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }  "fuzzy finder
 call plug#end()
 
-if filereadable(glob("~/.vim/.vimrc")) 
+if filereadable(glob("~/.vim/.vimrc"))
   source ~/.vim/.vimrc
 endif
 

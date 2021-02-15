@@ -56,10 +56,11 @@ MAC Apps to install
 * clipy - https://github.com/Clipy/Clipy/releases
 * postman - https://www.getpostman.com/downloads
 * GPGtools - https://gpgtools.org
-* keepassxc - https://keepassxc.org/download/
+* BetterSnapTool - https://folivora.ai
 * 1password X - browser exension.. just start with this https://chrome.google.com/webstore/detail/1password-x-%E2%80%93-password-ma/aeblfdkhhhdcdjpifhhbdiojplfjncoa
 
 OLD APPS
 * itsycal - https://www.mowglii.com/itsycal/
 * 1password.com - https://1password.com/downloads/mac/ -- If you want/need the full native app
 * GitUp - http://gitup.co/
+* keepassxc - https://keepassxc.org/download/
