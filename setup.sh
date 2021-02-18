@@ -33,3 +33,7 @@ then
   echo "Downloading vim-plug module..."
   curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fi
+
+echo
+echo "Once .vimrc is linked in you should run the following command to initialize vim plugins:"
+echo "       vim +PlugInstall +qall"
