@@ -68,6 +68,7 @@ set formatoptions+=t    " auto-wrap text too
 set wildchar=<Tab> wildmenu wildmode=full
 nnoremap fh :bprev<CR>  " previous buffer
 nnoremap fl :bnext<CR>  " next buffer
+nnoremap fc :bw<CR>     " close buffer
 
 
 " backups, swap and history {{{
