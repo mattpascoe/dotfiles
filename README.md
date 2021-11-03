@@ -64,6 +64,7 @@ Brewit:
 brew install iterm2 clipy
 brew install virtualbox vagrant
 brew install postman
+brew install istat-menus
 
 OLD APPS
 * itsycal - https://www.mowglii.com/itsycal/
