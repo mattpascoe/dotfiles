@@ -59,3 +59,10 @@ fi
 
 
 test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
+
+# https://starship.rs - a shell augmentation that seems simple
+# get dejavumono nerdfont for iterm.
+if command -v starship &> /dev/null; then
+  echo "Enabling starship.."
+  eval "$(starship init bash)"
+fi

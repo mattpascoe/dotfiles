@@ -1,3 +1,10 @@
+" Auto install plugin manager if it is not already.  ref: https://github.com/junegunn/vim-plug
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
 call plug#begin('~/.vim/plugged')
 Plug 'jlanzarotta/bufexplorer'
 Plug 'tpope/vim-fugitive'      " Git integrations
@@ -100,6 +107,7 @@ endfunction
 
 set statusline =
 set statusline +=%-2.2n             " buffer number
+set statusline +=\ %{FugitiveStatusline()} " git status
 set statusline +=\ %<%F             " full path
 set statusline +=\ [%Y%R%W]         " filetype, readonly?, preview?
 set statusline +=%{'~'[&pm=='']}    " patch mode?

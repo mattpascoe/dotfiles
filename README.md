@@ -59,6 +59,12 @@ MAC Apps to install
 * BetterSnapTool - https://folivora.ai
 * 1password X - browser exension.. just start with this https://chrome.google.com/webstore/detail/1password-x-%E2%80%93-password-ma/aeblfdkhhhdcdjpifhhbdiojplfjncoa
 
+
+Brewit:
+brew install iterm2 clipy
+brew install virtualbox vagrant
+brew install postman
+
 OLD APPS
 * itsycal - https://www.mowglii.com/itsycal/
 * 1password.com - https://1password.com/downloads/mac/ -- If you want/need the full native app
