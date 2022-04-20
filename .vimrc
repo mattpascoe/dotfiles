@@ -24,6 +24,9 @@ if filereadable(glob("~/.vim/.vimrc"))
   source ~/.vim/.vimrc
 endif
 
+" Newer vim seems to like pascal instead of puppet
+au BufNewFile,BufRead *.pp  setlocal filetype=puppet
+
 let g:syntastic_check_on_open = 0
 let g:syntastic_javascript_checkers = ['jsl', 'jshint']
 let g:syntastic_php_checkers=['php', 'phpcs']
