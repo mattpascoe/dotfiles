@@ -28,6 +28,14 @@ esac
 # Update the prompt with the titlebar
 PS1="$TITLEBAR$PS1"
 
+# Show timestamps in history
+HISTTIMEFORMAT="%Y-%m-%d %T "
+HISTCONTROL=ignoreboth
+
+# Append history, don't overwrite
+shopt -s histappend
+
+
 # Set up some command aliases
 # color for linux
 ##alias ls='ls -F --color=auto'
