@@ -65,9 +65,9 @@ brew install iterm2 clipy
 brew install virtualbox vagrant
 brew install postman
 brew install istat-menus
+brew install 1password
 
 OLD APPS
 * itsycal - https://www.mowglii.com/itsycal/
 * 1password.com - https://1password.com/downloads/mac/ -- If you want/need the full native app
 * GitUp - http://gitup.co/
-* keepassxc - https://keepassxc.org/download/
