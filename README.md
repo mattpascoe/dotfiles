@@ -15,7 +15,15 @@ Just set iterm to load preferences from folder. Usually I set `/Users/$USER/dotf
 Periodically save the preferences (or check the box) to this file and check it into Git.
 
 
-MISC MAC
+MAC Install
+--------
+These steps assume a factory default state or initial setup of these scripts
+
+* Open terminal
+* git clone https://github.com/mattpascoe/dotfiles.git
+* ~/dotfiles/setup.sh
+
+MISC MAC info
 --------
 Started using the .macos file or similar from https://github.com/mathiasbynens/dotfiles
 
