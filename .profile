@@ -48,6 +48,10 @@ alias lt='ls -lt'
 alias cdd='cd $HOME/data'
 # let diff know the width of my screen
 alias diff='diff -W $(( $(tput cols) - 2 ))'
+# git aliases
+alias gs='git status'
+alias gr='git remote'
+alias gp='git pull'
 
 # Turn on vi mode
 set -o vi

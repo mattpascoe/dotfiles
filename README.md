@@ -58,6 +58,7 @@ MAC Apps to install
 * GPGtools - https://gpgtools.org
 * BetterSnapTool - https://folivora.ai
 * 1password X - browser exension.. just start with this https://chrome.google.com/webstore/detail/1password-x-%E2%80%93-password-ma/aeblfdkhhhdcdjpifhhbdiojplfjncoa
+* lulu - firewall system
 
 
 Brewit:
@@ -66,6 +67,7 @@ brew install virtualbox vagrant
 brew install postman
 brew install istat-menus
 brew install 1password
+brew install lulu
 
 OLD APPS
 * itsycal - https://www.mowglii.com/itsycal/
