@@ -1,11 +1,9 @@
 #!/bin/bash
 
-# Using the list of files in this directory
-# make symlinks for the same files in the current
-# users home directory..
+# lots of install stuff.. you should be able to run this over and over without issue
+# TODO: refactor and have more "configuration" instead of hardcoded things like package installs
 
-
-# Determin what type of machine we are on
+# Determine what type of machine we are on
 unameOut="$(uname -s)"
 case "${unameOut}" in
     Linux*)     MACHINE=Linux;;
@@ -15,52 +13,76 @@ case "${unameOut}" in
     *)          MACHINE="UNKNOWN:${unameOut}"
 esac
 
+SCRIPT=$(readlink -f $0)
+DIR="$(dirname $SCRIPT)"
 
-# TODO: maybe add a backup copy operation
-# TODO: needs to check for existing files
-read -p "Linking all dotfiles in $PWD to files in $HOME. Continue? (y/N): "
+
 echo
+echo "Looks like we are a $MACHINE system."
 
-if [ "$REPLY" == "y" ]
+###### Ensure ~/data exists. Also used in .macos script
+if [ ! -d ~/data ]
 then
-  for FILE in $(find `pwd` -name "\.*")
-  do
-    # Ignore a few files
-    if [ $(echo $FILE | egrep "(\.git$|\.svn$|\.macos)") ]
-    then
-      continue
-    else
-      echo ln -s $FILE $HOME/$(basename $FILE)
-    fi
-  done
-
-
+  echo "- Creating ~/data directory. PUT YOUR DATA HERE!"
+  mkdir ~/data
 fi
 
 ###### Install Git if it does not exist
 if ! type "git" > /dev/null; then
   if [ "$MACHINE" == "Mac" ]; then
     # run git command, it may ask to install developer tools, go ahead and do that to get the git command
-    echo "Running git command, this should prompt to install developer tools.... "
-    git --help
+    echo "- Checking git version. If missing it will prompt to install developer tools..."
+    git --version
   fi
   if [ "$MACHINE" == "Linux" ]; then
     # For now, its debian based.. cuz.. RPM??
     apt-get install git
   fi
-
 fi
+
+###### Link dotfile configs
+declare -a LINKFILES=(".profile" ".screenrc" ".vimrc" ".zshrc")
+echo "- Checking dotfile config symlinks..."
+for FILE in "${LINKFILES[@]}"
+do
+  if [ ! -L $HOME/$FILE ]; then
+    if [ -e $HOME/$FILE ]; then
+      echo "Backing up current file to ${FILE}.bak"
+      mv $HOME/$FILE $HOME/$FILE.bak
+    fi
+    echo "Linking file $HOME/$FILE -> $DIR/$FILE"
+    ln -s $DIR/$FILE $HOME/$FILE
+  else
+    echo -n "Found link: "
+    ls -o $HOME/$FILE
+  fi
+done
+
 
 ###### Mac specific stuff
 if [ "$MACHINE" == "Mac" ]; then
-  echo "installing Brew tools...."
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  echo "brew install iterm2 clipy 1password brave-browser"
-  echo "~/dotfiles/.macos"
-fi
+  if ! type "brew" > /dev/null; then
+    echo "- Installing Brew tools..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  fi
 
-echo
-echo "Commands above not executed, cut/paste as desired"
+  echo "- Ensuring install of requested brew packages..."
+  brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font jq
+
+  echo "-!- Consider installing the following"
+  echo "brew install zoom"
+  echo
+
+#needs rosetta on m1
+# brew install -q homebrew/cask-drivers/yubico-authenticator
+
+  read -p "- Execute 'defaults' commands to set specific Mac settings... Continue (N/y) "
+  if [ "$REPLY" == "y" ]; then
+    ~/dotfiles/.macos
+  else
+    echo ".. Skipping defaults based config changes."
+  fi
+fi
 
 
 
@@ -79,3 +101,6 @@ echo "Commands above not executed, cut/paste as desired"
 #echo
 #echo "Once .vimrc is linked in you should run the following command to initialize vim plugins:"
 #echo "       vim +PlugInstall +qall"
+
+echo
+echo "Setup complete."

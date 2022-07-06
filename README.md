@@ -61,7 +61,8 @@ MAC Apps to install
 * vagrant - https://www.vagrantup.com/downloads.html
 * xcode - app store.. just type 'git' from CLI
 * istatmenus - https://bjango.com/mac/istatmenus/ (replaces itsycal)
-* clipy - https://github.com/Clipy/Clipy/releases
+* clipy - https://github.com/Clipy/Clipy/releases -- no longer avail for m1
+* maccy - maccy.app good clipboard
 * postman - https://www.getpostman.com/downloads
 * GPGtools - https://gpgtools.org
 * BetterSnapTool - https://folivora.ai
@@ -70,7 +71,7 @@ MAC Apps to install
 
 
 Brewit:
-brew install iterm2 clipy
+brew install iterm2 maccy
 brew install virtualbox vagrant
 brew install postman
 brew install istat-menus

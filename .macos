@@ -1,10 +1,19 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
+
+# A way to find what these items are:
+# defaults read > before
+# - make your change
+# defaults read > after
+# diff before after
 
 # ~/.macos — https://mths.be/macos
 
 # Close any open System Preferences panes, to prevent them from overriding
 # settings we’re about to change
 osascript -e 'tell application "System Preferences" to quit'
+
+# Enable DarkMode
+osascript -e 'tell application "System Events" to tell appearance preferences to set dark mode to 1'
 
 # Ask for the administrator password upfront
 sudo -v
@@ -28,20 +37,16 @@ defaults write com.apple.AppleMultitouchTrackpad Dragging -bool true
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Dragging -bool true
 
 # Touchbar setup
-defaults write com.apple.controlstrip MiniCustomized '(com.apple.system.media-play-pause, com.apple.system.volume, com.apple.system.mute, com.apple.system.screen-saver)'
+#defaults write com.apple.controlstrip MiniCustomized '(com.apple.system.media-play-pause, com.apple.system.volume, com.apple.system.mute, com.apple.system.screen-saver)'
 
 # Map caps lock to be escape -- https://stackoverflow.com/a/46460200/14230
 # This does not persist over reboot however. But now I have a real escape key!
 #hidutil property --set '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x700000039,"HIDKeyboardModifierMappingDst":0x700000029}]}'
 
-# If you want your DNS resolver to append domains from search list
-#sudo defaults write /Library/Preferences/com.apple.mDNSResponder.plist AlwaysAppendSearchDomains -bool YES
-#sudo launchctl unload /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist
-#sudo launchctl load /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist
-
 ###############################################################################
 # General UI/UX                                                               #
 ###############################################################################
+echo "General UI/UX settings.."
 
 # Set computer name (as done via System Preferences → Sharing)
 #sudo scutil --set ComputerName "0x6D746873"
@@ -59,12 +64,15 @@ defaults write com.apple.controlstrip MiniCustomized '(com.apple.system.media-pl
 #defaults write ~/Library/Preferences/ByHost/com.apple.systemuiserver.*.plist dontAutoLoad -array \
 #  "/System/Library/CoreServices/Menu Extras/User.menu" \
 #  "/System/Library/CoreServices/Menu Extras/Clock.menu"
+#	"/System/Library/CoreServices/Menu Extras/Volume.menu" \
 #defaults write com.apple.systemuiserver menuExtras -array \
 #	"/System/Library/CoreServices/Menu Extras/Bluetooth.menu" \
 #	"/System/Library/CoreServices/Menu Extras/TimeMachine.menu" \
-#	"/System/Library/CoreServices/Menu Extras/Volume.menu" \
 #	"/System/Library/CoreServices/Menu Extras/AirPort.menu" \
 #	"/System/Library/CoreServices/Menu Extras/Battery.menu"
+
+# Hide spotlight menubar icon
+defaults write com.apple.Spotlight MenuItemHidden -int 1
 
 # Show battery percentage
 defaults write com.apple.menuextra.battery ShowPercent -string "YES"
@@ -152,6 +160,11 @@ defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
 # Disable auto-correct
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
+# Enable Darkmode -- DOES NOT WORK.. adding to setup.sh
+#osascript -e 'tell application "System Events" to tell appearance preferences to set dark mode to 1'
+#defaults write -g AppleInterfaceStyle -string "Dark"  # may not actually work
+#defaults write -g NSRequiresAquaSystemAppearance -bool true
+
 # Set a custom wallpaper image. `DefaultDesktop.jpg` is already a symlink, and
 # all wallpapers are in `/Library/Desktop Pictures/`. The default is `Wave.jpg`.
 #rm -rf ~/Library/Application Support/Dock/desktoppicture.db
@@ -161,6 +174,7 @@ defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 ###############################################################################
 # Trackpad, mouse, keyboard, Bluetooth accessories, and input                 #
 ###############################################################################
+echo "Trackpad Mouse Keyboard settings.."
 
 # Trackpad: enable tap to click for this user and for the login screen
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
@@ -208,7 +222,7 @@ defaults write NSGlobalDomain InitialKeyRepeat -int 10
 #sudo defaults write /Library/Preferences/com.apple.loginwindow showInputMenu -bool true
 
 # Set the timezone; see `sudo systemsetup -listtimezones` for other values
-sudo systemsetup -settimezone "America/Boise" > /dev/null
+sudo systemsetup -settimezone "America/Boise" 2> /dev/null
 
 # Stop iTunes from responding to the keyboard media keys
 #launchctl unload -w /System/Library/LaunchAgents/com.apple.rcd.plist 2> /dev/null
@@ -216,7 +230,7 @@ sudo systemsetup -settimezone "America/Boise" > /dev/null
 #############################################################
 # Energy saving
 #############################################################
-
+echo "Energy settings.."
 # Enable lid wakeup
 sudo pmset -a lidwake 1
 
@@ -224,7 +238,7 @@ sudo pmset -a lidwake 1
 sudo pmset -a autorestart 1
 
 # Restart automatically if the computer freezes
-sudo systemsetup -setrestartfreeze on
+sudo systemsetup -setrestartfreeze on 2> /dev/null
 
 # Sleep the display Never
 sudo pmset -a displaysleep 0
@@ -242,7 +256,7 @@ sudo pmset -b displaysleep 5
 #sudo pmset -a standbydelay 86400
 
 # Never go into computer sleep mode
-#sudo systemsetup -setcomputersleep Off > /dev/null
+#sudo systemsetup -setcomputersleep Off 2> /dev/null
 
 # Hibernation mode
 # 0: Disable hibernation (speeds up entering sleep mode)
@@ -260,6 +274,7 @@ sudo pmset -b displaysleep 5
 ###############################################################################
 # Screen                                                                      #
 ###############################################################################
+echo "Screen settings.."
 
 # Require password immediately after sleep or screen saver begins
 #defaults write com.apple.screensaver askForPassword -int 1
@@ -287,7 +302,7 @@ sudo defaults write /Library/Preferences/com.apple.windowserver DisplayResolutio
 ###############################################################################
 # Finder                                                                      #
 ###############################################################################
-
+echo "Finder settings.."
 # Finder: allow quitting via ⌘ + Q; doing so will also hide desktop icons
 #defaults write com.apple.finder QuitMenuItem -bool true
 
@@ -388,7 +403,8 @@ defaults write com.apple.finder WarnOnEmptyTrash -bool false
 #defaults write com.apple.NetworkBrowser BrowseAllInterfaces -bool true
 
 # Show the ~/Library folder
-chflags nohidden ~/Library && xattr -d com.apple.FinderInfo ~/Library
+# FIXME -- this command may just error if the xattr doesnt exist already?
+# FIXME chflags nohidden ~/Library && xattr -d com.apple.FinderInfo ~/Library
 
 # Show the /Volumes folder
 sudo chflags nohidden /Volumes
@@ -407,6 +423,7 @@ defaults write com.apple.finder FXInfoPanesExpanded -dict \
 ###############################################################################
 # Dock, Dashboard, and hot corners                                            #
 ###############################################################################
+echo "Dock and Dashboard settings.."
 
 # Enable highlight hover effect for the grid view of a stack (Dock)
 defaults write com.apple.dock mouse-over-hilite-stack -bool true
@@ -432,7 +449,7 @@ defaults write com.apple.dock show-process-indicators -bool true
 #defaults write com.apple.dock persistent-apps -array
 
 # Show only open applications in the Dock
-#defaults write com.apple.dock static-only -bool true
+defaults write com.apple.dock static-only -bool true
 
 # Don’t animate opening applications from the Dock
 defaults write com.apple.dock launchanim -bool false
@@ -636,6 +653,7 @@ defaults write com.apple.mail DraftsViewerAttributes -dict-add "SortOrder" -stri
 ###############################################################################
 # Spotlight                                                                   #
 ###############################################################################
+echo "Spotlight settings.."
 
 # Hide Spotlight tray-icon (and subsequent helper)
 #sudo chmod 600 /System/Library/CoreServices/Search.bundle/Contents/MacOS/Search
@@ -889,15 +907,11 @@ defaults write ~/Library/Preferences/org.gpgtools.gpgmail SignNewEmailsByDefault
 defaults write ~/Library/Preferences/org.gpgtools.gpgmail OptionallyEncryptDrafts -bool false
 
 ###############################################################################
-# Clipy.app                                                                #
+# Maccy.app                                                                #
 ###############################################################################
 
 # My personal settings
-defaults write com.clipy-app.Clipy.plist kCPYCollectCrashReport -bool false
-defaults write com.clipy-app.Clipy.plist kCPYPrefNumberOfItemsPlaceInlineKey -int 10
-defaults write com.clipy-app.Clipy.plist kCPYPrefShowStatusItemKey -int 2
-# disable auto paste of menu selection
-defaults write com.clipy-app.Clipy.plist kCPYPrefInputPasteCommandKey -int 0
+defaults write org.p0deje.Maccy SUEnableAutomaticChecks -int 0
 
 ###############################################################################
 # Kill affected applications                                                  #
