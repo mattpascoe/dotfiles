@@ -36,9 +36,6 @@ fi
 defaults write com.apple.AppleMultitouchTrackpad Dragging -bool true
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Dragging -bool true
 
-# Touchbar setup
-#defaults write com.apple.controlstrip MiniCustomized '(com.apple.system.media-play-pause, com.apple.system.volume, com.apple.system.mute, com.apple.system.screen-saver)'
-
 # Map caps lock to be escape -- https://stackoverflow.com/a/46460200/14230
 # This does not persist over reboot however. But now I have a real escape key!
 #hidutil property --set '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x700000039,"HIDKeyboardModifierMappingDst":0x700000029}]}'
@@ -208,7 +205,7 @@ defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
 # Set a blazingly fast keyboard repeat rate
 defaults write NSGlobalDomain KeyRepeat -int 2
-defaults write NSGlobalDomain InitialKeyRepeat -int 10
+defaults write NSGlobalDomain InitialKeyRepeat -int 20
 
 # Set language and text formats
 # Note: if you’re in the US, replace `EUR` with `USD`, `Centimeters` with
@@ -240,8 +237,11 @@ sudo pmset -a autorestart 1
 # Restart automatically if the computer freezes
 sudo systemsetup -setrestartfreeze on 2> /dev/null
 
-# Sleep the display Never
-sudo pmset -a displaysleep 0
+# Sleep the display after 30 mins, set to 0 for Never
+sudo pmset -a displaysleep 30
+
+# Do not dim screen any when switching energy modes
+sudo pmset -a lessbright 0
 
 # Disable machine sleep while charging
 sudo pmset -c sleep 0

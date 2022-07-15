@@ -17,7 +17,6 @@ HISTSIZE=50000               #How many lines of history to keep in memory
 SAVEHIST=$HISTSIZE           #Number of history entries to save to disk
 #HISTDUP=erase               #Erase duplicates in the history file
 setopt    APPEND_HISTORY     #Append history to the history file (no overwriting)
-setopt    SHARE_HISTORY      #Share history across terminals
 setopt    INC_APPEND_HISTORY #Immediately append to the history file, not just when a term is killed
 # Show timestamps in history using history -f
 setopt    HIST_IGNORE_SPACE  #commands with space in front dont get stored
@@ -47,8 +46,8 @@ alias gp='git pull'
 # Turn on vi mode
 set -o vi
 
-# Create ssh-reagent command to attached to existing agent sockets
-ssh-reagent () {
+# Create ssh_reagent command to attached to existing agent sockets
+ssh_reagent () {
   for agent in /tmp/ssh-*/agent.*; do
       export SSH_AUTH_SOCK=$agent
       if ssh-add -l 2>&1 > /dev/null; then
