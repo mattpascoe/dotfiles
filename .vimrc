@@ -6,6 +6,7 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
 endif
 
 call plug#begin('~/.vim/plugged')
+Plug 'vimwiki/vimwiki'
 Plug 'jlanzarotta/bufexplorer'
 Plug 'tpope/vim-fugitive'      " Git integrations
 Plug 'scrooloose/syntastic'    " syntax and lint checker
