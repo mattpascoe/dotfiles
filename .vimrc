@@ -32,6 +32,7 @@ let g:syntastic_check_on_open = 0
 let g:syntastic_javascript_checkers = ['jsl', 'jshint']
 let g:syntastic_php_checkers=['php', 'phpcs']
 let g:syntastic_php_phpcs_args='--standard=PSR2 -n'
+let g:syntastic_puppet_checkers = ['puppet-lint']
 
 " Exclude specific puppet-lint checks
 let g:syntastic_puppet_puppetlint_args='--no-80chars-check --no-nested_classes_or_defines-check --no-autoloader_layout-check'
@@ -42,6 +43,19 @@ let g:syntastic_puppet_puppetlint_args='--no-80chars-check --no-nested_classes_o
 " Use Vim settings, rather then Vi settings (much better!).
 " This must be first, because it changes other options as a side effect.
 "" set nocompatible
+
+"""" vimwiki settings
+set nocompatible
+filetype plugin on
+"syntax on " this is set below
+let personal = {}
+let personal.path = '~/data/SYNC/wiki/'
+let personal.syntax = 'markdown'
+let work = {}
+let work.path = '~/data/workwiki/'
+let g:vimwiki_list = [personal, work]
+let g:vimwiki_listsyms = ' ○◐●✓'
+"""" end vimwiki
 
 " Automatically close NERDTree when you open a file
 let NERDTreeQuitOnOpen=1
@@ -161,14 +175,17 @@ let mapleader=","
 " Tab management
 nnoremap tl :tabnext<CR>
 nnoremap th :tabprev<CR>
-nnoremap tn :tabnew<CR>
+nnoremap tp :tabprev<CR>
+nnoremap tn :tabnext<CR>
+nnoremap tt :tabnew<CR>
 nnoremap tc :tabclose<CR>
+nnoremap tx :tabclose<CR>
 
 nnoremap <leader>s :<C-u>FZF<CR>
 nnoremap <leader>W :w !sudo tee % > /dev/null
 
 " setup shortcut to toggle numbers
-noremap <leader>r :call ToggleLineNumber()<CR>
+noremap <leader>l :call ToggleLineNumber()<CR>
 
 
 " Toggle the linenumbers

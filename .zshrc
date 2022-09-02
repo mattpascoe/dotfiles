@@ -42,6 +42,9 @@ alias diff='diff -W $(( $(tput cols) - 2 ))'
 alias gs='git status'
 alias gr='git remote'
 alias gp='git pull'
+# vimwiki
+alias vw='vim -c "VimwikiIndex 1"'
+alias vww='vim -c "VimwikiIndex 2"'
 
 # Turn on vi mode
 set -o vi
