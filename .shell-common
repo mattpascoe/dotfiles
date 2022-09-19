@@ -1,0 +1,99 @@
+# This file should contain common shell setups that are sourced in to each
+# rc file.  At this time it supports Bash and Zsh.  Maybe others?
+
+# Determine our shell type
+# if running bash
+if [ -n "$BASH_VERSION" ]; then
+  SHELLTYPE=bash
+elif [ -n "$ZSH_VERSION" ]; then
+  SHELLTYPE=zsh
+fi
+echo "Configuring $SHELLTYPE shell."
+
+# Set up some command aliases
+# color for linux
+##alias ls='ls -F --color=auto'
+# color for mac
+alias ls='ls -F -G'
+alias la='ls -a'
+alias ll='ls -l'
+alias lla='ls -la'
+alias lt='ls -lt'
+alias cdd='cd $HOME/data'
+# let diff know the width of my screen
+alias diff='diff -W $(( $(tput cols) - 2 ))'
+# git aliases
+alias gs='git status'
+alias gr='git remote'
+alias gp='git pull'
+alias gd='git diff'
+# vimwiki
+alias vw='vim -c "VimwikiIndex 1"'
+alias vww='vim -c "VimwikiIndex 2"'
+
+# Turn on vi mode
+set -o vi
+
+# Create ssh_reagent command to attached to existing agent sockets
+ssh_reagent () {
+  for agent in /tmp/ssh-*/agent.*; do
+      export SSH_AUTH_SOCK=$agent
+      if ssh-add -l 2>&1 > /dev/null; then
+         echo Found working SSH Agent:
+         ssh-add -l
+         return
+      fi
+  done
+  echo Cannot find ssh agent - maybe you should reconnect and forward it?
+}
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$PATH"
+fi
+
+# Load up brew environment
+if [ -f /opt/homebrew/bin/brew ] &> /dev/null; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+# Load iterm2 shell integration
+test -e "${HOME}/.iterm2_shell_integration.${SHELLTYPE}" && source "${HOME}/.iterm2_shell_integration.${SHELLTYPE}"
+
+# https://starship.rs - a shell augmentation that seems simple
+# get dejavumono nerdfont for iterm.
+if command -v starship &> /dev/null; then
+  echo "Enabling starship.."
+  eval "$(starship init $SHELLTYPE)"
+fi
+
+###### Setup fzf
+if [[ ! "$PATH" == */usr/local/opt/fzf/bin* ]]; then
+  PATH="${PATH:+${PATH}:}/usr/local/opt/fzf/bin"
+fi
+
+# FZF Auto-completion
+[[ $- == *i* ]] && source "/usr/local/opt/fzf/shell/completion.${SHELLTYPE}" 2> /dev/null
+
+# FZF Key bindings
+source "/usr/local/opt/fzf/shell/key-bindings.${SHELLTYPE}"
+
+export FZF_COMPLETION_TRIGGER=','
+export FZF_TMUX_HEIGHT=60% # not strictly TMUX only
+export FZF_DEFAULT_OPTS="--layout=reverse --border --info=inline"
+export FZF_CTRL_T_OPTS="--preview '(highlight -O ansi -l {} 2> /dev/null || cat {} ) 2> /dev/null | head -100'"
+# history in chronological order
+export FZF_CTRL_R_OPTS='--no-sort'
+
+_fzf_comprun() {
+  local command=$1
+  shift
+
+  case "$command" in
+    cd)           fzf "$@" --preview 'tree -C {} | head -100' ;;
+    export|unset) fzf "$@" --preview "eval 'echo \$'{}" ;;
+    ssh)          fzf "$@" --preview 'host {}' --tac ;;
+    *)            fzf "$@" --preview '(tree -C {} | highlight -O ansi -l {} 2> /dev/null || cat {} ) 2> /dev/null | head -100' ;;
+  esac
+}
+###### Setup fzf END

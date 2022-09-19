@@ -35,59 +35,12 @@ HISTCONTROL=ignoreboth
 # Append history, don't overwrite
 shopt -s histappend
 
-
-# Set up some command aliases
-# color for linux
-##alias ls='ls -F --color=auto'
-# color for mac
-alias ls='ls -F -G'
-alias la='ls -a'
-alias ll='ls -l'
-alias lla='ls -la'
-alias lt='ls -lt'
-alias cdd='cd $HOME/data'
-# let diff know the width of my screen
-alias diff='diff -W $(( $(tput cols) - 2 ))'
-# git aliases
-alias gs='git status'
-alias gr='git remote'
-alias gp='git pull'
-
-# Turn on vi mode
-set -o vi
-
-# Create ssh_reagent command to attached to existing agent sockets
-ssh_reagent () {
-  for agent in /tmp/ssh-*/agent.*; do
-      export SSH_AUTH_SOCK=$agent
-      if ssh-add -l 2>&1 > /dev/null; then
-         echo Found working SSH Agent:
-         ssh-add -l
-         return
-      fi
-  done
-  echo Cannot find ssh agent - maybe you should reconnect and forward it?
-}
-
-# if running bash
-if [ -n "$BASH_VERSION" ]; then
-    # include .bashrc if it exists
-    if [ -f "$HOME/.bashrc" ]; then
-        . "$HOME/.bashrc"
-    fi
+# include .bashrc if it exists
+if [ -f "$HOME/.bashrc" ]; then
+    . "$HOME/.bashrc"
 fi
 
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
-fi
-
-
-test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
-
-# https://starship.rs - a shell augmentation that seems simple
-# get dejavumono nerdfont for iterm.
-if command -v starship &> /dev/null; then
-  echo "Enabling starship.."
-  eval "$(starship init bash)"
-fi
+## Pull in common shell configuration
+SCRIPT=$(readlink "$BASH_SOURCE")
+SP=$(dirname "$SCRIPT")
+source $SP/.shell-common
