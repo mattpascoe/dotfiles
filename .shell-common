@@ -27,6 +27,7 @@ alias gs='git status'
 alias gr='git remote'
 alias gp='git pull'
 alias gd='git diff'
+alias gu='git push'
 # vimwiki
 alias vw='vim -c "VimwikiIndex 1"'
 alias vww='vim -c "VimwikiIndex 2"'
