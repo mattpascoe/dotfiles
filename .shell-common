@@ -68,15 +68,16 @@ if command -v starship &> /dev/null; then
 fi
 
 ###### Setup fzf
-if [[ ! "$PATH" == */usr/local/opt/fzf/bin* ]]; then
-  PATH="${PATH:+${PATH}:}/usr/local/opt/fzf/bin"
+BREWPREFIX=$(brew --prefix)
+if [[ ! "$PATH" == *${BREWPREFIX}/opt/fzf/bin* ]]; then
+  PATH="${PATH:+${PATH}:}${BREWPREFIX}/opt/fzf/bin"
 fi
 
 # FZF Auto-completion
-[[ $- == *i* ]] && source "/usr/local/opt/fzf/shell/completion.${SHELLTYPE}" 2> /dev/null
+[[ $- == *i* ]] && source "${BREWPREFIX}/opt/fzf/shell/completion.${SHELLTYPE}" 2> /dev/null
 
 # FZF Key bindings
-source "/usr/local/opt/fzf/shell/key-bindings.${SHELLTYPE}"
+source "${BREWPREFIX}/opt/fzf/shell/key-bindings.${SHELLTYPE}"
 
 export FZF_COMPLETION_TRIGGER=','
 export FZF_TMUX_HEIGHT=60% # not strictly TMUX only
