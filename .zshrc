@@ -32,6 +32,6 @@ bindkey '^R' history-incremental-search-backward
 autoload -Uz compinit && compinit
 
 # Pull in common shell configuration
-SCRIPT=$(readlink -f "$0")
+SCRIPT=$(readlink "${(%):-%x}")
 SP=$(dirname "$SCRIPT")
 source $SP/.shell-common
