@@ -7,23 +7,46 @@ endif
 
 call plug#begin('~/.vim/plugged')
 Plug 'vimwiki/vimwiki'
-Plug 'jlanzarotta/bufexplorer'
+"Plug 'jlanzarotta/bufexplorer'
 Plug 'tpope/vim-fugitive'      " Git integrations
 Plug 'scrooloose/syntastic'    " syntax and lint checker
 Plug 'bitc/vim-bad-whitespace'
-"Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 "Plug 'crusoexia/vim-monokai'
 "Plug 'vim-pandoc/vim-pandoc'  " Tools for various markdown styles
 "Plug 'vim-pandoc/vim-pandoc-syntax'
-Plug 'majutsushi/tagbar'
-Plug 'mileszs/ack.vim'
+"Plug 'majutsushi/tagbar'       " Needs ctags cli installed
+"Plug 'mileszs/ack.vim'         " Needs ack cli installed
 Plug 'tpope/vim-surround'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }  "fuzzy finder
+Plug 'junegunn/fzf.vim'
+Plug 'bignimbus/pop-punk.vim' " maybe.. colors dont complement well
+Plug 'NLKNguyen/papercolor-theme'
 call plug#end()
 
 if filereadable(glob("~/.vim/.vimrc"))
   source ~/.vim/.vimrc
 endif
+
+set nocompatible
+filetype plugin on
+syntax on
+
+set t_Co=256 " ensure enough colors for airline
+set background=dark     " on a dark background
+"colorscheme papercolor       " set color scheme
+colorscheme pop-punk       " set color scheme
+let g:PaperColor_Theme_Options = {
+  \   'theme': {
+  \     'default.dark': {
+  \       'override' : {
+  \         'color00' : ['#000000', '232'],
+  \         'linenumber_bg' : ['#080808', '232']
+  \       }
+  \     }
+  \   }
+  \ }
 
 " Newer vim seems to like pascal instead of puppet
 au BufNewFile,BufRead *.pp  setlocal filetype=puppet
@@ -37,28 +60,43 @@ let g:syntastic_puppet_checkers = ['puppet-lint']
 " Exclude specific puppet-lint checks
 let g:syntastic_puppet_puppetlint_args='--no-80chars-check --no-nested_classes_or_defines-check --no-autoloader_layout-check'
 
-" Took bd808s stuff..........
-" bd808's handy vimrc
-
-" Use Vim settings, rather then Vi settings (much better!).
-" This must be first, because it changes other options as a side effect.
-"" set nocompatible
+""" Airline plugin
+let g:airline#extensions#tabline#enabled = 1
+"let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+let g:airline_theme='minimalist'
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+let g:airline_left_sep = '▶'
+let g:airline_right_sep = '◀'
+let g:airline_symbols.crypt = '🔒'
+let g:airline_symbols.colnr = ' : '
+let g:airline_symbols.linenr = ' : '
+let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.branch = '⎇'
+let g:airline_symbols.paste = 'ρ'
+let g:airline_symbols.spell = 'Ꞩ'
+let g:airline_symbols.notexists = 'Ɇ'
+let g:airline_symbols.whitespace = 'Ξ'
+""" End Airline plugin
 
 """" vimwiki settings
-set nocompatible
-filetype plugin on
-"syntax on " this is set below
+" FYI mac vim does not have +conceal by default
 let personal = {}
 let personal.path = '~/data/SYNC/wiki/'
 let personal.syntax = 'markdown'
+let personal.ext = '.md'
 let work = {}
 let work.path = '~/data/workwiki/'
 let g:vimwiki_list = [personal, work]
 let g:vimwiki_listsyms = ' ○◐●✓'
 """" end vimwiki
 
-" Automatically close NERDTree when you open a file
-let NERDTreeQuitOnOpen=1
+let php_folding = 1        "Set PHP folding of classes and functions.
+let php_htmlInStrings = 1  "Syntax highlight HTML code inside PHP strings.
+let php_sql_query = 1      "Syntax highlight SQL code inside PHP strings.
+let php_noShortTags = 1    "Disable PHP short tags.
 
 " basic formatting {{{
 "set autoread            " Auto load file when changed from outside vim
@@ -91,17 +129,14 @@ set formatoptions+=t    " auto-wrap text too
 " }}}
 
 set wildchar=<Tab> wildmenu wildmode=full
-nnoremap fh :bprev<CR>  " previous buffer
-nnoremap fl :bnext<CR>  " next buffer
-nnoremap fc :bw<CR>     " close buffer
-
 
 " backups, swap and history {{{
 set nobackup            " don't keep a backup file
 set nowritebackup       " seriously, no backup file
-set viminfo='10,f1,<50,:50,n~/.viminfo
+set viminfo='10,f1,%30,<50,:50,n~/.viminfo
                         " marks for 10 files
                         " store file marks
+                        " save 30 buffer list
                         " max 50 lines for each register
                         " remember 50 commands
                         " write to ~/.viminfo
@@ -119,25 +154,25 @@ set fillchars=vert:\ ,stl:\ ,stlnc:\  "no funny fill chars in splitters
 set splitbelow
 set splitright
 
-function! SyntaxItem()
-  return synIDattr(synID(line("."),col("."),1),"name")
-endfunction
+"function! SyntaxItem()
+"  return synIDattr(synID(line("."),col("."),1),"name")
+"endfunction
 
-set statusline =
-set statusline +=%-2.2n             " buffer number
-set statusline +=\ %{FugitiveStatusline()} " git status
-set statusline +=\ %<%F             " full path
-set statusline +=\ [%Y%R%W]         " filetype, readonly?, preview?
-set statusline +=%{'~'[&pm=='']}    " patch mode?
-set statusline +=%M                 " Modified?
-"set statusline +=%#warningmsg#%{SyntasticStatuslineFlag()}%* " syntax check
-set statusline +=%=                 " float right
-set statusline +=%#error#%{&paste?'[paste]':''}%* " Paste mode?
-" set statusline +=%{SyntaxItem()}    " syntax highlight group under cursor
-set statusline +=\ %{&ff}           " file format
-set statusline +=\ %{&fenc}         " encoding
-set statusline +=\ %l,%c%V          " line, col-virt col (like :set ruler)
-" }}}
+"set statusline =
+"set statusline +=%-2.2n             " buffer number
+"set statusline +=\ %{FugitiveStatusline()} " git status
+"set statusline +=\ %<%F             " full path
+"set statusline +=\ [%Y%R%W]         " filetype, readonly?, preview?
+"set statusline +=%{'~'[&pm=='']}    " patch mode?
+"set statusline +=%M                 " Modified?
+""set statusline +=%#warningmsg#%{SyntasticStatuslineFlag()}%* " syntax check
+"set statusline +=%=                 " float right
+"set statusline +=%#error#%{&paste?'[paste]':''}%* " Paste mode?
+"" set statusline +=%{SyntaxItem()}    " syntax highlight group under cursor
+"set statusline +=\ %{&ff}           " file format
+"set statusline +=\ %{&fenc}         " encoding
+"set statusline +=\ %l,%c%V          " line, col-virt col (like :set ruler)
+"" }}}
 
 " encoding and charsets {{{
 set encoding=utf-8      " you don't use utf-8? ಠ_ಠ
@@ -149,13 +184,6 @@ endtry
 set fileformats=unix,dos,mac  " preferred file format order
 " }}}
 
-
-" syntax highlighting {{{
-syntax enable           " enable syntax highlighting
-"colorscheme desert      " set color scheme
-colorscheme slate       " set color scheme
-set background=dark     " on a dark background
-" }}}
 
 """" would love to but the colors suck with solarize in iterm2
 " highlight 80 and 120+ column
@@ -181,12 +209,29 @@ nnoremap tt :tabnew<CR>
 nnoremap tc :tabclose<CR>
 nnoremap tx :tabclose<CR>
 
+" Buffer management
+nnoremap ff :enew<CR>   " new buffer
+nnoremap fh :bprev<CR>  " previous buffer
+nnoremap fp :bprev<CR>  " previous buffer
+nnoremap fl :bnext<CR>  " next buffer
+nnoremap fn :bnext<CR>  " next buffer
+nnoremap fc :bw<CR>     " close buffer
+nnoremap fx :bw<CR>     " close buffer
+
+"" FZF related
+" bufferlist
+nnoremap <Leader>b :Buffers<CR>
 nnoremap <leader>s :<C-u>FZF<CR>
+nnoremap <leader><tab> :<C-u>FZF<CR>
+
+" NO, write it for real!
 nnoremap <leader>W :w !sudo tee % > /dev/null
+
+" Reload vimr configuration file
+nnoremap <leader>vr :source $MYVIMRC<CR>
 
 " setup shortcut to toggle numbers
 noremap <leader>l :call ToggleLineNumber()<CR>
-
 
 " Toggle the linenumbers
 function! ToggleLineNumber()

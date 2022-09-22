@@ -67,7 +67,7 @@ if [ "$MACHINE" == "Mac" ]; then
   fi
 
   echo "- Ensuring install of requested brew packages..."
-  brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font jq
+  brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font jq fzf highlight tree
 
   echo "-!- Consider installing the following"
   echo "brew install zoom"
@@ -87,6 +87,8 @@ fi
 
 
 
+# May need compinit fixup for writable site-functions etc
+#compaudit | xargs chmod go-w
 
 
 
