@@ -23,6 +23,7 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }  "fuzzy finder
 Plug 'junegunn/fzf.vim'
 Plug 'bignimbus/pop-punk.vim' " maybe.. colors dont complement well
 Plug 'NLKNguyen/papercolor-theme'
+Plug 'rodjek/vim-puppet'
 call plug#end()
 
 if filereadable(glob("~/.vim/.vimrc"))
@@ -34,9 +35,8 @@ filetype plugin on
 syntax on
 
 set t_Co=256 " ensure enough colors for airline
-set background=dark     " on a dark background
-"colorscheme papercolor       " set color scheme
-colorscheme pop-punk       " set color scheme
+"colorscheme pop-punk       " set color scheme
+colorscheme papercolor       " set color scheme
 let g:PaperColor_Theme_Options = {
   \   'theme': {
   \     'default.dark': {
@@ -47,15 +47,16 @@ let g:PaperColor_Theme_Options = {
   \     }
   \   }
   \ }
+set background=dark     " on a dark background
 
 " Newer vim seems to like pascal instead of puppet
 au BufNewFile,BufRead *.pp  setlocal filetype=puppet
 
-let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_open = 1
 let g:syntastic_javascript_checkers = ['jsl', 'jshint']
 let g:syntastic_php_checkers=['php', 'phpcs']
 let g:syntastic_php_phpcs_args='--standard=PSR2 -n'
-let g:syntastic_puppet_checkers = ['puppet-lint']
+let g:syntastic_puppet_checkers = ['puppetlint']
 
 " Exclude specific puppet-lint checks
 let g:syntastic_puppet_puppetlint_args='--no-80chars-check --no-nested_classes_or_defines-check --no-autoloader_layout-check'
