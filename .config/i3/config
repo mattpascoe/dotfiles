@@ -47,6 +47,7 @@ floating_modifier $mod
 
 # start a terminal
 bindsym $mod+Return exec i3-sensible-terminal
+bindsym $mod+t exec i3-sensible-terminal
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -112,8 +113,8 @@ bindsym $mod+a focus parent
 
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
-set $ws1 "1: Terminal"
-set $ws2 "2: Web"
+set $ws1 "1: Web"
+set $ws2 "2: Terminal"
 set $ws3 "3"
 set $ws4 "4"
 set $ws5 "5"
@@ -148,7 +149,6 @@ bindsym $mod+Shift+8 move container to workspace number $ws8
 bindsym $mod+Shift+9 move container to workspace number $ws9
 bindsym $mod+Shift+0 move container to workspace number $ws10
 
-assign [class="firefox"] $ws2
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -192,8 +192,12 @@ bar {
         position top
 }
 
+assign [class="brave-browser"] $ws1
+assign [class="i3-sensible-terminal"] $ws2
+
 exec_always compton
-exec firefox
+#exec firefox
+exec brave-browser
 exec i3-sensible-terminal
 
 exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +50% && $refresh_i3status
