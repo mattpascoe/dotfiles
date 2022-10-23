@@ -36,7 +36,7 @@ syntax on
 
 set t_Co=256 " ensure enough colors for airline
 "colorscheme pop-punk       " set color scheme
-colorscheme papercolor       " set color scheme
+colorscheme PaperColor       " set color scheme
 let g:PaperColor_Theme_Options = {
   \   'theme': {
   \     'default.dark': {
@@ -230,6 +230,9 @@ nnoremap <leader>W :w !sudo tee % > /dev/null
 
 " Reload vimr configuration file
 nnoremap <leader>vr :source $MYVIMRC<CR>
+
+" Toggle conceal level
+nnoremap <leader>c :set <C-R>=&conceallevel ? 'conceallevel=0' : 'conceallevel=2'<CR><CR>
 
 " setup shortcut to toggle numbers
 noremap <leader>l :call ToggleLineNumber()<CR>

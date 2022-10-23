@@ -44,3 +44,6 @@ fi
 SCRIPT=$(readlink "$BASH_SOURCE")
 SP=$(dirname "$SCRIPT")
 source $SP/.shell-common
+
+# Debian fzf completions
+[[ -f /usr/share/bash-completion/completions/fzf ]] && source /usr/share/bash-completion/completions/fzf

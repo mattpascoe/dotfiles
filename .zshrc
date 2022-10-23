@@ -35,3 +35,7 @@ autoload -Uz compinit && compinit
 SCRIPT=$(readlink "${(%):-%x}")
 SP=$(dirname "$SCRIPT")
 source $SP/.shell-common
+
+# Debian fzf completions
+# if only the package was consistent in where it put its completions
+[[ -f /usr/share/doc/fzf/examples/completion.zsh ]] && source /usr/share/doc/fzf/examples/completion.zsh

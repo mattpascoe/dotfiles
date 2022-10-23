@@ -56,7 +56,22 @@ fi
 # Load up brew environment
 if [ -f /opt/homebrew/bin/brew ] &> /dev/null; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
+
+  # Set Brew related FZF elements
+  BREWPREFIX=$(brew --prefix)
+  if [[ ! "$PATH" == *${BREWPREFIX}/opt/fzf/bin* ]]; then
+    PATH="${PATH:+${PATH}:}${BREWPREFIX}/opt/fzf/bin"
+  fi
+
+  # FZF Auto-completion
+  [[ $- == *i* ]] && source "${BREWPREFIX}/opt/fzf/shell/completion.${SHELLTYPE}" 2> /dev/null
+
+  # FZF Key bindings
+  source "${BREWPREFIX}/opt/fzf/shell/key-bindings.${SHELLTYPE}"
 fi
+
+# Debian linux location for fzf bindings
+[[ -f /usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE} ]] && source /usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE}
 
 # Load iterm2 shell integration
 test -e "${HOME}/.iterm2_shell_integration.${SHELLTYPE}" && source "${HOME}/.iterm2_shell_integration.${SHELLTYPE}"
@@ -69,17 +84,6 @@ if command -v starship &> /dev/null; then
 fi
 
 ###### Setup fzf
-BREWPREFIX=$(brew --prefix)
-if [[ ! "$PATH" == *${BREWPREFIX}/opt/fzf/bin* ]]; then
-  PATH="${PATH:+${PATH}:}${BREWPREFIX}/opt/fzf/bin"
-fi
-
-# FZF Auto-completion
-[[ $- == *i* ]] && source "${BREWPREFIX}/opt/fzf/shell/completion.${SHELLTYPE}" 2> /dev/null
-
-# FZF Key bindings
-source "${BREWPREFIX}/opt/fzf/shell/key-bindings.${SHELLTYPE}"
-
 export FZF_COMPLETION_TRIGGER=','
 export FZF_TMUX_HEIGHT=60% # not strictly TMUX only
 export FZF_DEFAULT_OPTS="--layout=reverse --border --info=inline"
