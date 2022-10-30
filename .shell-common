@@ -8,7 +8,7 @@ if [ -n "$BASH_VERSION" ]; then
 elif [ -n "$ZSH_VERSION" ]; then
   SHELLTYPE=zsh
 fi
-echo "Configuring $SHELLTYPE shell."
+echo "Configuring as a $SHELLTYPE shell."
 
 # Set up some command aliases
 # color for linux
@@ -48,15 +48,24 @@ ssh_reagent () {
   echo Cannot find ssh agent - maybe you should reconnect and forward it?
 }
 
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
+# Load iterm2 shell integration on Macs
+test -e "${HOME}/.iterm2_shell_integration.${SHELLTYPE}" && source "${HOME}/.iterm2_shell_integration.${SHELLTYPE}"
+
+# https://starship.rs - a shell augmentation that seems simple
+# get dejavumono nerdfont for iterm.
+if command -v starship &> /dev/null; then
+  echo "Enabling starship.."
+  eval "$(starship init $SHELLTYPE)"
 fi
 
-# Load up brew environment
+# Load up brew environment on ARM systems, do I need this for intel?
 if [ -f /opt/homebrew/bin/brew ] &> /dev/null; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
 
+######################### Setup FZF ################
+# Load FZF integrations for macs or unix
+if command -v brew &> /dev/null; then
   # Set Brew related FZF elements
   BREWPREFIX=$(brew --prefix)
   if [[ ! "$PATH" == *${BREWPREFIX}/opt/fzf/bin* ]]; then
@@ -67,23 +76,14 @@ if [ -f /opt/homebrew/bin/brew ] &> /dev/null; then
   [[ $- == *i* ]] && source "${BREWPREFIX}/opt/fzf/shell/completion.${SHELLTYPE}" 2> /dev/null
 
   # FZF Key bindings
-  source "${BREWPREFIX}/opt/fzf/shell/key-bindings.${SHELLTYPE}"
+  [[ -f ${BREWPREFIX}/opt/fzf/shell/key-bindings.${SHELLTYPE} ]] && source "${BREWPREFIX}/opt/fzf/shell/key-bindings.${SHELLTYPE}"
+
+else
+  # shell completions already installed to system via fzf package
+  # Debian linux location for fzf bindings per shell type
+  [[ -f /usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE} ]] && source /usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE}
 fi
 
-# Debian linux location for fzf bindings
-[[ -f /usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE} ]] && source /usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE}
-
-# Load iterm2 shell integration
-test -e "${HOME}/.iterm2_shell_integration.${SHELLTYPE}" && source "${HOME}/.iterm2_shell_integration.${SHELLTYPE}"
-
-# https://starship.rs - a shell augmentation that seems simple
-# get dejavumono nerdfont for iterm.
-if command -v starship &> /dev/null; then
-  echo "Enabling starship.."
-  eval "$(starship init $SHELLTYPE)"
-fi
-
-###### Setup fzf
 export FZF_COMPLETION_TRIGGER=','
 export FZF_TMUX_HEIGHT=60% # not strictly TMUX only
 export FZF_DEFAULT_OPTS="--layout=reverse --border --info=inline"
@@ -117,4 +117,4 @@ _fzf_comprun() {
     *)            fzf "$@" --preview '(tree -C {} | highlight -O ansi -l {} 2> /dev/null || cat {} ) 2> /dev/null | head -100' ;;
   esac
 }
-###### Setup fzf END
+################### Setup FZF END ############

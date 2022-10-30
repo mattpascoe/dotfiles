@@ -94,7 +94,7 @@ if [ "$MACHINE" == "Mac" ]; then
   brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font jq fzf highlight tree
 
   echo "-!- Consider installing the following"
-  echo "brew install zoom"
+  echo "brew install zoom homebrew/cask-fonts/font-jetbrains-mono-nerd-font"
   echo
 
 #needs rosetta on m1
