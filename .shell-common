@@ -11,26 +11,52 @@ fi
 echo "Configuring as a $SHELLTYPE shell."
 
 # Set up some command aliases
-# color for linux
-##alias ls='ls -F --color=auto'
-# color for mac
-alias ls='ls -F -G'
+alias cdd='cd $HOME/data'
+# vimwiki
+alias vw='vim -c "VimwikiIndex 1"'
+alias vww='vim -c "VimwikiIndex 2"'
+
+alias ls='ls -F --color=auto'
 alias la='ls -a'
 alias ll='ls -l'
 alias lla='ls -la'
+alias lha='ls -lha'
 alias lt='ls -lt'
-alias cdd='cd $HOME/data'
+alias ltr='ls -ltr'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias :q='exit'
+alias mkdir='mkdir -pv'
+alias pa='ps aux | grep'
+alias ports="sudo lsof -i -n | egrep 'COMMAND|LISTEN|UDP|TCP'"
+alias h='history'
 # let diff know the width of my screen
 alias diff='diff -W $(( $(tput cols) - 2 ))'
 # git aliases
 alias gs='git status'
+alias gsb='git status -sb'
+alias gca='git commit -a -m'
 alias gr='git remote'
 alias gp='git pull'
 alias gd='git diff'
+alias gco='git checkout'
 alias gu='git push'
-# vimwiki
-alias vw='vim -c "VimwikiIndex 1"'
-alias vww='vim -c "VimwikiIndex 2"'
+alias stash='git stash'
+alias glog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+
+# Date and time in US timezones
+# d or t then pt, mt, ct, et for each timezone and ut for utc
+alias dpt='TZ=America/Los_Angeles date'
+alias dmt='TZ=America/Denver date'
+alias dct='TZ=America/Chicago date'
+alias det='TZ=America/New_York date'
+alias dut='TZ=UTC date'
+# Times are in AM/PM format here
+alias tpt='dpt +"%r"'
+alias tmt='dmt +"%r"'
+alias tct='dct +"%r"'
+alias tet='det +"%r"'
+alias tut='dut +"%r"'
 
 # Turn on vi mode
 set -o vi
@@ -39,28 +65,29 @@ set -o vi
 ssh_reagent () {
   for agent in /tmp/ssh-*/agent.*; do
       export SSH_AUTH_SOCK=$agent
-      if ssh-add -l 2>&1 > /dev/null; then
+      if ssh-add -l &>/dev/null; then
          echo Found working SSH Agent:
-         ssh-add -l
+         ssh-add -l 2>/dev/null
          return
       fi
   done
   echo Cannot find ssh agent - maybe you should reconnect and forward it?
 }
+alias sshre='ssh_reagent'
 
 # Load iterm2 shell integration on Macs
 test -e "${HOME}/.iterm2_shell_integration.${SHELLTYPE}" && source "${HOME}/.iterm2_shell_integration.${SHELLTYPE}"
+
+# Load up brew environment on ARM systems, do I need this for intel?
+if [ -f /opt/homebrew/bin/brew ] &> /dev/null; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
 
 # https://starship.rs - a shell augmentation that seems simple
 # get dejavumono nerdfont for iterm.
 if command -v starship &> /dev/null; then
   echo "Enabling starship.."
   eval "$(starship init $SHELLTYPE)"
-fi
-
-# Load up brew environment on ARM systems, do I need this for intel?
-if [ -f /opt/homebrew/bin/brew ] &> /dev/null; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
 ######################### Setup FZF ################
