@@ -59,8 +59,8 @@ if [ "$MACHINE" == "Linux" ]; then
   echo "- Ensuring install of requested packages..."
   sudo apt install jq fzf highlight tree zsh
 
-  echo "- Switching default shell to ZSH..."
-  sudo chsh -s /bin/zsh
+  echo "- Switching default shell to ZSH, provide your password..."
+  chsh -s /bin/zsh
 fi
 
 
@@ -91,7 +91,7 @@ if [ "$MACHINE" == "Mac" ]; then
   fi
 
   echo "- Ensuring install of requested brew packages..."
-  brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font jq fzf highlight tree
+  brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font jq fzf highlight tree homebrew/cask/syncthing
 
   echo "-!- Consider installing the following"
   echo "brew install zoom homebrew/cask-fonts/font-jetbrains-mono-nerd-font"
