@@ -90,12 +90,19 @@ if [ "$MACHINE" == "Mac" ]; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   fi
 
-  echo "- Ensuring install of requested brew packages..."
-  brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font jq fzf highlight tree homebrew/cask/syncthing
+  # Load up brew environment on ARM systems, do I need this for intel?
+  if [ -f /opt/homebrew/bin/brew ] &> /dev/null; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
 
-  echo "-!- Consider installing the following"
-  echo "brew install zoom homebrew/cask-fonts/font-jetbrains-mono-nerd-font"
-  echo
+    echo "- Ensuring install of requested brew packages..."
+    brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font jq fzf highlight tree homebrew/cask/syncthing
+
+    echo "-!- Consider installing the following"
+    echo "brew install zoom homebrew/cask-fonts/font-jetbrains-mono-nerd-font"
+    echo
+  else
+    echo "ERROR: Unable to find Brew command"
+  fi
 
 #needs rosetta on m1
 # brew install -q homebrew/cask-drivers/yubico-authenticator
