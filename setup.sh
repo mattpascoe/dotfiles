@@ -64,25 +64,6 @@ if [ "$MACHINE" == "Linux" ]; then
 fi
 
 
-###### Link dotfile configs
-LINKFILES+=(".profile" ".screenrc" ".vimrc" ".zshrc")
-echo "- Checking dotfile config symlinks..."
-for FILE in "${LINKFILES[@]}"
-do
-  if [ ! -L $HOME/$FILE ]; then
-    if [ -e $HOME/$FILE ]; then
-      echo "Backing up current file to ${FILE}.bak"
-      mv $HOME/$FILE $HOME/$FILE.bak
-    fi
-    echo "Linking file $HOME/$FILE -> $DIR/$FILE"
-    ln -s $DIR/$FILE $HOME/$FILE
-  else
-    echo -n "Found link: "
-    ls -o $HOME/$FILE
-  fi
-done
-
-
 ###### Mac specific stuff
 if [ "$MACHINE" == "Mac" ]; then
   if ! type "brew" > /dev/null; then
@@ -93,6 +74,16 @@ if [ "$MACHINE" == "Mac" ]; then
   # Load up brew environment on ARM systems, do I need this for intel?
   if [ -f /opt/homebrew/bin/brew ] &> /dev/null; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
+
+    read -p "Do you want yabai/skhd configuration? [y/N] " -r YAB
+    echo    # (optional) move to a new line
+    if [[ $YAB =~ ^[Yy]$ ]]
+    then
+      # Tiling window manager and shortcuts
+      brew install koekeishiya/formulae/yabai koekeishiya/formulae/skhd
+
+      LINKFILES+=(".config/yabai" ".config/skhd")
+    fi
 
     echo "- Ensuring install of requested brew packages..."
     brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font jq fzf highlight tree homebrew/cask/syncthing
@@ -118,6 +109,25 @@ fi
 
 # May need compinit fixup for writable site-functions etc
 #compaudit | xargs chmod go-w
+
+
+###### Link dotfile configs
+LINKFILES+=(".profile" ".screenrc" ".vimrc" ".zshrc")
+echo "- Checking dotfile config symlinks..."
+for FILE in "${LINKFILES[@]}"
+do
+  if [ ! -L $HOME/$FILE ]; then
+    if [ -e $HOME/$FILE ]; then
+      echo "Backing up current file to ${FILE}.bak"
+      mv $HOME/$FILE $HOME/$FILE.bak
+    fi
+    echo "Linking file $HOME/$FILE -> $DIR/$FILE"
+    ln -s $DIR/$FILE $HOME/$FILE
+  else
+    echo -n "Found link: "
+    ls -o $HOME/$FILE
+  fi
+done
 
 
 
