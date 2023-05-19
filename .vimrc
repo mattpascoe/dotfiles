@@ -6,6 +6,7 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
 endif
 
 call plug#begin('~/.vim/plugged')
+Plug 'github/copilot.vim'
 Plug 'vimwiki/vimwiki'
 "Plug 'jlanzarotta/bufexplorer'
 Plug 'tpope/vim-fugitive'      " Git integrations
@@ -145,7 +146,7 @@ set history=50          " keep 50 lines of command line history
 " }}}
 
 set pastetoggle=<C-P>   " easy paste switch
-set paste               " turn on paste mode by default
+"set paste               " turn on paste mode by default, disabled due to copilot
 
 " status line, commands and splitters {{{
 set laststatus=2        " always show status line
