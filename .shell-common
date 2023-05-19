@@ -36,7 +36,9 @@ alias diff='diff -W $(( $(tput cols) - 2 ))'
 alias gs='git status'
 alias gsb='git status -sb'
 alias gca='git commit -a -m'
+alias gb='git branch'
 alias gr='git remote'
+alias grpo='git remote prune origin'
 alias gp='git pull'
 alias gd='git diff'
 alias gco='git checkout'
@@ -88,6 +90,21 @@ fi
 if command -v starship &> /dev/null; then
   echo "Enabling starship.."
   eval "$(starship init $SHELLTYPE)"
+fi
+
+# Terraform configuration
+if command -v terraform &> /dev/null; then
+  # terraform
+  alias tf='terraform'
+  alias tfin='terraform init'
+  alias tfp='terraform plan'
+  alias tfa='terraform apply'
+  alias tfv='terraform validate'
+  alias tfim='terraform import'
+
+  # terraform autocomplete
+  autoload -U +X bashcompinit && bashcompinit
+  complete -o nospace -C /opt/homebrew/bin/terraform terraform
 fi
 
 ######################### Setup FZF ################
