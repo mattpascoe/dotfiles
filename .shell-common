@@ -43,6 +43,7 @@ alias gp='git pull'
 alias gd='git diff'
 alias gco='git checkout'
 alias gu='git push'
+alias gwt='git worktree'
 alias stash='git stash'
 alias glog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 

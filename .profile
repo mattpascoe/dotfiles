@@ -32,8 +32,8 @@ PS1="$TITLEBAR$PS1"
 HISTTIMEFORMAT="%Y-%m-%d %T "
 HISTCONTROL=ignoreboth
 
-# Append history, don't overwrite
-shopt -s histappend
+shopt -s histappend # Append history, don't overwrite
+shopt -s autocd # use autocd so you dont need to use cd command, just path
 
 # include .bashrc if it exists
 if [ -f "$HOME/.bashrc" ]; then
