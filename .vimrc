@@ -6,7 +6,6 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
 endif
 
 call plug#begin('~/.vim/plugged')
-Plug 'github/copilot.vim'
 Plug 'vimwiki/vimwiki'
 "Plug 'jlanzarotta/bufexplorer'
 Plug 'tpope/vim-fugitive'      " Git integrations
@@ -25,6 +24,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'bignimbus/pop-punk.vim' " maybe.. colors dont complement well
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'rodjek/vim-puppet'
+Plug 'github/copilot.vim'
 call plug#end()
 
 if filereadable(glob("~/.vim/.vimrc"))
@@ -93,7 +93,24 @@ let work = {}
 let work.path = '~/data/workwiki/'
 let g:vimwiki_list = [personal, work]
 let g:vimwiki_listsyms = ' ○◐●✓'
+let g:vimwiki_global_ext = 0
+autocmd FileType vimwiki setlocal nonumber norelativenumber colorcolumn=
 """" end vimwiki
+
+"""" copilot settings
+" re-enable some default disabled filetypes
+let g:copilot_filetypes = {
+  \ 'gitcommit': v:true,
+  \ 'markdown': v:true,
+  \ 'yaml': v:true
+  \ }
+" disable copilot for large files over 100k
+autocmd BufReadPre *
+  \ let f=getfsize(expand("<afile>"))
+  \ | if f > 100000 || f == -2
+  \ | let b:copilot_enabled = v:false
+  \ | endif
+"""" end copilot
 
 let php_folding = 1        "Set PHP folding of classes and functions.
 let php_htmlInStrings = 1  "Syntax highlight HTML code inside PHP strings.
