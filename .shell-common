@@ -46,6 +46,8 @@ alias gu='git push'
 alias gwt='git worktree'
 alias stash='git stash'
 alias glog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+# git branch list with date and time
+alias gblist="git for-each-ref --sort='-committerdate:iso8601' --format='%(committerdate:iso8601)%09%(refname)' refs/heads"
 
 # Date and time in US timezones
 # d or t then pt, mt, ct, et for each timezone and ut for utc
