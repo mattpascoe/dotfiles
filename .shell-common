@@ -145,7 +145,7 @@ _fzf_complete_ona() {
   TMPFILE=/tmp/fzf-onalist.out
   if [ ! -f $TMPFILE -o $(find $TMPFILE -mmin +120 2>/dev/null) ]
   then
-    command curl -ks "https://ona/dcm.php?module=ona_sql&options=sql%3Dlist%5Fall%5Ffzf%2Esql%26header%3Dno"|tail -n +2|awk -v RS=":" '{print}'|sort -u|grep "\S" > $TMPFILE
+    command curl -ks "https://ona/dcm.php?module=ona_sql&sql=list_all_hosts.sql&header=no"|tail -n +2|awk -F':' '{ print $1; print $3; print $4 }'|sort -u|grep "\S" > $TMPFILE
   fi
   _fzf_complete +m -- "$@" < <(
     command grep -v '^[[:digit:]]' $TMPFILE|sort -V && grep '^[[:digit:]]' $TMPFILE|sort
@@ -160,7 +160,8 @@ _fzf_comprun() {
     cd)           fzf "$@" --preview 'tree -C {} | head -100' ;;
     export|unset) fzf "$@" --preview "eval 'echo \$'{}" ;;
     ssh)          fzf "$@" --preview 'host {}' --tac ;;
-    ona)          fzf "$@" --preview 'HN={}; curl -ks "https://ona/dcm.php?module=host_display&options=host%3D${HN}"|tail -n +2' --header-first --header '            ONA search for FQDN, IP or MAC then ping the result.';;
+#    ona)          fzf "$@" --preview 'HN={}; curl -ks "https://ona/dcm.php?module=host_display&host=${HN}"|tail -n +2' --header-first --header '            ONA search for FQDN, IP or MAC then ping the result.';;
+    ona)         fzf "$@" --preview 'HN={}; curl -ks "https://ona/dcm.php?module=host_display&host=${HN}&format=json"|jq -C .' --header-first --header '            ONA search for FQDN, IP or MAC then ping the result.';;
     *)            fzf "$@" --preview '(tree -C {} | highlight -O ansi -l {} 2> /dev/null || cat {} ) 2> /dev/null | head -100' ;;
   esac
 }
