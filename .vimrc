@@ -251,6 +251,10 @@ nnoremap <leader>W :w !sudo tee % > /dev/null
 " Reload vimr configuration file
 nnoremap <leader>vr :source $MYVIMRC<CR>
 
+" Some Git related maps
+nnoremap <leader>g :Git<CR>
+nnoremap <leader>gp :Git push<CR>
+
 " Toggle conceal level
 nnoremap <leader>c :set <C-R>=&conceallevel ? 'conceallevel=0' : 'conceallevel=2'<CR><CR>
 
