@@ -94,7 +94,9 @@ let work.path = '~/data/workwiki/'
 let g:vimwiki_list = [personal, work]
 let g:vimwiki_listsyms = ' ○◐●✓'
 let g:vimwiki_global_ext = 0
-autocmd FileType vimwiki setlocal nonumber norelativenumber colorcolumn=
+" vimwiki steals tab completion, disable it since I dont use tables much at all
+let g:vimwiki_key_mappings = { 'table_mappings': 0 }
+autocmd FileType vimwiki setlocal nonumber norelativenumber colorcolumn= textwidth=0
 """" end vimwiki
 
 """" copilot settings
@@ -147,7 +149,7 @@ set formatoptions+=b    " don't break existing long lines
 set formatoptions+=t    " auto-wrap text too
 " }}}
 
-set wildchar=<Tab> wildmenu wildmode=full
+set wildchar=<Tab> wildmenu wildmode=longest:full,full wildoptions=pum
 
 " backups, swap and history {{{
 set nobackup            " don't keep a backup file
