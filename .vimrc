@@ -9,7 +9,6 @@ call plug#begin('~/.vim/plugged')
 Plug 'vimwiki/vimwiki'
 "Plug 'jlanzarotta/bufexplorer'
 Plug 'tpope/vim-fugitive'      " Git integrations
-Plug 'scrooloose/syntastic'    " syntax and lint checker
 Plug 'bitc/vim-bad-whitespace'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -21,10 +20,11 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-surround'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }  "fuzzy finder
 Plug 'junegunn/fzf.vim'
-Plug 'bignimbus/pop-punk.vim' " maybe.. colors dont complement well
+"Plug 'bignimbus/pop-punk.vim' " maybe.. colors dont complement well
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'rodjek/vim-puppet'
 Plug 'github/copilot.vim'
+Plug 'dense-analysis/ale' "Replacement for syntastic
 call plug#end()
 
 if filereadable(glob("~/.vim/.vimrc"))
@@ -52,15 +52,6 @@ set background=dark     " on a dark background
 
 " Newer vim seems to like pascal instead of puppet
 au BufNewFile,BufRead *.pp  setlocal filetype=puppet
-
-let g:syntastic_check_on_open = 1
-let g:syntastic_javascript_checkers = ['jsl', 'jshint']
-let g:syntastic_php_checkers=['php', 'phpcs']
-let g:syntastic_php_phpcs_args='--standard=PSR2 -n'
-let g:syntastic_puppet_checkers = ['puppetlint']
-
-" Exclude specific puppet-lint checks
-let g:syntastic_puppet_puppetlint_args='--no-80chars-check --no-nested_classes_or_defines-check --no-autoloader_layout-check'
 
 """ Airline plugin
 let g:airline#extensions#tabline#enabled = 1
@@ -238,6 +229,10 @@ nnoremap fl :bnext<CR>  " next buffer
 nnoremap fn :bnext<CR>  " next buffer
 nnoremap fc :bw<CR>     " close buffer
 nnoremap fx :bw<CR>     " close buffer
+
+" ALE related
+nnoremap <leader>ln :ALENextWrap<CR>
+nnoremap <leader>lp :ALEPreviousWrap<CR>
 
 "" FZF related
 " bufferlist
