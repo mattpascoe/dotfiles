@@ -35,6 +35,8 @@ set nocompatible
 filetype plugin on
 syntax on
 
+autocmd FileType gitcommit setlocal nonumber norelativenumber textwidth=0
+
 set t_Co=256 " ensure enough colors for airline
 "colorscheme pop-punk       " set color scheme
 colorscheme PaperColor       " set color scheme
@@ -248,7 +250,8 @@ nnoremap <leader>vr :source $MYVIMRC<CR>
 
 " Some Git related maps
 nnoremap <leader>g :Git<CR>
-nnoremap <leader>gp :Git push<CR>
+nnoremap <leader>gu :Git push<CR>
+nnoremap <leader>gd :Git diff<CR>
 
 " Toggle conceal level
 nnoremap <leader>c :set <C-R>=&conceallevel ? 'conceallevel=0' : 'conceallevel=2'<CR><CR>
