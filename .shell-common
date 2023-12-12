@@ -12,6 +12,7 @@ echo "Configuring as a $SHELLTYPE shell."
 
 # Set up some command aliases
 alias cdd='cd $HOME/data'
+alias vi='vim'
 # vimwiki
 alias vw='vim -c "VimwikiIndex 1"'
 alias vww='vim -c "VimwikiIndex 2"'
@@ -79,6 +80,12 @@ ssh_reagent () {
   echo Cannot find ssh agent - maybe you should reconnect and forward it?
 }
 alias sshre='ssh_reagent'
+
+# If we have the brew install of the libfido2 library, use it for ssh
+# https://github.com/Yubico/libfido2/issues/464 on Sonoma and above Macs
+if [ -f /usr/local/lib/libsk-libfido2.dylib ] &> /dev/null; then
+  export SSH_SK_PROVIDER=/usr/local/lib/libsk-libfido2.dylib
+fi
 
 # Load iterm2 shell integration on Macs
 test -e "${HOME}/.iterm2_shell_integration.${SHELLTYPE}" && source "${HOME}/.iterm2_shell_integration.${SHELLTYPE}"
