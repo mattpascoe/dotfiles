@@ -10,8 +10,6 @@ Plug 'vimwiki/vimwiki'
 "Plug 'jlanzarotta/bufexplorer'
 Plug 'tpope/vim-fugitive'      " Git integrations
 Plug 'bitc/vim-bad-whitespace'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 "Plug 'crusoexia/vim-monokai'
 "Plug 'vim-pandoc/vim-pandoc'  " Tools for various markdown styles
 "Plug 'vim-pandoc/vim-pandoc-syntax'
@@ -20,11 +18,12 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-surround'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }  "fuzzy finder
 Plug 'junegunn/fzf.vim'
-"Plug 'bignimbus/pop-punk.vim' " maybe.. colors dont complement well
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'rodjek/vim-puppet'
 Plug 'github/copilot.vim'
 Plug 'dense-analysis/ale' "Replacement for syntastic
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 call plug#end()
 
 if filereadable(glob("~/.vim/.vimrc"))
@@ -35,10 +34,13 @@ set nocompatible
 filetype plugin on
 syntax on
 
+" disable indenting for comments on python and yaml
+autocmd BufNewFile,BufReadPost * if &filetype == "python" | set indentkeys-=0# | endif
+autocmd BufNewFile,BufReadPost * if &filetype == "yaml" | set indentkeys-=0# | endif
+
 autocmd FileType gitcommit setlocal nonumber norelativenumber textwidth=0
 
 set t_Co=256 " ensure enough colors for airline
-"colorscheme pop-punk       " set color scheme
 colorscheme PaperColor       " set color scheme
 let g:PaperColor_Theme_Options = {
   \   'theme': {
@@ -55,6 +57,9 @@ set background=dark     " on a dark background
 " Newer vim seems to like pascal instead of puppet
 au BufNewFile,BufRead *.pp  setlocal filetype=puppet
 
+""" ALE settings
+let g:ale_yaml_yamllint_options='-d "{extends: relaxed, rules: {line-length: disable}}"' " disable line length check
+
 """ Airline plugin
 let g:airline#extensions#tabline#enabled = 1
 "let g:airline_powerline_fonts = 1
@@ -70,6 +75,7 @@ let g:airline_symbols.colnr = ' : '
 let g:airline_symbols.linenr = ' : '
 let g:airline_symbols.maxlinenr = ''
 let g:airline_symbols.branch = '⎇'
+"let g:airline_symbols.dirty='⚡'
 let g:airline_symbols.paste = 'ρ'
 let g:airline_symbols.spell = 'Ꞩ'
 let g:airline_symbols.notexists = 'Ɇ'
@@ -114,7 +120,7 @@ let php_noShortTags = 1    "Disable PHP short tags.
 
 " basic formatting {{{
 "set autoread            " Auto load file when changed from outside vim
-set scrolloff=5
+set scrolloff=10
 set shiftwidth=2        " I have no idea why you would use anything else
 set softtabstop=2       " backspace over a shift width
 set tabstop=2           " tabs are for shifting
@@ -145,6 +151,7 @@ set formatoptions+=t    " auto-wrap text too
 set wildchar=<Tab> wildmenu wildmode=longest:full,full wildoptions=pum
 
 " backups, swap and history {{{
+set noundofile          " don't keep undo file
 set nobackup            " don't keep a backup file
 set nowritebackup       " seriously, no backup file
 set viminfo='10,f1,%30,<50,:50,n~/.viminfo
@@ -201,7 +208,7 @@ set fileformats=unix,dos,mac  " preferred file format order
 
 """" would love to but the colors suck with solarize in iterm2
 " highlight 80 and 120+ column
-highlight ColorColumn ctermbg=0
+highlight ColorColumn ctermbg=8
 "let &colorcolumn="80,".join(range(120,999),",")
 set colorcolumn=80
 
@@ -231,6 +238,9 @@ nnoremap fl :bnext<CR>  " next buffer
 nnoremap fn :bnext<CR>  " next buffer
 nnoremap fc :bw<CR>     " close buffer
 nnoremap fx :bw<CR>     " close buffer
+
+" Open a terminal
+nnoremap <leader>t :terminal<CR>
 
 " ALE related
 nnoremap <leader>ln :ALENextWrap<CR>
