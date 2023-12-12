@@ -97,7 +97,7 @@ if [ "$MACHINE" == "Mac" ]; then
     fi
 
     echo "- Ensuring install of requested brew packages..."
-    brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font jq fzf highlight tree homebrew/cask/syncthing
+    brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman
 
     echo "-!- Consider installing the following"
     echo "brew install zoom homebrew/cask-fonts/font-jetbrains-mono-nerd-font"
