@@ -82,3 +82,13 @@ OLD APPS
 * itsycal - https://www.mowglii.com/itsycal/
 * 1password.com - https://1password.com/downloads/mac/ -- If you want/need the full native app
 * GitUp - http://gitup.co/
+
+
+
+Ideas to find a home for
+------------------------
+Turn off the silly a/ and b/ prefixes in git diff
+    git config --global diff.noprefix true
+
+Interesting zsh 'global' alias option
+  alias -g H='| head'  # git log H will show only the first 10 lines of the log
