@@ -13,6 +13,10 @@ case "${unameOut}" in
     *)          MACHINE="UNKNOWN:${unameOut}"
 esac
 
+if [ -f /etc/os-release ]; then
+  . /etc/os-release
+fi
+
 SCRIPT=$(readlink -f $0)
 DIR="$(dirname $SCRIPT)"
 declare -a LINKFILES
@@ -27,26 +31,18 @@ then
   mkdir ~/data
 fi
 
-###### Install Git if it does not exist
-if ! type "git" > /dev/null; then
-  if [ "$MACHINE" == "Mac" ]; then
-    # run git command, it may ask to install developer tools, go ahead and do that to get the git command
-    echo "- Checking git version. If missing it will prompt to install developer tools..."
-    git --version
-  fi
-  if [ "$MACHINE" == "Linux" ]; then
-    # For now, its debian based.. cuz.. RPM??
-    sudo apt install git
-  fi
-fi
-
 ###### Linux specific stuff
 if [ "$MACHINE" == "Linux" ]; then
-  read -p "Do you want to install Starship.rs prompt? [y/N] " -r STAR
-  echo    # (optional) move to a new line
-  if [[ $STAR =~ ^[Yy]$ ]]
-  then
-    sudo sh -c "curl -fsSL https://starship.rs/install.sh | sh"
+  echo "Looks like the OS is $PRETTY_NAME"
+  if ! type "starship" &> /dev/null; then
+    read -p "Do you want to install Starship.rs prompt? [y/N] " -r STAR
+    echo    # (optional) move to a new line
+    if [[ $STAR =~ ^[Yy]$ ]]
+    then
+      sudo sh -c "curl -fsSL https://starship.rs/install.sh | sh"
+    fi
+  else
+    echo "- Starship is alredy installed."
   fi
 
   read -p "Do you want i3 configuration links? [y/N] " -r I3
@@ -56,16 +52,31 @@ if [ "$MACHINE" == "Linux" ]; then
     LINKFILES+=(".config/i3")
   fi
 
+  PKGS+=("git" "jq" "fzf" "tree" "zsh" "highlight")
   echo "- Ensuring install of requested packages..."
-  sudo apt install jq fzf highlight tree zsh
+  case "$ID" in
+    debian*)    sudo apt install ${PKGS[@]};;
+    ubuntu*)    sudo apt install ${PKGS[@]};;
+    *)  echo "-!- This system is not a supported type, You should check that the following packages are installed:"
+        echo "    ${PKGS[@]}";;
+  esac
 
-  echo "- Switching default shell to ZSH, provide your password..."
-  chsh -s /bin/zsh
+  if [ ! -f /bin/zsh ]; then
+    echo "- Switching default shell to ZSH, provide your password if prompted..."
+    chsh -s /bin/zsh
+  fi
 fi
 
 
 ###### Mac specific stuff
 if [ "$MACHINE" == "Mac" ]; then
+  # Install Git if it does not exist
+  if ! type "git" > /dev/null; then
+    # run git command, it may ask to install developer tools, go ahead and do that to get the git command
+    echo "- Checking git version. If missing it will prompt to install developer tools..."
+    git --version
+  fi
+
   if ! type "brew" > /dev/null; then
     echo "- Installing Brew tools..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
