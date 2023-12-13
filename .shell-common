@@ -136,6 +136,7 @@ else
   # shell completions already installed to system via fzf package
   # Debian linux location for fzf bindings per shell type
   [[ -f /usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE} ]] && source /usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE}
+  [[ -f /usr/share/fzf/key-bindings.${SHELLTYPE} ]] && source /usr/share/fzf/key-bindings.${SHELLTYPE}
 fi
 
 export FZF_COMPLETION_TRIGGER=','
