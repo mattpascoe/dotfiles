@@ -16,7 +16,7 @@ cp /boot/config/myzshrc /root/.zshrc
 ln -s /mnt/user/local /root/data
 
 # Setup starship. REQUIRES INTERNET
-curl -fsSL https://starship.rs/install.sh | FORCE=y sh
+curl -fsSL https://starship.rs/install.sh | FORCE=y sh | head
 # Alternate idea?
 #ln -s /mnt/user/local/bin/starship /usr/local/bin/starship
 
