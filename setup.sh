@@ -24,6 +24,22 @@ declare -a LINKFILES
 echo
 echo "Looks like we are a $MACHINE system."
 
+###### Unraid specific stuff, barebones zsh setup
+if [ -f /etc/unraid-version ]; then
+  echo "- Setting up as an Unraid system."
+
+  # Combine the zshrc and shell-common files into /boot/config
+  cat .zshrc .shell-common > /boot/config/myzshrc
+  # Copy the vimrc file to /boot/config
+  cp .vimrc /boot/config/myvimrc
+  # Replace the default go file with our own
+  cp .unraid-go /boot/config/go
+
+  echo "- Updates to /boot/config have been made."
+  # Stop here since unraid is its own beast
+  exit
+fi
+
 ###### Ensure ~/data exists. Also used in .macos script
 if [ ! -d ~/data ]
 then

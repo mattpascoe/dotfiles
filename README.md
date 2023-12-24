@@ -83,7 +83,19 @@ OLD APPS
 * 1password.com - https://1password.com/downloads/mac/ -- If you want/need the full native app
 * GitUp - http://gitup.co/
 
+Unraid support
+--------------
+The setup script will try and detect if it is being run on an unraid box.
+It expects that you have a share called 'local' that will be used to store
+files used by the local root user.
 
+This local share is likely going to be hidden and not actually on the network.
+
+It is also assumed that you have the NerdTools plugin installed and that the
+fzf, zsh packages have been installed.
+
+Unraid will run from /boot/config so if there are any changes to vimrc, zshrc or
+shell-common, you will need to run `setup.sh` again.
 
 Ideas to find a home for
 ------------------------

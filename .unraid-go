@@ -1,0 +1,24 @@
+#!/bin/bash
+# Start the Management Utility
+/usr/local/sbin/emhttp &
+
+### MDP: The following are my updates managed by my dotfiles repo
+# This file as a whole is managed there. DO NOT make edits here or they will
+# be overwritten.
+# The `dotfiles` repo is in /mnt/user/local
+# This is also the location of local working data for the root user.
+
+# Copy in our rc files
+cp /boot/config/myvimrc $HOME/.vimrc
+cp /boot/config/myzshrc $HOME/.zshrc
+
+# Link the local array share to root data, useful for `cdd` alias
+ln -s /mnt/user/local $HOME/data
+
+# Setup starship. REQUIRES INTERNET
+curl -fsSL https://starship.rs/install.sh | FORCE=y sh
+# Alternate idea?
+#ln -s /mnt/user/local/bin/starship /usr/local/bin/starship
+
+# Invoke zsh if we have it. Provides clean fallback if its not available
+echo "[ -f /bin/zsh ] && /bin/zsh; exit" >> /root/.bash_profile
