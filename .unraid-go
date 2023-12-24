@@ -9,11 +9,11 @@
 # This is also the location of local working data for the root user.
 
 # Copy in our rc files
-cp /boot/config/myvimrc $HOME/.vimrc
-cp /boot/config/myzshrc $HOME/.zshrc
+cp /boot/config/myvimrc /root/.vimrc
+cp /boot/config/myzshrc /root/.zshrc
 
 # Link the local array share to root data, useful for `cdd` alias
-ln -s /mnt/user/local $HOME/data
+ln -s /mnt/user/local /root/data
 
 # Setup starship. REQUIRES INTERNET
 curl -fsSL https://starship.rs/install.sh | FORCE=y sh
