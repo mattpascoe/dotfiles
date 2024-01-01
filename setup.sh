@@ -69,7 +69,7 @@ if [ "$MACHINE" == "Linux" ]; then
     LINKFILES+=(".config/i3")
   fi
 
-  PKGS+=("git" "jq" "fzf" "tree" "zsh" "highlight")
+  PKGS+=("git" "jq" "fzf" "tree" "zsh" "highlight" "tmux")
   echo "- Ensuring install of requested packages..."
   case "$ID" in
     debian*)    sudo apt install ${PKGS[@]};;
@@ -114,7 +114,7 @@ if [ "$MACHINE" == "Mac" ]; then
     fi
 
     echo "- Ensuring install of requested brew packages..."
-    brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman
+    brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman tmux bash
 
     echo "-!- Consider installing the following"
     echo "brew install zoom homebrew/cask-fonts/font-jetbrains-mono-nerd-font"
@@ -134,13 +134,8 @@ if [ "$MACHINE" == "Mac" ]; then
   fi
 fi
 
-
-# May need compinit fixup for writable site-functions etc
-#compaudit | xargs chmod go-w
-
-
 ###### Link dotfile configs
-LINKFILES+=(".profile" ".screenrc" ".vimrc" ".zshrc")
+LINKFILES+=(".profile" ".screenrc" ".vimrc" ".zshrc" ".tmux.conf")
 echo "- Checking dotfile config symlinks..."
 for FILE in "${LINKFILES[@]}"
 do
@@ -156,6 +151,11 @@ do
     ls -o $HOME/$FILE
   fi
 done
+
+if [ ! -d ~/.tmux/plugins/tpm ];then
+  echo "Installing TMUX plugin manager."
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+fi
 
 echo
 echo "Setup complete."

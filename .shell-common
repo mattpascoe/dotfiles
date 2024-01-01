@@ -174,3 +174,40 @@ _fzf_comprun() {
   esac
 }
 ################### Setup FZF END ############
+
+########## TMUX window renaming ##############
+# Make short hostname only if its not an IP address
+__tm_get_hostname(){
+  local HOST="$(echo $* | rev | cut -d ' ' -f 1 | rev)"
+  if [[ $HOST =~ "([0-9]{1,3}\.){3}[0-9]{1,3}" ]]; then
+    echo $HOST # It's an IPv4 addr
+  else
+    echo $HOST| cut -d . -f 1-2 # Display first two octets of FQDN as provided
+  fi
+}
+
+__tm_get_current_window(){
+  tmux list-windows| awk -F : '/\(active\)$/{print $1}'
+}
+
+# Rename window according to __tm_get_hostname and then restore it after the command
+__tm_command() {
+ # if [ "$(ps -p $(ps -p $$ -o ppid=) -o comm=| cut -d : -f 1)" = "tmux" ]; then
+  if [ -n "$TMUX" ]; then
+    __tm_window=$(__tm_get_current_window)
+    # Use current window to change back the setting. If not it will be applied to the active window
+    [ "$SHELLTYPE" = "bash" ] && trap "tmux set-window-option -t $__tm_window automatic-rename on 1>/dev/null" RETURN
+    [ "$SHELLTYPE" = "zsh"  ] && precmd() { tmux set-window-option -t $__tm_window automatic-rename on 1>/dev/null }
+    tmux rename-window "$(__tm_get_hostname $*)"
+  fi
+  command "$@"
+}
+
+ssh() {
+  __tm_command ssh "$@"
+}
+
+mosh() {
+  __tm_command mosh "$@"
+}
+############ TMUX window renaming END ########
