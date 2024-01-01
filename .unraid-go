@@ -11,14 +11,21 @@
 # Copy in our rc files
 cp /boot/config/myvimrc /root/.vimrc
 cp /boot/config/myzshrc /root/.zshrc
+mkdir -p /root/.config/btop
+cp /boot/config/btop.conf /root/.config/btop
 
 # Link the local array share to root data, useful for `cdd` alias
 ln -s /mnt/user/local /root/data
 
 # Setup starship. REQUIRES INTERNET
 curl -fsSL https://starship.rs/install.sh | FORCE=y sh | head
-# Alternate idea?
-#ln -s /mnt/user/local/bin/starship /usr/local/bin/starship
 
 # Invoke zsh if we have it. Provides clean fallback if its not available
 echo "[ -f /bin/zsh ] && /bin/zsh; exit" >> /root/.bash_profile
+
+# Disable screenblanking on console
+/bin/setterm -blank 0
+
+# Start btop under tmux in console
+echo "Starting tmux with btop"
+LANG="en_US.UTF-8" tmux new -s btop "zsh;" \; new-window "btop;zsh;"
