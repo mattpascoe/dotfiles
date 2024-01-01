@@ -2,6 +2,7 @@
 
 # lots of install stuff.. you should be able to run this over and over without issue
 # TODO: refactor and have more "configuration" instead of hardcoded things like package installs
+# TODO: look more into neo-vim
 
 # Determine what type of machine we are on
 unameOut="$(uname -s)"
@@ -98,9 +99,9 @@ if [ "$MACHINE" == "Mac" ]; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   fi
 
-  # Load up brew environment on ARM systems, do I need this for intel?
-  if [ -f /opt/homebrew/bin/brew ] &> /dev/null; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
+  # Load up brew environment, should work on ARM intel systems.
+  if type "brew" > /dev/null; then
+    eval "$(brew shellenv)"
 
     read -p "Do you want yabai/skhd configuration? [y/N] " -r YAB
     echo    # (optional) move to a new line
@@ -113,7 +114,7 @@ if [ "$MACHINE" == "Mac" ]; then
     fi
 
     echo "- Ensuring install of requested brew packages..."
-    brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman
+    brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman
 
     echo "-!- Consider installing the following"
     echo "brew install zoom homebrew/cask-fonts/font-jetbrains-mono-nerd-font"
@@ -155,20 +156,6 @@ do
     ls -o $HOME/$FILE
   fi
 done
-
-
-
-## TODO: look more into neo-vim
-## download the vim plug module
-#if [ ! -f ~/.vim/autoload/plug.vim ]
-#then
-#  echo "Downloading vim-plug module..."
-#  curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-#fi
-
-#echo
-#echo "Once .vimrc is linked in you should run the following command to initialize vim plugins:"
-#echo "       vim +PlugInstall +qall"
 
 echo
 echo "Setup complete."
