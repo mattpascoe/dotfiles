@@ -1,5 +1,6 @@
 # The following is my personal SSH config. Nothing here would be sensitive
 # info.  Simply add an Include statement toward the top of ~/.ssh/config.
+# Ensure that chmod 600 ~/.ssh/config is applied as well.
 #
 # For example, I usually have add keys as a first line, then add this below it to inclue this file.
 #
