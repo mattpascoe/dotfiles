@@ -34,7 +34,7 @@ autoload -Uz compinit && compinit
 # Pull in common shell configuration
 SCRIPT=$(readlink "${(%):-%x}")
 SP=$(dirname "$SCRIPT")
-source $SP/.shell-common
+[ -f $SP/.shell-common ] && source $SP/.shell-common
 
 # Debian fzf completions
 # if only the package was consistent in where it put its completions
