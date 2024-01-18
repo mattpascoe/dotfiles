@@ -6,9 +6,13 @@
 # This file as a whole is managed there. DO NOT make edits here or they will
 # be overwritten.
 # The `dotfiles` repo is in /mnt/user/local
-# This is also the location of local working data for the root user.
+# This is also the location of local working data dir (cdd alias) for the root user.
 
-# Copy in our rc files
+# Enable write cache on the parity drive
+PARITYDISK=$(php -r '$ini_array = parse_ini_file("/var/local/emhttp/disks.ini",true); print($ini_array["parity"]["device"]);')
+[ ! -z "$PARITYDISK" ] && hdparm -W 1 /dev/$PARITYDISK
+
+# Copy in our rc files, these are intsalled to /boot by dotfiles setup script
 cp /boot/config/myvimrc /root/.vimrc
 cp /boot/config/myzshrc /root/.zshrc
 mkdir -p /root/.config/btop
@@ -19,11 +23,13 @@ ln -s /mnt/user/local /root/data
 
 # Setup starship. REQUIRES INTERNET
 curl -fsSL https://starship.rs/install.sh | FORCE=y sh | head
+# Alternate idea?
+#ln -s /mnt/user/local/bin/starship /usr/local/bin/starship
 
 # Invoke zsh if we have it. Provides clean fallback if its not available
 echo "[ -f /bin/zsh ] && /bin/zsh; exit" >> /root/.bash_profile
 
-# Disable screenblanking on console
+#  Disable screenblanking on console
 /bin/setterm -blank 0
 
 # Start btop under tmux in console
