@@ -1,9 +1,14 @@
 " Auto install plugin manager if it is not already.  ref: https://github.com/junegunn/vim-plug
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
 if empty(glob(data_dir . '/autoload/plug.vim'))
-  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
+" Run PlugInstall if there are missing plugins
+autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+  \| PlugInstall --sync | source $MYVIMRC
+\| endif
 
 call plug#begin('~/.vim/plugged')
 Plug 'vimwiki/vimwiki'
@@ -20,8 +25,10 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }  "fuzzy finder
 Plug 'junegunn/fzf.vim'
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'rodjek/vim-puppet'
+Plug 'hashivim/vim-terraform'
 Plug 'github/copilot.vim'
 Plug 'dense-analysis/ale' "Replacement for syntastic
+"Plug 'ap/vim-css-color' "Color preview for css
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 call plug#end()
@@ -56,6 +63,8 @@ set background=dark     " on a dark background
 
 " Newer vim seems to like pascal instead of puppet
 au BufNewFile,BufRead *.pp  setlocal filetype=puppet
+
+let g:terraform_fmt_on_save=1
 
 """ ALE settings
 let g:ale_yaml_yamllint_options='-d "{extends: relaxed, rules: {line-length: disable}}"' " disable line length check
@@ -154,13 +163,20 @@ set wildchar=<Tab> wildmenu wildmode=longest:full,full wildoptions=pum
 set noundofile          " don't keep undo file
 set nobackup            " don't keep a backup file
 set nowritebackup       " seriously, no backup file
-set viminfo='10,f1,%30,<50,:50,n~/.viminfo
+if !has('nvim')
+  set viminfo='10,f1,%30,<50,:50,n~/.viminfo
                         " marks for 10 files
                         " store file marks
                         " save 30 buffer list
                         " max 50 lines for each register
                         " remember 50 commands
                         " write to ~/.viminfo
+else
+  " Do nothing here to use the neovim default
+  " or do soemething like:
+  " set viminfo+=n~/.shada
+endif
+
 set history=50          " keep 50 lines of command line history
 " }}}
 
