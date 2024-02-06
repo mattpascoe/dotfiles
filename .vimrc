@@ -16,8 +16,12 @@ Plug 'vimwiki/vimwiki'
 Plug 'tpope/vim-fugitive'      " Git integrations
 Plug 'bitc/vim-bad-whitespace'
 "Plug 'crusoexia/vim-monokai'
-"Plug 'vim-pandoc/vim-pandoc'  " Tools for various markdown styles
-"Plug 'vim-pandoc/vim-pandoc-syntax'
+Plug 'vim-pandoc/vim-pandoc'  " Tools for various markdown styles
+Plug 'vim-pandoc/vim-pandoc-syntax'
+" If you don't have nodejs and yarn
+" use pre build, add 'vim-plug' to the filetype list so vim-plug can update this plugin
+" see: https://github.com/iamcco/markdown-preview.nvim/issues/50
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 "Plug 'majutsushi/tagbar'       " Needs ctags cli installed
 "Plug 'mileszs/ack.vim'         " Needs ack cli installed
 Plug 'tpope/vim-surround'
@@ -31,6 +35,7 @@ Plug 'dense-analysis/ale' "Replacement for syntastic
 "Plug 'ap/vim-css-color' "Color preview for css
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+"TODO look into lazyvim, ripgrep, ag, or silversearcher-ag type plugins
 call plug#end()
 
 if filereadable(glob("~/.vim/.vimrc"))
@@ -66,6 +71,18 @@ au BufNewFile,BufRead *.pp  setlocal filetype=puppet
 
 let g:terraform_fmt_on_save=1
 
+" Pandoc settings (basically takes over markdown)
+autocmd FileType pandoc setlocal nonumber norelativenumber colorcolumn= textwidth=0 spell
+let g:pandoc#filetypes#handled = ["pandoc", "markdown"]
+let g:pandoc#filetypes#pandoc_markdown = 0
+let g:pandoc#modules#disabled = ["folding"]
+
+""" Markdown preview browser
+let g:mkdp_browser = 'safari' " is safari for now, I dont expect to use elsewhere
+let g:mkdp_auto_start = 1 " auto open preview on entering markdown file TBD
+let g:mkdp_auto_close = 0
+let g:mkdp_combine_preview = 1 " combine with auto close
+
 """ ALE settings
 let g:ale_yaml_yamllint_options='-d "{extends: relaxed, rules: {line-length: disable}}"' " disable line length check
 
@@ -99,6 +116,7 @@ let personal.syntax = 'markdown'
 let personal.ext = '.md'
 let work = {}
 let work.path = '~/data/workwiki/'
+let work.ext = '.md'
 let g:vimwiki_list = [personal, work]
 let g:vimwiki_listsyms = ' ○◐●✓'
 let g:vimwiki_global_ext = 0
@@ -285,10 +303,19 @@ nnoremap <leader>c :set <C-R>=&conceallevel ? 'conceallevel=0' : 'conceallevel=2
 " setup shortcut to toggle numbers
 noremap <leader>l :call ToggleLineNumber()<CR>
 
+" Toggle markdown preview
+noremap <leader>md :MarkdownPreviewToggle<CR>
+
 " Toggle the linenumbers
 function! ToggleLineNumber()
   if v:version > 703
     set norelativenumber!
   endif
   set nonumber!
+endfunction
+
+" Toggle spell check
+nnoremap <leader>sp :call ToggleSpell()<CR>
+function! ToggleSpell()
+  set spell!
 endfunction
