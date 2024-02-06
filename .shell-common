@@ -17,6 +17,8 @@ alias vi='vim'
 alias vw='vim -c "VimwikiIndex 1"'
 alias vww='vim -c "VimwikiIndex 2"'
 
+alias lg='lazygit'
+
 alias ls='ls -F --color=auto'
 alias la='ls -a'
 alias ll='ls -l'

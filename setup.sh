@@ -82,6 +82,9 @@ if [ "$MACHINE" == "Linux" ]; then
     echo "- Switching default shell to ZSH, provide your password if prompted..."
     chsh -s /bin/zsh
   fi
+
+  echo "-!- Consider installing the following"
+  echo "lazygit"
 fi
 
 
@@ -114,7 +117,7 @@ if [ "$MACHINE" == "Mac" ]; then
     fi
 
     echo "- Ensuring install of requested brew packages..."
-    brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman tmux bash
+    brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman tmux bash jesseduffield/lazygit/lazygit
 
     echo "-!- Consider installing the following"
     echo "brew install zoom homebrew/cask-fonts/font-jetbrains-mono-nerd-font"
