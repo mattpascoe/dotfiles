@@ -47,7 +47,7 @@ Host home
 Host nas
   # Home nas
   User root
-  Hostname 10.1.1.250
+  Hostname 10.1.1.11
 
 # Sometimes you have to force a cipher or key exchange algorithm example
 #Host old-router.example.com
