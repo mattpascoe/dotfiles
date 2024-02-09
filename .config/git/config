@@ -1,0 +1,13 @@
+# This is Git's per-user configuration file.
+[user]
+  # Please adapt and uncomment the following lines:
+  name = Matt Pascoe
+  email = matt@opennetadmin.com
+[pull]
+  rebase = false
+
+# Include the work specific gitconfig file when in workrepos
+# You must define the .gitconfig file in the workrepos directory
+# Add a [user] section to set the email relative to work
+[includeIf "gitdir:~/data/workrepos/"]
+  path = ~/data/workrepos/.gitconfig
