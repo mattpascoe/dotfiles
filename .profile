@@ -1,4 +1,8 @@
 # Settings for login shells
+
+# Define the XDG configuration directory
+export XDG_CONFIG_HOME="$HOME/.config"
+
 # Set up a prompt with spaces around the path so you can easily double click to select it
 PS1='[\u@\h \w]\$ '
 
