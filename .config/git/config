@@ -5,6 +5,9 @@
   email = matt@opennetadmin.com
 [pull]
   rebase = false
+[diff]
+  # Turn off the silly a/ and b/ prefixes in git diff
+  noprefix = true
 
 # Include the work specific gitconfig file when in workrepos
 # You must define the .gitconfig file in the workrepos directory
