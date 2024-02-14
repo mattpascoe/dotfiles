@@ -13,7 +13,7 @@ autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
 call plug#begin('~/.vim/plugged')
 Plug 'vimwiki/vimwiki'
 "Plug 'jlanzarotta/bufexplorer'
-Plug 'tpope/vim-fugitive'      " Git integrations
+Plug 'tpope/vim-fugitive'      " Git integrations - compare to lazygit
 Plug 'bitc/vim-bad-whitespace'
 "Plug 'crusoexia/vim-monokai'
 Plug 'vim-pandoc/vim-pandoc'  " Tools for various markdown styles
@@ -264,13 +264,10 @@ nnoremap tt :tabnew<CR>
 nnoremap tc :tabclose<CR>
 nnoremap tx :tabclose<CR>
 
-" Buffer management
+" Buffer management - maybe map to something other than f
 nnoremap ff :enew<CR>   " new buffer
-nnoremap fh :bprev<CR>  " previous buffer
 nnoremap fp :bprev<CR>  " previous buffer
-nnoremap fl :bnext<CR>  " next buffer
 nnoremap fn :bnext<CR>  " next buffer
-nnoremap fc :bw<CR>     " close buffer
 nnoremap fx :bw<CR>     " close buffer
 
 " Open a terminal
@@ -289,10 +286,10 @@ nnoremap <leader><tab> :<C-u>FZF<CR>
 " NO, write it for real!
 nnoremap <leader>W :w !sudo tee % > /dev/null
 
-" Reload vimr configuration file
+" Reload vim configuration file
 nnoremap <leader>vr :source $MYVIMRC<CR>
 
-" Some Git related maps
+" Some Git related maps - possibly remove if lazygit performs
 nnoremap <leader>g :Git<CR>
 nnoremap <leader>gu :Git push<CR>
 nnoremap <leader>gd :Git diff<CR>
