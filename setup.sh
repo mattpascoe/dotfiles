@@ -138,7 +138,7 @@ if [ "$MACHINE" == "Mac" ]; then
 fi
 
 ###### Link dotfile configs
-LINKFILES+=(".profile" ".vimrc" ".config/nvim" ".zshrc" ".config/tmux" ".config/git" ".config/btop" ".config/lazygit")
+LINKFILES+=(".profile" ".vimrc" ".config/nvim" ".zshrc" ".config/tmux" ".config/git" ".config/btop" ".config/lazygit" ".config/starship.toml")
 echo "- Checking dotfile config symlinks..."
 for FILE in "${LINKFILES[@]}"
 do
