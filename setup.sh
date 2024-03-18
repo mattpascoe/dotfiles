@@ -2,7 +2,7 @@
 
 # lots of install stuff.. you should be able to run this over and over without issue
 # TODO: refactor and have more "configuration" instead of hardcoded things like package installs
-# TODO: look more into neo-vim
+# TODO: look into using stow for dotfile management
 
 # Determine what type of machine we are on
 unameOut="$(uname -s)"

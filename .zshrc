@@ -35,7 +35,6 @@ bindkey '^R' history-incremental-search-backward
 #export KEYTIMEOUT=1 # some folks say this timeout is too short and it should
 #be like 20. I have not ever used it so I dont know if I even need it. look into it more.
 
-
 # Change cursor shape for different vi modes.
 # more info https://vim.fandom.com/wiki/Change_cursor_shape_in_different_modes#For_Terminal_on_macOS
 # Be aware that the cursor in vi also picks up on these settings.
@@ -64,6 +63,18 @@ autoload -Uz compinit && compinit
 SCRIPT=$(readlink "${(%):-%x}")
 SP=$(dirname "$SCRIPT")
 [ -f $SP/.shell-common ] && source $SP/.shell-common
+
+# Load or install the zsh-autosuggestions plugin
+if [ -f $XDG_CONFIG_HOME/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
+  source $XDG_CONFIG_HOME/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+  # configure the autosuggestions
+  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#303030,underline'
+  ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+  bindkey '^[[Z' autosuggest-accept # SHIFT-TAB to accept autosuggestion
+else
+  echo "Installing zsh-autosuggestions plugin."
+  git clone https://github.com/zsh-users/zsh-autosuggestions $XDG_CONFIG_HOME/zsh/zsh-autosuggestions
+fi
 
 # Debian fzf completions
 # if only the package was consistent in where it put its completions
