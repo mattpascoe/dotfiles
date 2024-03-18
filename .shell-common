@@ -71,7 +71,32 @@ alias tut='dut +"%r"'
 # Turn on vi mode
 set -o vi
 
+# If in tmux, refresh ssh and display variables. This is cleaner than the
+# ssh_reagent function below.
+# taken from https://babushk.in/posts/renew-environment-tmux.html
+if [ -n "$TMUX" ]; then
+  function refreshvars() {
+    sshauth=$(tmux show-environment | grep "^SSH_AUTH_SOCK")
+    if [ $sshauth ]; then
+        export $sshauth
+    fi
+    display=$(tmux show-environment | grep "^DISPLAY")
+    if [ $display ]; then
+        export $display
+    fi
+  }
+else
+  function refreshvars() {
+    return
+  }
+fi
+# insead of using a preexec, I'm just going to run the function when the shell
+# starts up here.
+refreshvars
+
+
 # Create ssh_reagent command to attached to existing agent sockets
+# Leaving this if needed later, Prefer TMUX refreshvars above
 ssh_reagent () {
   for agent in /tmp/ssh-*/agent.*; do
       export SSH_AUTH_SOCK=$agent
