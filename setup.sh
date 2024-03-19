@@ -18,8 +18,8 @@ if [ -f /etc/os-release ]; then
   . /etc/os-release
 fi
 
-SCRIPT=$(readlink -f $0)
-DIR="$(dirname $SCRIPT)"
+SCRIPT=$(readlink -f "$0")
+DIR=$(dirname "$SCRIPT")
 declare -a LINKFILES
 
 echo
@@ -72,8 +72,8 @@ if [ "$MACHINE" == "Linux" ]; then
   PKGS+=("git" "jq" "fzf" "tree" "zsh" "highlight" "tmux")
   echo "- Ensuring install of requested packages..."
   case "$ID" in
-    debian*)    sudo apt install ${PKGS[@]};;
-    ubuntu*)    sudo apt install ${PKGS[@]};;
+    debian*)    sudo apt install "${PKGS[@]}";;
+    ubuntu*)    sudo apt install "${PKGS[@]}";;
     *)  echo "-!- This system is not a supported type, You should check that the following packages are installed:"
         echo "    ${PKGS[@]}";;
   esac
@@ -117,7 +117,7 @@ if [ "$MACHINE" == "Mac" ]; then
     fi
 
     echo "- Ensuring install of requested brew packages..."
-    brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman tmux bash jesseduffield/lazygit/lazygit
+    brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman tmux bash jesseduffield/lazygit/lazygit shellcheck
 
     echo "-!- Consider installing the following"
     echo "brew install zoom homebrew/cask-fonts/font-jetbrains-mono-nerd-font"
@@ -129,7 +129,7 @@ if [ "$MACHINE" == "Mac" ]; then
 #needs rosetta on m1
 # brew install -q homebrew/cask-drivers/yubico-authenticator
 
-  read -p "- Execute 'defaults' commands to set specific Mac settings... Continue (N/y) "
+  read -r -p "- Execute 'defaults' commands to set specific Mac settings... Continue (N/y) "
   if [ "$REPLY" == "y" ]; then
     ~/dotfiles/.macos
   else
@@ -142,16 +142,16 @@ LINKFILES+=(".profile" ".vimrc" ".config/nvim" ".zshrc" ".config/tmux" ".config/
 echo "- Checking dotfile config symlinks..."
 for FILE in "${LINKFILES[@]}"
 do
-  if [ ! -L $HOME/$FILE ]; then
-    if [ -e $HOME/$FILE ]; then
+  if [ ! -L "$HOME/$FILE" ]; then
+    if [ -e "$HOME/$FILE" ]; then
       echo "Backing up current file to ${FILE}.bak"
-      mv $HOME/$FILE $HOME/$FILE.bak
+      mv "$HOME/$FILE" "$HOME/$FILE.bak"
     fi
     echo "Linking file $HOME/$FILE -> $DIR/$FILE"
-    ln -s $DIR/$FILE $HOME/$FILE
+    ln -s "$DIR/$FILE" "$HOME/$FILE"
   else
     echo -n "Found link: "
-    ls -o $HOME/$FILE
+    ls -o "$HOME/$FILE"
   fi
 done
 
