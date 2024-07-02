@@ -17,8 +17,6 @@ alias vi='vim'
 alias vw='vim -c "VimwikiIndex 1"'
 alias vww='vim -c "VimwikiIndex 2"'
 
-alias lg='lazygit'
-
 alias ls='ls -F --color=auto'
 alias la='ls -a'
 alias ll='ls -l'
@@ -136,10 +134,11 @@ if command -v terraform &> /dev/null; then
   # terraform
   alias tf='terraform'
   alias tfin='terraform init'
-  alias tfp='terraform plan'
   alias tfa='terraform apply'
   alias tfv='terraform validate'
   alias tfim='terraform import'
+  # Fancy, color on terminal, no color in txt file, include stderr to txt file. Add summary tags, also copy to clipboard.
+  alias tfp="terraform plan -out my.plan 2>&1 | tee >(sed -e 's/\x1b\[[0-9;]*m//g' -e '1s~.*~<details><summary>Click for TF Plan</summary>\n~' -e '$s~$~\n</details>~' | tee plan.txt | pbcopy)"
 
   # terraform autocomplete
   autoload -U +X bashcompinit && bashcompinit
