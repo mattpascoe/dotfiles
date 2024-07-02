@@ -35,6 +35,7 @@ Plug 'dense-analysis/ale' "Replacement for syntastic
 "Plug 'ap/vim-css-color' "Color preview for css
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'christoomey/vim-tmux-navigator'
 "TODO look into lazyvim, ripgrep, ag, or silversearcher-ag type plugins
 call plug#end()
 
