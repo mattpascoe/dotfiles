@@ -4,3 +4,5 @@
 .config/lazygit/state.yml
 # lazy-lock stores a state file in config, I dont want to track it
 .config/nvim/lazy-lock.json
+# Skip tmux plugins
+.config/tmux/plugins
