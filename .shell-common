@@ -169,7 +169,7 @@ fi
 
 export FZF_COMPLETION_TRIGGER=','
 export FZF_TMUX_HEIGHT=60% # not strictly TMUX only
-export FZF_DEFAULT_OPTS="--layout=reverse --border --info=inline"
+export FZF_DEFAULT_OPTS="--layout=reverse --border --info=inline --bind ctrl-h:preview-up,ctrl-l:preview-down"
 export FZF_CTRL_T_OPTS="--preview '(highlight -O ansi -l {} 2> /dev/null || cat {} ) 2> /dev/null | head -100'"
 # history in chronological order
 export FZF_CTRL_R_OPTS='--no-sort'
