@@ -160,9 +160,9 @@ do
   fi
 done
 
-if [ ! -d ~/.tmux/plugins/tpm ];then
+if [ ! -d ~/.config/tmux/plugins/tpm ];then
   echo "Installing TMUX plugin manager."
-  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
 fi
 
 echo
