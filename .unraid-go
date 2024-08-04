@@ -34,4 +34,5 @@ echo "[ -f /bin/zsh ] && /bin/zsh; exit" >> /root/.bash_profile
 
 # Start btop under tmux in console
 echo "Starting tmux with btop"
+tmux set-option -g default-shell /bin/zsh
 LANG="en_US.UTF-8" tmux new -s btop "zsh;" \; new-window "btop;zsh;"
