@@ -125,8 +125,11 @@ fi
 # https://starship.rs - a shell augmentation that seems simple
 # get dejavumono nerdfont for iterm.
 if command -v starship &> /dev/null; then
-  echo "Enabling starship.."
-  eval "$(starship init $SHELLTYPE)"
+  type starship_zle-keymap-select >/dev/null || \
+  {
+    echo "Enabling starship.."
+    eval "$(starship init $SHELLTYPE)"
+  }
 fi
 
 # Terraform configuration
