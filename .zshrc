@@ -2,6 +2,11 @@
 
 # Define the XDG configuration directory
 export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_STATE_HOME="$HOME/.local/state"
+export HISTFILE="$XDG_STATE_HOME/zsh/history"
+
+# Create $XDG_STATE_HOME/zsh if it doesn't exist
+[ -d "$XDG_STATE_HOME/zsh" ] || mkdir -p "$XDG_STATE_HOME/zsh"
 
 # Set up a prompt with spaces around the path so you can easily double click to select it
 PS1='[%n@%m %~]$ '
@@ -15,8 +20,7 @@ case $TERM in
         ;;
 esac
 
-
-#HISTFILE=~/.zsh_history     #Where to save history to disk
+HISTFILE="$XDG_STATE_HOME/zsh/history" #Where to save history to disk
 HISTSIZE=50000               #How many lines of history to keep in memory
 SAVEHIST=$HISTSIZE           #Number of history entries to save to disk
 #HISTDUP=erase               #Erase duplicates in the history file
