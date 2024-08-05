@@ -26,13 +26,19 @@ curl -fsSL https://starship.rs/install.sh | FORCE=y sh | head
 # Alternate idea?
 #ln -s /mnt/user/local/bin/starship /usr/local/bin/starship
 
-# Invoke zsh if we have it. Provides clean fallback if its not available
-echo "[ -f /bin/zsh ] && /bin/zsh; exit" >> /root/.bash_profile
+# Invoke TMUX or zsh if we have it. Provides clean fallback if its not available
+cat <<EOF >> /root/.bash_profile
+# Automatic start with tmux
+if [ -z "\$TMUX" ]; then
+  tmux attach-session -t NAS || tmux new-session -s NAS
+fi
+[ -f /bin/zsh ] && /bin/zsh; exit
+EOF
 
 #  Disable screenblanking on console
 /bin/setterm -blank 0
 
-# Start btop under tmux in console
+# Start btop under tmux in console session called NAS
 echo "Starting tmux with btop"
 tmux set-option -g default-shell /bin/zsh
-LANG="en_US.UTF-8" tmux new -s btop "zsh;" \; new-window "btop;zsh;"
+tmux attach-session -t NAS || LANG="en_US.UTF-8" tmux new -s NAS "zsh;" \; new-window "btop;zsh;"
