@@ -10,10 +10,14 @@ autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
   \| PlugInstall --sync | source $MYVIMRC
 \| endif
 
+" Check if we are on an unraid OS so we can ignore some plugins
+let has_unraid = filereadable('/etc/unraid-version')
+
 call plug#begin('~/.vim/plugged')
 Plug 'vimwiki/vimwiki'
 "Plug 'jlanzarotta/bufexplorer'
-Plug 'tpope/vim-fugitive'      " Git integrations - compare to lazygit
+" disable fugitive in favor of lazygit
+"Plug 'tpope/vim-fugitive'      " Git integrations - compare to lazygit
 Plug 'bitc/vim-bad-whitespace'
 "Plug 'crusoexia/vim-monokai'
 Plug 'vim-pandoc/vim-pandoc'  " Tools for various markdown styles
@@ -21,7 +25,8 @@ Plug 'vim-pandoc/vim-pandoc-syntax'
 " If you don't have nodejs and yarn
 " use pre build, add 'vim-plug' to the filetype list so vim-plug can update this plugin
 " see: https://github.com/iamcco/markdown-preview.nvim/issues/50
-Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+Plug 'iamcco/markdown-preview.nvim', has_unraid ? { 'on': [] } : { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug'] }
+Plug 'github/copilot.vim', has_unraid ? { 'on': [] } : {}
 "Plug 'majutsushi/tagbar'       " Needs ctags cli installed
 "Plug 'mileszs/ack.vim'         " Needs ack cli installed
 Plug 'tpope/vim-surround'
@@ -30,7 +35,6 @@ Plug 'junegunn/fzf.vim'
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'rodjek/vim-puppet'
 Plug 'hashivim/vim-terraform'
-Plug 'github/copilot.vim'
 Plug 'dense-analysis/ale' "Replacement for syntastic
 "Plug 'ap/vim-css-color' "Color preview for css
 Plug 'vim-airline/vim-airline'
@@ -317,3 +321,7 @@ nnoremap <leader>sp :call ToggleSpell()<CR>
 function! ToggleSpell()
   set spell!
 endfunction
+
+" Go back to last misspelled word and pick first suggestion.
+nnoremap <leader>ss <Esc>[s1z=
+
