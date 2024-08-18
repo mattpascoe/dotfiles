@@ -8,11 +8,6 @@
 # The `dotfiles` repo is in /mnt/user/local
 # This is also the location of local working data dir (cdd alias) for the root user.
 
-# Define the XDG configuration directory
-export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_STATE_HOME="$HOME/.local/state"
-export HISTFILE="$XDG_STATE_HOME/zsh/history"
-
 # Enable write cache on the parity drive
 PARITYDISK=$(php -r '$ini_array = parse_ini_file("/var/local/emhttp/disks.ini",true); print($ini_array["parity"]["device"]);')
 [ -n "$PARITYDISK" ] && hdparm -W 1 "/dev/$PARITYDISK"
@@ -25,8 +20,8 @@ cp /boot/config/myzshrc /root/.zshrc
 ln -s /mnt/user/local /root/data
 
 # Link directly to the dotfiles repo
-ln -s /root/data/dotfiles/.config/btop "$HOME/.config/btop"
-ln -s /root/data/dotfiles/.config/tmux "$HOME/.config/tmux"
+ln -s /root/data/dotfiles/.config/btop /root/.config/btop
+ln -s /root/data/dotfiles/.config/tmux /root/.config/tmux
 
 # Setup starship. REQUIRES INTERNET
 curl -fsSL https://starship.rs/install.sh | FORCE=y sh | head
@@ -48,4 +43,4 @@ EOF
 # Start btop under tmux in console session called NAS
 echo "Starting tmux with btop"
 tmux set-option -g default-shell /bin/zsh
-tmux attach-session -t NAS || LANG="en_US.UTF-8" tmux new -s NAS "zsh;" \; new-window "btop;zsh;"
+tmux attach-session -t NAS || LANG="en_US.UTF-8" tmux new -f /root/.config/tmux/tmux.conf -s NAS "zsh;" \; new-window "btop;zsh;"
