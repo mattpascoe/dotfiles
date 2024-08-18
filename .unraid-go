@@ -7,6 +7,7 @@
 # location or they will be overwritten.
 # The `dotfiles` repo is in /mnt/user/local
 # This is also the location of local working data dir (cdd alias) for the root user.
+export HOME=/root
 
 # Enable write cache on the parity drive
 PARITYDISK=$(php -r '$ini_array = parse_ini_file("/var/local/emhttp/disks.ini",true); print($ini_array["parity"]["device"]);')
@@ -25,8 +26,6 @@ ln -s /root/data/dotfiles/.config/tmux /root/.config/tmux
 
 # Setup starship. REQUIRES INTERNET
 curl -fsSL https://starship.rs/install.sh | FORCE=y sh | head
-# Alternate idea?
-#ln -s /mnt/user/local/bin/starship /usr/local/bin/starship
 
 # Invoke TMUX or zsh if we have it. Provides clean fallback if its not available
 cat <<EOF >> /root/.bash_profile
