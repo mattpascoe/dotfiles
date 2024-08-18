@@ -31,7 +31,7 @@ curl -fsSL https://starship.rs/install.sh | FORCE=y sh | head
 cat <<EOF >> /root/.bash_profile
 # Automatic start with tmux
 if [ -z "\$TMUX" ]; then
-  tmux attach-session -t NAS || tmux new-session -s NAS
+  tmux attach-session -f /root/.config/tmux/tmux.conf -t NAS || tmux new-session -f /root/.config/tmux/tmux.conf -s NAS
 fi
 [ -f /bin/zsh ] && /bin/zsh; exit
 EOF
@@ -41,5 +41,5 @@ EOF
 
 # Start btop under tmux in console session called NAS
 echo "Starting tmux with btop"
-tmux set-option -g default-shell /bin/zsh
-tmux attach-session -t NAS || LANG="en_US.UTF-8" tmux new -f /root/.config/tmux/tmux.conf -s NAS "zsh;" \; new-window "btop;zsh;"
+tmux set-option -f /root/.config/tmux/tmux.conf -g default-shell /bin/zsh
+tmux attach-session -f /root/.config/tmux/tmux.conf -t NAS || LANG="en_US.UTF-8" tmux new -f /root/.config/tmux/tmux.conf -s NAS "zsh;" \; new-window "btop;zsh;"
