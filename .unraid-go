@@ -25,8 +25,8 @@ cp /boot/config/myzshrc /root/.zshrc
 ln -s /mnt/user/local /root/data
 
 # Link directly to the dotfiles repo
-ln -s /root/data/dotfiles/.config/btop ~/.config/btop
-ln -s /root/data/dotfiles/.config/tmux ~/.config/tmux
+ln -s /root/data/dotfiles/.config/btop "$HOME/.config/btop"
+ln -s /root/data/dotfiles/.config/tmux "$HOME/.config/tmux"
 
 # Setup starship. REQUIRES INTERNET
 curl -fsSL https://starship.rs/install.sh | FORCE=y sh | head
