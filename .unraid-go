@@ -56,4 +56,5 @@ source $HOME/.zshrc
 echo "Starting tmux with btop"
 sleep 15
 tmux set-option -g default-shell /bin/zsh
+tmux set-option -g bell-action none
 tmux attach-session -t NAS || LANG="en_US.UTF-8" tmux new -s NAS "zsh;" \; new-window "btop;zsh;"
