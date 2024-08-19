@@ -8,6 +8,10 @@
 # The `dotfiles` repo is in /mnt/user/local
 # This is also the location of local working data dir (cdd alias) for the root user.
 export HOME=/root
+export USER=root
+export USERNAME=root
+export TERM=xterm-256color
+export PATH=$PATH:/usr/local/bin
 
 # Enable write cache on the parity drive
 PARITYDISK=$(php -r '$ini_array = parse_ini_file("/var/local/emhttp/disks.ini",true); print($ini_array["parity"]["device"]);')
@@ -29,9 +33,11 @@ curl -fsSL https://starship.rs/install.sh | FORCE=y sh | head
 
 # Invoke TMUX or zsh if we have it. Provides clean fallback if its not available
 cat <<EOF >> /root/.bash_profile
+export PATH=$PATH:/usr/local/bin
+export TERM=xterm-256color
 # Automatic start with tmux
 if [ -z "\$TMUX" ]; then
-  tmux attach-session -f /root/.config/tmux/tmux.conf -t NAS || tmux new-session -f /root/.config/tmux/tmux.conf -s NAS
+  tmux attach-session -t NAS || tmux new-session -s NAS
 fi
 [ -f /bin/zsh ] && /bin/zsh; exit
 EOF
@@ -39,7 +45,10 @@ EOF
 #  Disable screenblanking on console
 /bin/setterm -blank 0
 
+source /root/.zshrc
+
 # Start btop under tmux in console session called NAS
 echo "Starting tmux with btop"
-tmux set-option -f /root/.config/tmux/tmux.conf -g default-shell /bin/zsh
-tmux attach-session -f /root/.config/tmux/tmux.conf -t NAS || LANG="en_US.UTF-8" tmux new -f /root/.config/tmux/tmux.conf -s NAS "zsh;" \; new-window "btop;zsh;"
+tmux set-option -g default-shell /bin/zsh
+sleep 15
+tmux attach-session -t NAS || LANG="en_US.UTF-8" tmux new -s NAS "zsh;" \; new-window "btop;zsh;"
