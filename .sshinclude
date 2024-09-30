@@ -1,0 +1,88 @@
+# The following is my personal SSH config. Nothing here would be sensitive
+# info.  Simply add an Include statement toward the top of ~/.ssh/config.
+# Ensure that chmod 600 ~/.ssh/config is applied as well.
+#
+# For example, I usually have add keys as a first line, then add this below it to inclue this file.
+#
+# AddKeysToAgent yes
+# Include ~/dotfiles/.sshinclude
+#
+
+Host *github.com
+  User mattpascoe
+
+Host onavm myvm
+  # requires my specific ssh key
+  # Same as ssh -C -L 4400:localhost:4000 ubuntu@<IP-ADDR>
+  User ubuntu
+  Hostname ssh.opennetadmin.com
+  # forward agent for github access
+  ForwardAgent yes
+  Compression yes
+  ServerAliveInterval 300
+  ServerAliveCountMax 2
+  # Forward syncthing admin example
+  #LocalForward 28384 localhost:8384
+  #LocalForward 8443 localhost:443
+
+Host demoona
+  # requires my specific ssh key
+  User ubuntu
+  Hostname checkversion.opennetadmin.com
+  # forward agent for github access
+  ForwardAgent yes
+  Compression yes
+  ServerAliveInterval 300
+  ServerAliveCountMax 2
+
+Host home
+  # Home macbookpro
+  User mdp
+  Hostname 10.1.1.223
+  ForwardAgent yes
+  Compression yes
+  ServerAliveInterval 300
+  ServerAliveCountMax 2
+
+Host nas
+  # Home nas
+  User root
+  Hostname 10.1.1.11
+
+# Sometimes you have to force a cipher or key exchange algorithm example
+#Host old-router.example.com
+#  Ciphers aes256-ctr
+#  KexAlgorithms +diffie-hellman-group14-sha1
+
+
+# Another useful trick is to use a RemoteForward to proxy traffic back to
+# your local machine. Allows you to curl or git from the remote host.
+#
+# RemoteForward 127.0.0.1:3128 PROXY_ADDR:3128
+## Then on remote host
+#export HTTP_PROXY=localhost:3128; export HTTPS_PROXY=localhost:3128; export http_proxy=localhost:3128; export https_proxy=localhost:3128
+#export HTTPS_PROXY=localhost:3128; export https_proxy=localhost:3128;
+
+
+
+# This experiment tries to use an ENV varible to pass .sshrc file contents
+# to the remote host. Use base64 to deal with multi lines. You would create
+# the LC_SSHRC variable on the client side as a base64 encoded string.
+#   export LC_SSHRC='$(cat ~/.sshrc | base64)'"
+#
+# The expectation here is that .sshrc will be a mostly shell agnostic and
+# fairly simple rc setup. Its not intended to be super fancy!
+#
+# At this point it seems best to simply take the ENV var if it exists and
+# always update the remote .sshrc. This keeps it in sync with whatever the client
+# side has. This could mean multiple clients could fight for control.
+#
+# Other variants could be to remote execute a shell that uses the ENV var as
+# its intial profile.
+#  RemoteCommand bash -c 'echo "$LC_SSHRC" | base64 -d > ~/.sshrc; bash --rcfile ~/.sshrc'
+#
+#Host testing-idea
+  #Using LC_* as it seems to be allowed by default but may not always be reliable
+#  SendEnv LC_SSHRC
+  #This is the remote command to run.
+#  RemoteCommand [ -n "$LC_SSHRC" ] && echo "$LC_SSHRC" | base64 -d > ~/.sshrc

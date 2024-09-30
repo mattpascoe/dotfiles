@@ -1,30 +1,46 @@
 " Auto install plugin manager if it is not already.  ref: https://github.com/junegunn/vim-plug
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
 if empty(glob(data_dir . '/autoload/plug.vim'))
-  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
+" Run PlugInstall if there are missing plugins
+autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+  \| PlugInstall --sync | source $MYVIMRC
+\| endif
+
+" Check if we are on an unraid OS so we can ignore some plugins
+let has_unraid = filereadable('/etc/unraid-version')
 
 call plug#begin('~/.vim/plugged')
 Plug 'vimwiki/vimwiki'
 "Plug 'jlanzarotta/bufexplorer'
-Plug 'tpope/vim-fugitive'      " Git integrations
-Plug 'scrooloose/syntastic'    " syntax and lint checker
+" disable fugitive in favor of lazygit
+"Plug 'tpope/vim-fugitive'      " Git integrations - compare to lazygit
 Plug 'bitc/vim-bad-whitespace'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 "Plug 'crusoexia/vim-monokai'
-"Plug 'vim-pandoc/vim-pandoc'  " Tools for various markdown styles
-"Plug 'vim-pandoc/vim-pandoc-syntax'
+Plug 'vim-pandoc/vim-pandoc'  " Tools for various markdown styles
+Plug 'vim-pandoc/vim-pandoc-syntax'
+" If you don't have nodejs and yarn
+" use pre build, add 'vim-plug' to the filetype list so vim-plug can update this plugin
+" see: https://github.com/iamcco/markdown-preview.nvim/issues/50
+Plug 'iamcco/markdown-preview.nvim', has_unraid ? { 'on': [] } : { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug'] }
+Plug 'github/copilot.vim', has_unraid ? { 'on': [] } : {}
 "Plug 'majutsushi/tagbar'       " Needs ctags cli installed
 "Plug 'mileszs/ack.vim'         " Needs ack cli installed
 Plug 'tpope/vim-surround'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }  "fuzzy finder
 Plug 'junegunn/fzf.vim'
-Plug 'bignimbus/pop-punk.vim' " maybe.. colors dont complement well
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'rodjek/vim-puppet'
-Plug 'github/copilot.vim'
+Plug 'hashivim/vim-terraform'
+Plug 'dense-analysis/ale' "Replacement for syntastic
+"Plug 'ap/vim-css-color' "Color preview for css
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'christoomey/vim-tmux-navigator'
+"TODO look into lazyvim, ripgrep, ag, or silversearcher-ag type plugins
 call plug#end()
 
 if filereadable(glob("~/.vim/.vimrc"))
@@ -35,8 +51,13 @@ set nocompatible
 filetype plugin on
 syntax on
 
+" disable indenting for comments on python and yaml
+autocmd BufNewFile,BufReadPost * if &filetype == "python" | set indentkeys-=0# | endif
+autocmd BufNewFile,BufReadPost * if &filetype == "yaml" | set indentkeys-=0# | endif
+
+autocmd FileType gitcommit setlocal nonumber norelativenumber textwidth=0
+
 set t_Co=256 " ensure enough colors for airline
-"colorscheme pop-punk       " set color scheme
 colorscheme PaperColor       " set color scheme
 let g:PaperColor_Theme_Options = {
   \   'theme': {
@@ -53,14 +74,22 @@ set background=dark     " on a dark background
 " Newer vim seems to like pascal instead of puppet
 au BufNewFile,BufRead *.pp  setlocal filetype=puppet
 
-let g:syntastic_check_on_open = 1
-let g:syntastic_javascript_checkers = ['jsl', 'jshint']
-let g:syntastic_php_checkers=['php', 'phpcs']
-let g:syntastic_php_phpcs_args='--standard=PSR2 -n'
-let g:syntastic_puppet_checkers = ['puppetlint']
+let g:terraform_fmt_on_save=1
 
-" Exclude specific puppet-lint checks
-let g:syntastic_puppet_puppetlint_args='--no-80chars-check --no-nested_classes_or_defines-check --no-autoloader_layout-check'
+" Pandoc settings (basically takes over markdown)
+autocmd FileType pandoc setlocal nonumber norelativenumber colorcolumn= textwidth=0 spell
+let g:pandoc#filetypes#handled = ["pandoc", "markdown"]
+let g:pandoc#filetypes#pandoc_markdown = 0
+let g:pandoc#modules#disabled = ["folding"]
+
+""" Markdown preview browser
+let g:mkdp_browser = 'safari' " is safari for now, I dont expect to use elsewhere
+let g:mkdp_auto_start = 1 " auto open preview on entering markdown file TBD
+let g:mkdp_auto_close = 0
+let g:mkdp_combine_preview = 1 " combine with auto close
+
+""" ALE settings
+let g:ale_yaml_yamllint_options='-d "{extends: relaxed, rules: {line-length: disable}}"' " disable line length check
 
 """ Airline plugin
 let g:airline#extensions#tabline#enabled = 1
@@ -77,6 +106,7 @@ let g:airline_symbols.colnr = ' : '
 let g:airline_symbols.linenr = ' : '
 let g:airline_symbols.maxlinenr = ''
 let g:airline_symbols.branch = '⎇'
+"let g:airline_symbols.dirty='⚡'
 let g:airline_symbols.paste = 'ρ'
 let g:airline_symbols.spell = 'Ꞩ'
 let g:airline_symbols.notexists = 'Ɇ'
@@ -91,10 +121,13 @@ let personal.syntax = 'markdown'
 let personal.ext = '.md'
 let work = {}
 let work.path = '~/data/workwiki/'
+let work.ext = '.md'
 let g:vimwiki_list = [personal, work]
 let g:vimwiki_listsyms = ' ○◐●✓'
 let g:vimwiki_global_ext = 0
-autocmd FileType vimwiki setlocal nonumber norelativenumber colorcolumn=
+" vimwiki steals tab completion, disable it since I dont use tables much at all
+let g:vimwiki_key_mappings = { 'table_mappings': 0 }
+autocmd FileType vimwiki setlocal nonumber norelativenumber colorcolumn= textwidth=0
 """" end vimwiki
 
 """" copilot settings
@@ -119,7 +152,7 @@ let php_noShortTags = 1    "Disable PHP short tags.
 
 " basic formatting {{{
 "set autoread            " Auto load file when changed from outside vim
-set scrolloff=5
+set scrolloff=10
 set shiftwidth=2        " I have no idea why you would use anything else
 set softtabstop=2       " backspace over a shift width
 set tabstop=2           " tabs are for shifting
@@ -147,18 +180,26 @@ set formatoptions+=b    " don't break existing long lines
 set formatoptions+=t    " auto-wrap text too
 " }}}
 
-set wildchar=<Tab> wildmenu wildmode=full
+set wildchar=<Tab> wildmenu wildmode=longest:full,full wildoptions=pum
 
 " backups, swap and history {{{
+set noundofile          " don't keep undo file
 set nobackup            " don't keep a backup file
 set nowritebackup       " seriously, no backup file
-set viminfo='10,f1,%30,<50,:50,n~/.viminfo
+if !has('nvim')
+  set viminfo='10,f1,%30,<50,:50,n~/.viminfo
                         " marks for 10 files
                         " store file marks
                         " save 30 buffer list
                         " max 50 lines for each register
                         " remember 50 commands
                         " write to ~/.viminfo
+else
+  " Do nothing here to use the neovim default
+  " or do soemething like:
+  " set viminfo+=n~/.shada
+endif
+
 set history=50          " keep 50 lines of command line history
 " }}}
 
@@ -206,7 +247,7 @@ set fileformats=unix,dos,mac  " preferred file format order
 
 """" would love to but the colors suck with solarize in iterm2
 " highlight 80 and 120+ column
-highlight ColorColumn ctermbg=0
+highlight ColorColumn ctermbg=8
 "let &colorcolumn="80,".join(range(120,999),",")
 set colorcolumn=80
 
@@ -228,14 +269,18 @@ nnoremap tt :tabnew<CR>
 nnoremap tc :tabclose<CR>
 nnoremap tx :tabclose<CR>
 
-" Buffer management
+" Buffer management - maybe map to something other than f
 nnoremap ff :enew<CR>   " new buffer
-nnoremap fh :bprev<CR>  " previous buffer
 nnoremap fp :bprev<CR>  " previous buffer
-nnoremap fl :bnext<CR>  " next buffer
 nnoremap fn :bnext<CR>  " next buffer
-nnoremap fc :bw<CR>     " close buffer
 nnoremap fx :bw<CR>     " close buffer
+
+" Open a terminal
+nnoremap <leader>t :terminal<CR>
+
+" ALE related
+nnoremap <leader>ln :ALENextWrap<CR>
+nnoremap <leader>lp :ALEPreviousWrap<CR>
 
 "" FZF related
 " bufferlist
@@ -246,14 +291,22 @@ nnoremap <leader><tab> :<C-u>FZF<CR>
 " NO, write it for real!
 nnoremap <leader>W :w !sudo tee % > /dev/null
 
-" Reload vimr configuration file
+" Reload vim configuration file
 nnoremap <leader>vr :source $MYVIMRC<CR>
+
+" Some Git related maps - possibly remove if lazygit performs
+nnoremap <leader>g :Git<CR>
+nnoremap <leader>gu :Git push<CR>
+nnoremap <leader>gd :Git diff<CR>
 
 " Toggle conceal level
 nnoremap <leader>c :set <C-R>=&conceallevel ? 'conceallevel=0' : 'conceallevel=2'<CR><CR>
 
 " setup shortcut to toggle numbers
 noremap <leader>l :call ToggleLineNumber()<CR>
+
+" Toggle markdown preview
+noremap <leader>md :MarkdownPreviewToggle<CR>
 
 " Toggle the linenumbers
 function! ToggleLineNumber()
@@ -262,3 +315,13 @@ function! ToggleLineNumber()
   endif
   set nonumber!
 endfunction
+
+" Toggle spell check
+nnoremap <leader>sp :call ToggleSpell()<CR>
+function! ToggleSpell()
+  set spell!
+endfunction
+
+" Go back to last misspelled word and pick first suggestion.
+nnoremap <leader>ss <Esc>[s1z=
+

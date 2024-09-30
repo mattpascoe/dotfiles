@@ -1,4 +1,8 @@
 # Settings for login shells
+
+# Define the XDG configuration directory
+export XDG_CONFIG_HOME="$HOME/.config"
+
 # Set up a prompt with spaces around the path so you can easily double click to select it
 PS1='[\u@\h \w]\$ '
 
@@ -43,7 +47,7 @@ fi
 ## Pull in common shell configuration
 SCRIPT=$(readlink "$BASH_SOURCE")
 SP=$(dirname "$SCRIPT")
-source $SP/.shell-common
+[ -f $SP/.shell-common ] && source $SP/.shell-common
 
 # Debian fzf completions
 [[ -f /usr/share/bash-completion/completions/fzf ]] && source /usr/share/bash-completion/completions/fzf

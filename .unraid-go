@@ -1,0 +1,60 @@
+#!/bin/bash
+# Start the Management Utility
+/usr/local/sbin/emhttp &
+
+### MDP: The following are my updates managed by my dotfiles repo
+# This file as a whole is managed there. DO NOT make edits on the unraid /boot
+# location or they will be overwritten.
+# The `dotfiles` repo is in /mnt/user/local
+# This is also the location of local working data dir (cdd alias) for the root user.
+
+#  Disable screenblanking on console
+/bin/setterm -blank 0
+
+# Set "missing" env vars for initial shell state
+export HOME=/root
+export USER=root
+export USERNAME=root
+export TERM=xterm-256color
+export PATH=$PATH:/usr/local/bin
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_STATE_HOME="$HOME/.local/state"
+export HISTFILE="$XDG_STATE_HOME/zsh/history"
+
+# Enable write cache on the parity drive
+PARITYDISK=$(php -r '$ini_array = parse_ini_file("/var/local/emhttp/disks.ini",true); print($ini_array["parity"]["device"]);')
+[ -n "$PARITYDISK" ] && hdparm -W 1 "/dev/$PARITYDISK"
+
+# Copy in our rc files, these are intsalled to /boot by dotfiles setup script
+cp /boot/config/myvimrc $HOME/.vimrc
+cp /boot/config/myzshrc $HOME/.zshrc
+
+# Link the local array share to root data, useful for `cdd` alias
+ln -s /mnt/user/local $HOME/data
+
+# Link directly to the dotfiles repo
+ln -s /root/data/dotfiles/.config/btop $HOME/.config/btop
+ln -s /root/data/dotfiles/.config/tmux $HOME/.config/tmux
+
+# Setup starship. REQUIRES INTERNET
+curl -fsSL https://starship.rs/install.sh | FORCE=y sh | head
+
+# Invoke TMUX or zsh if we have it. Provides clean fallback if its not available
+cat <<EOF >> /root/.bash_profile
+export PATH=$PATH:/usr/local/bin
+export TERM=xterm-256color
+# Automatic start with tmux
+if [ -z "\$TMUX" ]; then
+  tmux attach-session -t NAS || tmux new-session -s NAS
+fi
+[ -f /bin/zsh ] && /bin/zsh; exit
+EOF
+
+source $HOME/.zshrc
+
+# Start btop under tmux in console session called NAS
+echo "Starting tmux with btop"
+sleep 15
+tmux set-option -g default-shell /bin/zsh
+tmux set-option -g bell-action none
+tmux attach-session -t NAS || LANG="en_US.UTF-8" tmux new -s NAS "zsh;" \; new-window "btop;zsh;"

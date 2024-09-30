@@ -12,6 +12,7 @@ echo "Configuring as a $SHELLTYPE shell."
 
 # Set up some command aliases
 alias cdd='cd $HOME/data'
+alias vi='vim'
 # vimwiki
 alias vw='vim -c "VimwikiIndex 1"'
 alias vww='vim -c "VimwikiIndex 2"'
@@ -26,6 +27,7 @@ alias ltr='ls -ltr'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias :q='exit'
+alias q='exit'
 alias mkdir='mkdir -pv'
 alias pa='ps aux | grep'
 alias ports="sudo lsof -i -n | egrep 'COMMAND|LISTEN|UDP|TCP'"
@@ -40,6 +42,7 @@ alias gb='git branch'
 alias gr='git remote'
 alias grpo='git remote prune origin'
 alias gp='git pull'
+alias gf='git fetch'
 alias gd='git diff'
 alias gco='git checkout'
 alias gu='git push'
@@ -66,7 +69,32 @@ alias tut='dut +"%r"'
 # Turn on vi mode
 set -o vi
 
+# If in tmux, refresh ssh and display variables. This is cleaner than the
+# ssh_reagent function below.
+# taken from https://babushk.in/posts/renew-environment-tmux.html
+if [ -n "$TMUX" ]; then
+  function refreshvars() {
+    sshauth=$(tmux show-environment | grep "^SSH_AUTH_SOCK")
+    if [ $sshauth ]; then
+        export $sshauth
+    fi
+    display=$(tmux show-environment | grep "^DISPLAY")
+    if [ $display ]; then
+        export $display
+    fi
+  }
+else
+  function refreshvars() {
+    return
+  }
+fi
+# insead of using a preexec, I'm just going to run the function when the shell
+# starts up here.
+refreshvars
+
+
 # Create ssh_reagent command to attached to existing agent sockets
+# Leaving this if needed later, Prefer TMUX refreshvars above
 ssh_reagent () {
   for agent in /tmp/ssh-*/agent.*; do
       export SSH_AUTH_SOCK=$agent
@@ -80,6 +108,12 @@ ssh_reagent () {
 }
 alias sshre='ssh_reagent'
 
+# If we have the brew install of the libfido2 library, use it for ssh
+# https://github.com/Yubico/libfido2/issues/464 on Sonoma and above Macs
+if [ -f /usr/local/lib/libsk-libfido2.dylib ] &> /dev/null; then
+  export SSH_SK_PROVIDER=/usr/local/lib/libsk-libfido2.dylib
+fi
+
 # Load iterm2 shell integration on Macs
 test -e "${HOME}/.iterm2_shell_integration.${SHELLTYPE}" && source "${HOME}/.iterm2_shell_integration.${SHELLTYPE}"
 
@@ -91,8 +125,11 @@ fi
 # https://starship.rs - a shell augmentation that seems simple
 # get dejavumono nerdfont for iterm.
 if command -v starship &> /dev/null; then
-  echo "Enabling starship.."
-  eval "$(starship init $SHELLTYPE)"
+  type starship_zle-keymap-select >/dev/null || \
+  {
+    echo "Enabling starship.."
+    eval "$(starship init $SHELLTYPE)"
+  }
 fi
 
 # Terraform configuration
@@ -100,10 +137,11 @@ if command -v terraform &> /dev/null; then
   # terraform
   alias tf='terraform'
   alias tfin='terraform init'
-  alias tfp='terraform plan'
   alias tfa='terraform apply'
   alias tfv='terraform validate'
   alias tfim='terraform import'
+  # Fancy, color on terminal, no color in txt file, include stderr to txt file. Add summary tags, also copy to clipboard.
+  alias tfp="terraform plan -out my.plan 2>&1 | tee >(sed -e 's/\x1b\[[0-9;]*m//g' -e '1s~.*~<details><summary>Click for TF Plan</summary>\n~' -e '$s~$~\n</details>~' | tee plan.txt | pbcopy)"
 
   # terraform autocomplete
   autoload -U +X bashcompinit && bashcompinit
@@ -129,11 +167,12 @@ else
   # shell completions already installed to system via fzf package
   # Debian linux location for fzf bindings per shell type
   [[ -f /usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE} ]] && source /usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE}
+  [[ -f /usr/share/fzf/key-bindings.${SHELLTYPE} ]] && source /usr/share/fzf/key-bindings.${SHELLTYPE}
 fi
 
 export FZF_COMPLETION_TRIGGER=','
 export FZF_TMUX_HEIGHT=60% # not strictly TMUX only
-export FZF_DEFAULT_OPTS="--layout=reverse --border --info=inline"
+export FZF_DEFAULT_OPTS="--layout=reverse --border --info=inline --bind ctrl-h:preview-up,ctrl-l:preview-down"
 export FZF_CTRL_T_OPTS="--preview '(highlight -O ansi -l {} 2> /dev/null || cat {} ) 2> /dev/null | head -100'"
 # history in chronological order
 export FZF_CTRL_R_OPTS='--no-sort'
@@ -166,3 +205,40 @@ _fzf_comprun() {
   esac
 }
 ################### Setup FZF END ############
+
+########## TMUX window renaming ##############
+# Make short hostname only if its not an IP address
+__tm_get_hostname(){
+  local HOST="$(echo $* | rev | cut -d ' ' -f 1 | rev)"
+  if [[ $HOST =~ "([0-9]{1,3}\.){3}[0-9]{1,3}" ]]; then
+    echo $HOST # It's an IPv4 addr
+  else
+    echo $HOST| cut -d . -f 1-2 # Display first two octets of FQDN as provided
+  fi
+}
+
+__tm_get_current_window(){
+  tmux list-windows| awk -F : '/\(active\)$/{print $1}'
+}
+
+# Rename window according to __tm_get_hostname and then restore it after the command
+__tm_command() {
+ # if [ "$(ps -p $(ps -p $$ -o ppid=) -o comm=| cut -d : -f 1)" = "tmux" ]; then
+  if [ -n "$TMUX" ]; then
+    __tm_window=$(__tm_get_current_window)
+    # Use current window to change back the setting. If not it will be applied to the active window
+    [ "$SHELLTYPE" = "bash" ] && trap "tmux set-window-option -t $__tm_window automatic-rename on 1>/dev/null" RETURN
+    [ "$SHELLTYPE" = "zsh"  ] && precmd() { tmux set-window-option -t $__tm_window automatic-rename on 1>/dev/null }
+    tmux rename-window "$(__tm_get_hostname $*)"
+  fi
+  command "$@"
+}
+
+ssh() {
+  __tm_command ssh "$@"
+}
+
+mosh() {
+  __tm_command mosh "$@"
+}
+############ TMUX window renaming END ########
