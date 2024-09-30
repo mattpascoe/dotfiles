@@ -25,9 +25,10 @@
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
-  #home.packages = with pkgs; [
+  home.packages = with pkgs; [
     #_1password-gui
     #trippy
+    tmux
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -41,7 +42,7 @@
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
-  #];
+  ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
@@ -71,6 +72,10 @@
   home.sessionVariables = {
     EDITOR = "vi";
   };
+
+  # This is to ensure programs are using ~/.config rather than
+  # /Users/<username/Library/whatever
+  xdg.enable = true;
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
