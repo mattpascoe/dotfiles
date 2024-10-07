@@ -145,7 +145,7 @@ autocmd BufReadPre *
   \ | endif
 """" end copilot
 
-let php_folding = 1        "Set PHP folding of classes and functions.
+"let php_folding = 1        "Set PHP folding of classes and functions.
 let php_htmlInStrings = 1  "Syntax highlight HTML code inside PHP strings.
 let php_sql_query = 1      "Syntax highlight SQL code inside PHP strings.
 let php_noShortTags = 1    "Disable PHP short tags.
@@ -321,6 +321,9 @@ nnoremap <leader>sp :call ToggleSpell()<CR>
 function! ToggleSpell()
   set spell!
 endfunction
+
+" Ignore first word capitalization
+:set spellcapcheck=
 
 " Go back to last misspelled word and pick first suggestion.
 nnoremap <leader>ss <Esc>[s1z=
