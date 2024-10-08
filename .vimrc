@@ -26,7 +26,8 @@ Plug 'vim-pandoc/vim-pandoc-syntax'
 " use pre build, add 'vim-plug' to the filetype list so vim-plug can update this plugin
 " see: https://github.com/iamcco/markdown-preview.nvim/issues/50
 Plug 'iamcco/markdown-preview.nvim', has_unraid ? { 'on': [] } : { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug'] }
-Plug 'github/copilot.vim', has_unraid ? { 'on': [] } : {}
+"Plug 'github/copilot.vim', has_unraid ? { 'on': [] } : {}
+Plug 'Exafunction/codeium.vim', { 'branch': 'main' }
 "Plug 'majutsushi/tagbar'       " Needs ctags cli installed
 "Plug 'mileszs/ack.vim'         " Needs ack cli installed
 Plug 'tpope/vim-surround'
@@ -130,20 +131,26 @@ let g:vimwiki_key_mappings = { 'table_mappings': 0 }
 autocmd FileType vimwiki setlocal nonumber norelativenumber colorcolumn= textwidth=0
 """" end vimwiki
 
-"""" copilot settings
-" re-enable some default disabled filetypes
-let g:copilot_filetypes = {
-  \ 'gitcommit': v:true,
-  \ 'markdown': v:true,
-  \ 'yaml': v:true
-  \ }
-" disable copilot for large files over 100k
-autocmd BufReadPre *
-  \ let f=getfsize(expand("<afile>"))
-  \ | if f > 100000 || f == -2
-  \ | let b:copilot_enabled = v:false
-  \ | endif
-"""" end copilot
+"""" codeium settings
+imap <C-j>   <Cmd>call codeium#CycleCompletions(1)<CR>
+imap <C-k>   <Cmd>call codeium#CycleCompletions(-1)<CR>
+imap <script><silent><nowait><expr> <C-l> codeium#AcceptNextWord()
+"""" end codeium
+
+""""" copilot settings
+"" re-enable some default disabled filetypes
+"let g:copilot_filetypes = {
+"  \ 'gitcommit': v:true,
+"  \ 'markdown': v:true,
+"  \ 'yaml': v:true
+"  \ }
+"" disable copilot for large files over 100k
+"autocmd BufReadPre *
+"  \ let f=getfsize(expand("<afile>"))
+"  \ | if f > 100000 || f == -2
+"  \ | let b:copilot_enabled = v:false
+"  \ | endif
+""""" end copilot
 
 "let php_folding = 1        "Set PHP folding of classes and functions.
 let php_htmlInStrings = 1  "Syntax highlight HTML code inside PHP strings.
