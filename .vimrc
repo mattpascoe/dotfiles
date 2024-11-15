@@ -34,13 +34,16 @@ Plug 'tpope/vim-surround'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }  "fuzzy finder
 Plug 'junegunn/fzf.vim'
 Plug 'NLKNguyen/papercolor-theme'
-Plug 'rodjek/vim-puppet'
-Plug 'hashivim/vim-terraform'
+"Plug 'rodjek/vim-puppet'
+"Plug 'hashivim/vim-terraform'
 Plug 'dense-analysis/ale' "Replacement for syntastic
 "Plug 'ap/vim-css-color' "Color preview for css
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'christoomey/vim-tmux-navigator'
+"Plug 'tpope/vim-dadbod'
+"Plug 'kristijanhusak/vim-dadbod-ui'
+"Plug 'kristijanhusak/vim-dadbod-completion' "Optional
 "TODO look into lazyvim, ripgrep, ag, or silversearcher-ag type plugins
 call plug#end()
 
@@ -75,7 +78,7 @@ set background=dark     " on a dark background
 " Newer vim seems to like pascal instead of puppet
 au BufNewFile,BufRead *.pp  setlocal filetype=puppet
 
-let g:terraform_fmt_on_save=1
+"let g:terraform_fmt_on_save=1
 
 " Pandoc settings (basically takes over markdown)
 autocmd FileType pandoc setlocal nonumber norelativenumber colorcolumn= textwidth=0 spell
@@ -132,6 +135,7 @@ autocmd FileType vimwiki setlocal nonumber norelativenumber colorcolumn= textwid
 """" end vimwiki
 
 """" codeium settings
+let g:airline#extensions#codeium#enabled = 1
 imap <C-j>   <Cmd>call codeium#CycleCompletions(1)<CR>
 imap <C-k>   <Cmd>call codeium#CycleCompletions(-1)<CR>
 imap <script><silent><nowait><expr> <C-l> codeium#AcceptNextWord()
@@ -330,7 +334,7 @@ function! ToggleSpell()
 endfunction
 
 " Ignore first word capitalization
-:set spellcapcheck=
+set spellcapcheck=
 
 " Go back to last misspelled word and pick first suggestion.
 nnoremap <leader>ss <Esc>[s1z=
