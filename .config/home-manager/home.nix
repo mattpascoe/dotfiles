@@ -1,3 +1,5 @@
+# use `nix flake update` to pull in new available versions
+# use `home-manager switch` to apply changes this file
 { config, pkgs, ... }:
 
 
@@ -11,8 +13,8 @@
 
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
-  home.username = "mdp";
-  home.homeDirectory = "/Users/mdp";
+  #home.username = "mdp";
+  #home.homeDirectory = "/Users/mdp";
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -21,14 +23,38 @@
   # You should not change this value, even if you update Home Manager. If you do
   # want to update the value, then make sure to first check the Home Manager
   # release notes.
-  home.stateVersion = "23.05"; # Please read the comment before changing.
+  #home.stateVersion = "23.05"; # Please read the comment before changing.
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
     #_1password-gui
+    _1password-cli
+    #beekeeper-studio # not supported on mac
+    docker
+    docker-client
+    dockerfile-language-server-nodejs # for LSP
+    docker-compose-language-service # for LSP
+    fd
+    fzf
+    kitty
+    lazydocker
+    lazygit
+    lazysql
+    neovim
+    newman
+    nodejs # needed for stupid LSPs
+    #nodejs-slim # needed for stupid LSPs probably better since its 'slim'.. need to test it tho
+    php # for LSPs and maybe more
+    php82Extensions.xdebug
+    ripgrep
+    slack
+    telegram-desktop
     #trippy
     tmux
+    yazi
+    yubikey-manager
+    zoom-us
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
