@@ -12,10 +12,10 @@ echo "Configuring as a $SHELLTYPE shell."
 
 # Set up some command aliases
 alias cdd='cd $HOME/data'
-alias vi='vim'
+alias vi='nvim'
 # vimwiki
-alias vw='vim -c "VimwikiIndex 1"'
-alias vww='vim -c "VimwikiIndex 2"'
+alias vw='vim -c ":VimwikiIndex 1"'
+alias vww='vim -c ":VimwikiIndex 2"'
 
 alias ls='ls -F --color=auto'
 alias la='ls -a'
@@ -68,6 +68,7 @@ alias tut='dut +"%r"'
 
 # Turn on vi mode
 set -o vi
+export EDITOR=vi
 
 # If in tmux, refresh ssh and display variables. This is cleaner than the
 # ssh_reagent function below.
