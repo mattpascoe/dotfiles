@@ -92,6 +92,14 @@ else
   git clone https://github.com/zsh-users/zsh-autosuggestions $XDG_CONFIG_HOME/zsh/zsh-autosuggestions
 fi
 
+if [ -f $XDG_CONFIG_HOME/zsh/zsh-vi-mode/zsh-vi-mode.zsh ]; then
+  source $XDG_CONFIG_HOME/zsh/zsh-vi-mode/zsh-vi-mode.zsh
+else
+  echo "Installing zsh-vi-mode plugin."
+  git clone https://github.com/jeffreytse/zsh-vi-mode.git $XDG_CONFIG_HOME/zsh/zsh-vi-mode
+fi
+
+
 # Debian fzf completions
 # if only the package was consistent in where it put its completions
 [[ -f /usr/share/doc/fzf/examples/completion.zsh ]] && source /usr/share/doc/fzf/examples/completion.zsh
