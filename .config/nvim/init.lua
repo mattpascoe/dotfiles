@@ -1,87 +1,11 @@
 --[[
 
-=====================================================================
-==================== READ THIS BEFORE CONTINUING ====================
-=====================================================================
-========                                    .-----.          ========
-========         .----------------------.   | === |          ========
-========         |.-""""""""""""""""""-.|   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||   KICKSTART.NVIM   ||   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||                    ||   |-----|          ========
-========         ||:Tutor              ||   |:::::|          ========
-========         |'-..................-'|   |____o|          ========
-========         `"")----------------(""`   ___________      ========
-========        /::::::::::|  |::::::::::\  \ no mouse \     ========
-========       /:::========|  |==hjkl==:::\  \ required \    ========
-========      '""""""""""""'  '""""""""""""'  '""""""""""'   ========
-========                                                     ========
-=====================================================================
-=====================================================================
+Initial startingpoint was Kickstart.nvim
+https://github.com/nvim-lua/kickstart.nvim
 
-What is Kickstart?
-
-  Kickstart.nvim is *not* a distribution.
-
-  Kickstart.nvim is a starting point for your own configuration.
-    The goal is that you can read every line of code, top-to-bottom, understand
-    what your configuration is doing, and modify it to suit your needs.
-
-    Once you've done that, you can start exploring, configuring and tinkering to
-    make Neovim your own! That might mean leaving Kickstart just the way it is for a while
-    or immediately breaking it into modular pieces. It's up to you!
-
-    If you don't know anything about Lua, I recommend taking some time to read through
-    a guide. One possible example which will only take 10-15 minutes:
-      - https://learnxinyminutes.com/docs/lua/
-
-    After understanding a bit more about Lua, you can use `:help lua-guide` as a
-    reference for how Neovim integrates Lua.
-    - :help lua-guide
-    - (or HTML version): https://neovim.io/doc/user/lua-guide.html
-
-Kickstart Guide:
-
-  TODO: The very first thing you should do is to run the command `:Tutor` in Neovim.
-
-    If you don't know what this means, type the following:
-      - <escape key>
-      - :
-      - Tutor
-      - <enter key>
-
-    (If you already know the Neovim basics, you can skip this step.)
-
-  Once you've completed that, you can continue working through **AND READING** the rest
-  of the kickstart init.lua.
-
-  Next, run AND READ `:help`.
-    This will open up a help window with some basic information
-    about reading, navigating and searching the builtin help documentation.
-
-    This should be the first place you go to look when you're stuck or confused
-    with something. It's one of my favorite Neovim features.
-
-    MOST IMPORTANTLY, we provide a keymap "<space>sh" to [s]earch the [h]elp documentation,
-    which is very useful when you're not exactly sure of what you're looking for.
-
-  I have left several `:help X` comments throughout the init.lua
-    These are hints about where to find more information about the relevant settings,
-    plugins or Neovim features used in Kickstart.
-
-   NOTE: Look for lines like this
-
-    Throughout the file. These are for you, the reader, to help you understand what is happening.
-    Feel free to delete them once you know what you're doing, but they should serve as a guide
-    for when you are first encountering a few different constructs in your Neovim config.
+:help lua-guide (or HTML version): https://neovim.io/doc/user/lua-guide.html
 
 If you experience any errors while trying to install kickstart, run `:checkhealth` for more info.
-
-I hope you enjoy your Neovim journey,
-- TJ
-
-P.S. You can delete this when you're done too. It's your config now! :)
 --]]
 
 -- Set <space> as the leader key
@@ -91,7 +15,14 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
+
+-- check if we are an unraid system
+vim.g.has_unraid = vim.fn.filereadable '/etc/unraid-version'
+
+vim.g.php_htmlInStrings = 1 --Syntax highlight HTML code inside PHP strings.
+vim.g.php_sql_query = 1 --Syntax highlight SQL code inside PHP strings.
+vim.g.php_noShortTags = 1 --Disable PHP short tags.
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -102,7 +33,18 @@ vim.g.have_nerd_font = false
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
+vim.opt.relativenumber = true
+
+-- Dont backup files
+vim.opt.backup = false
+vim.opt.writebackup = false
+
+-- Preferred file formats in order
+vim.opt.fileformats = 'unix,dos,mac'
+
+vim.opt.shiftround = true -- indent in multiples of shiftwidth
+vim.opt.autoindent = true -- always set autoindenting on
+vim.opt.smartindent = true -- be smart about indenting new lines
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -164,6 +106,44 @@ vim.opt.scrolloff = 10
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
+-- Set up abbreviations
+vim.cmd.abbrev('-...', '-----------------------------------------------------')
+vim.cmd.abbrev('RuL', '----+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8----+----9----+----0')
+vim.cmd.abbrev('NuM', '1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890')
+
+vim.keymap.set('i', 'ii', '<C-[>') -- Quick escape to normal mode TBD if useful
+vim.keymap.set('n', ';', ':') -- map ; for cmd mode so no need for shift
+
+-- Open a terminal
+vim.keymap.set('n', '<leader>tt', ':terminal<cr>', { desc = '[T]oggle [T]erminal', noremap = true, silent = true })
+
+-- Toggle paste and spell mode with status
+vim.keymap.set('n', '<leader>tn', ':set number!<cr>', { desc = '[T]oggle [P]aste mode', noremap = true, silent = true })
+vim.keymap.set('n', '<leader>tp', ':set paste!<cr>', { desc = '[T]oggle [P]aste mode', noremap = true, silent = true })
+vim.keymap.set('n', '<leader>ts', ':set spell!<cr>', { desc = '[T]oggle [S]pellcheck mode', noremap = true, silent = true })
+--vim.api.nvim_set_hl(0, 'SpellBad', { ctermfg = 12, sp = 12, italic = true, undercurl = true })
+
+-- NOTE: do I want any single character going into the * register unless I specifically want it?  TBD
+-- dont store single letter deletes to the register
+vim.keymap.set('n', 'x', '"_x', { noremap = true, silent = true })
+vim.keymap.set('n', 'X', '"_x', { noremap = true, silent = true })
+
+-- Reload the configuration file without restarting vim
+vim.keymap.set('n', '<leader>R', '<cmd>source $MYVIMRC<CR>', { desc = 'VIM Configuration [R]eload' })
+
+-- buffers
+vim.keymap.set('n', '<leader>b', ':enew<cr>', { desc = 'Open a new [b]uffer' })
+vim.keymap.set('n', '<leader>n', ':bn<cr>', { desc = '[N]ext buffer' })
+vim.keymap.set('n', '<leader>p', ':bp<cr>', { desc = '[P]revious buffer' })
+vim.keymap.set('n', '<leader>x', ':bd<cr>', { desc = 'Close buffer' })
+
+-- Gitsigns show blame line
+vim.keymap.set('n', '<leader>cb', ':Gitsigns blame_line<cr>', { desc = '[C]ode git [b]lame line', noremap = true, silent = true })
+vim.keymap.set('n', '<leader>cB', ':Gitsigns blame<cr>', { desc = '[C]ode git [B]lame full', noremap = true, silent = true })
+
+-- yank to clipboard
+vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]], { desc = '[Y]ank selection to clipboard' })
+
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
@@ -201,6 +181,27 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
     vim.highlight.on_yank()
+  end,
+})
+
+-- Disable line numbers etc on various file types
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'gitcommit',
+  callback = function()
+    vim.opt_local.number = false
+    vim.opt_local.relativenumber = false
+    vim.opt_local.textwidth = 0
+    vim.opt_local.colorcolumn = ''
+  end,
+})
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'vimwiki',
+  callback = function()
+    vim.opt_local.number = false
+    vim.opt_local.relativenumber = false
+    vim.opt_local.textwidth = 0
+    vim.opt_local.colorcolumn = ''
   end,
 })
 
@@ -605,6 +606,11 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
+        phpactor = {},
+        cssls = {},
+        html = {},
+        dockerls = {},
+        docker_compose_language_service = {},
         -- clangd = {},
         -- gopls = {},
         -- pyright = {},
@@ -624,6 +630,7 @@ require('lazy').setup({
           -- capabilities = {},
           settings = {
             Lua = {
+              diagnostics = { globals = { 'vim' } }, -- Set vim global to reduce errors
               completion = {
                 callSnippet = 'Replace',
               },
@@ -647,6 +654,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'php-debug-adapter',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -831,19 +839,271 @@ require('lazy').setup({
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
     'folke/tokyonight.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
-    init = function()
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+    --    init = function()
+    -- Load the colorscheme here.
+    -- Like many other themes, this one has different styles, and you could load
+    -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
+    --      vim.cmd.colorscheme 'tokyonight-night'
 
-      -- You can configure highlights by doing something like:
+    -- You can configure highlights by doing something like:
+    --      vim.cmd.hi 'Comment gui=none'
+    --    end,
+  },
+
+  {
+    'NLKNguyen/papercolor-theme',
+    priority = 1000,
+    config = function()
+      -- Left blank to address startup error
+    end,
+    init = function()
+      vim.opt.termguicolors = true
+      vim.opt.background = 'dark'
       vim.cmd.hi 'Comment gui=none'
+      --vim.cmd.colorscheme 'PaperColor'
     end,
   },
 
+  {
+    'christoomey/vim-tmux-navigator',
+    cmd = {
+      'TmuxNavigateLeft',
+      'TmuxNavigateDown',
+      'TmuxNavigateUp',
+      'TmuxNavigateRight',
+      'TmuxNavigatePrevious',
+    },
+    keys = {
+      { '<c-h>', '<cmd><C-U>TmuxNavigateLeft<cr>' },
+      { '<c-j>', '<cmd><C-U>TmuxNavigateDown<cr>' },
+      { '<c-k>', '<cmd><C-U>TmuxNavigateUp<cr>' },
+      { '<c-l>', '<cmd><C-U>TmuxNavigateRight<cr>' },
+      { '<c-\\>', '<cmd><C-U>TmuxNavigatePrevious<cr>' },
+    },
+  },
+
+  -- Show actual colors for references
+  {
+    'chrisbra/Colorizer',
+    init = function()
+      vim.keymap.set('n', '<leader>tc', ':ColorToggle<cr>', { desc = '[T]oggle [C]olor Preview' })
+      -- sets the color at the end of the line
+      -- Seems to have a bug that toggleing just adds another block
+      vim.g.colorizer_use_virtual_text = 1
+      vim.g.colorizer_auto_filetype = 'css,html'
+    end,
+  },
+
+  -- Catppuccin Color scheme
+  {
+    'catppuccin/nvim',
+    as = 'catppuccin',
+    priority = 1000, -- Make sure to load this before all the other start plugins.
+    init = function()
+      vim.opt.termguicolors = true
+      vim.cmd.colorscheme 'catppuccin'
+      vim.api.nvim_set_hl(0, 'ColorColumn', { bg = '#030307' }) -- Draw a highlight at the colorcolumn position also liked #06060F
+    end,
+    config = function()
+      require('catppuccin').setup {
+        flavor = 'mocha',
+        no_italic = true,
+        -- TODO more playing with colors yet to be done
+        color_overrides = {
+          mocha = {
+            base = '#000000', -- Make the primary background black
+            -- mantle = '#242424',
+            -- crust = '#474747',
+          },
+        },
+        integrations = {
+          cmp = true,
+          gitsigns = true,
+          nvimtree = true,
+          treesitter = true,
+          notify = false,
+          mini = {
+            enabled = true,
+            indentscope_color = '',
+          },
+          -- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
+        },
+      }
+    end,
+  },
+
+  {
+    'Exafunction/codeium.vim',
+    event = 'BufEnter',
+    config = function()
+      vim.keymap.set('n', '<leader>ta', ':CodeiumToggle<cr>', { desc = '[T]oggle AI helper (Codeium)', noremap = true, silent = true })
+      -- vim.keymap.set('i', '<C-g>', function() return vim.fn['codeium#Accept']() end, { expr = true, silent = true })
+      vim.keymap.set('i', '<C-j>', function()
+        return vim.fn['codeium#CycleCompletions'](1)
+      end, { expr = true, silent = true })
+      vim.keymap.set('i', '<C-o>', function()
+        return vim.fn['codeium#CycleCompletions'](-1)
+      end, { expr = true, silent = true })
+      vim.keymap.set('i', '<C-x>', function()
+        return vim.fn['codeium#Clear']()
+      end, { expr = true, silent = true })
+    end,
+  },
+
+  {
+    'vimwiki/vimwiki',
+    init = function()
+      vim.g.vimwiki_list = {
+        {
+          -- personal
+          path = '~/data/SYNC/wiki/',
+          syntax = 'markdown',
+          ext = '.md',
+        },
+        {
+          -- work
+          path = '~/data/workwiki/',
+          syntax = 'markdown',
+          ext = '.md',
+        },
+      }
+
+      vim.g.vimwiki_listsyms = ' ○◐●✓'
+      vim.g.vimwiki_global_ext = 0
+      vim.g.vimwiki_key_mappings = { table_mappings = 0 }
+    end,
+    config = function()
+      vim.keymap.set('n', '<leader>tl', ':VimwikiToggleListItem<cr>', { desc = '[T]oggle Vimwiki [L]istitem', noremap = true, silent = true })
+    end,
+  },
+
+  -- -- Visualize buffers as tabs
+  -- {
+  --   'akinsho/bufferline.nvim',
+  --   version = '*',
+  --   after = 'catppuccin',
+  --   dependencies = 'nvim-tree/nvim-web-devicons',
+  --   config = function()
+  --     local base_highlights = require('catppuccin.groups.integrations.bufferline').get()
+  --     local custom_highlights = {
+  --       fill = { bg = '#000000' },
+  --     }
+  --
+  --     -- Set the custom highlights to override base highlights
+  --     --setmetatable(custom_highlights, { __index = base_highlights })
+  --
+  --     -- Merge the tables using vim.tbl_deep_extend
+  --     --local merged_highlights = vim.tbl_deep_extend('force', base_highlights, custom_highlights)
+  --
+  --     -- Print the merged highlights to the command line for debugging
+  --     --print(vim.inspect(base_highlights))
+  --
+  --     require('bufferline').setup {
+  --       options = {
+  --         separator_style = 'slant',
+  --       },
+  --       --highlights = custom_highlights,
+  --       highlights = require('catppuccin.groups.integrations.bufferline').get(),
+  --     }
+  --   end,
+  -- },
+
+  -- Preview markdown live in web browser
+  -- NOTE: had to do a ':Lazy build markdown-preview.nvim' the first time
+  {
+    'iamcco/markdown-preview.nvim',
+    cond = function()
+      return not has_unraid -- not yet tested, should not install on unraid
+    end,
+    cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
+    ft = { 'markdown' },
+    init = function()
+      vim.keymap.set('n', '<leader>tm', ':MarkdownPreviewToggle<cr>', { desc = '[T]oggle [M]arkdown Preview' })
+      vim.g.mkdp_filetypes = { 'markdown' }
+      vim.g.mkdp_browser = { 'safari' }
+      vim.g.mkdp_combine_preview = 1
+    end,
+    build = function()
+      vim.fn['mkdp#util#install']()
+    end,
+  },
+
+  -- Save and load buffers (a session) automatically for each folder
+  {
+    'rmagatti/auto-session',
+    lazy_support = true,
+
+    init = function()
+      -- Add localoptions as per auto-session plugin suggestion
+      vim.opt.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
+    end,
+    ---enables autocomplete for opts
+    ---@module "auto-session"
+    ---@type AutoSession.Config
+    opts = {
+      suppressed_dirs = { '~/', '~/Downloads', '/' },
+      args_allow_files_auto_save = true,
+      log_level = 'error',
+    },
+  },
+
+  -- Setup a debugger
+  -- TODO this stuff is not yet fully working. more to do with dap and php
+  {
+    --'rcarriga/nvim-dap-ui',
+    'mfussenegger/nvim-dap',
+    dependencies = { 'rcarriga/nvim-dap-ui', 'nvim-neotest/nvim-nio' },
+    config = function()
+      local dap, dapui = require 'dap', require 'dapui'
+      dap.listeners.before.attach.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.launch.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated.dapui_config = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited.dapui_config = function()
+        dapui.close()
+      end
+
+      dap.adapters.php = {
+        type = 'executable',
+        command = 'node',
+        args = { '~/.local/share/nvim/mason/packages/php-debug-adapter/extension/out/phpDebug.js' },
+      }
+
+      dap.configurations.php = {
+        {
+          type = 'php',
+          request = 'launch',
+          name = 'Listen for Xdebug',
+          port = 9003,
+        },
+      }
+
+      --require 'nvim-dap-virtual-text'
+      vim.fn.sign_define('DapBreakpoint', { text = '🔴', texthl = 'DapBreakpoint', linehl = 'DapBreakpoint', numhl = 'DapBreakpoint' })
+
+      -- Debugger
+      vim.keymap.set('n', '<leader>dt', dapui.toggle, { noremap = true })
+      vim.keymap.set('n', '<leader>db', dap.toggle_breakpoint, { noremap = true })
+      vim.keymap.set('n', '<leader>dc', dap.continue, { noremap = true })
+      vim.keymap.set('n', '<leader>dr', ":lua require('dapui').open({reset = true})<CR>", { noremap = true })
+      --vim.keymap.set("n", "<leader>ht", ":lua require('harpoon.ui').toggle_quick_menu()<CR>", {noremap=true})
+    end,
+  },
+  'theHamsta/nvim-dap-virtual-text',
+  --'leoluz/nvim-dap-go',
+
   -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+  {
+    'folke/todo-comments.nvim',
+    event = 'VimEnter',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = { signs = false },
+  },
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
@@ -863,6 +1123,9 @@ require('lazy').setup({
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
 
+      local tabline = require 'mini.tabline'
+      tabline.setup { MiniTablineFill = '#FF0000' }
+
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
@@ -875,7 +1138,7 @@ require('lazy').setup({
       -- cursor location to LINE:COLUMN
       ---@diagnostic disable-next-line: duplicate-set-field
       statusline.section_location = function()
-        return '%2l:%-2v'
+        return "%3{codeium#GetStatusString()} %2l:%-2v%{&paste ? ' ρ' : ''}%{&spell ? ' Ꞩ' : ''}"
       end
 
       -- ... and there is more!
