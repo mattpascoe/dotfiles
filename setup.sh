@@ -102,37 +102,40 @@ if [ "$MACHINE" == "Mac" ]; then
     git --version
   fi
 
-  if ! type "brew" > /dev/null; then
-    echo "- Installing Brew tools..."
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  fi
-
-  # Load up brew environment, should work on ARM intel systems.
-  if type "brew" > /dev/null; then
-    eval "$(brew shellenv)"
-
-    read -p "Do you want yabai/skhd configuration? [y/N] " -r YAB
-    echo    # (optional) move to a new line
-    if [[ $YAB =~ ^[Yy]$ ]]
-    then
-      # Tiling window manager and shortcuts
-      brew install koekeishiya/formulae/yabai koekeishiya/formulae/skhd
-
-      LINKFILES+=(".config/yabai" ".config/skhd")
+  read -r -p "- Install Homebrew based packages... Continue (N/y) "
+  if [ "$REPLY" == "y" ]; then
+    if ! type "brew" > /dev/null; then
+      echo "- Installing Brew tools..."
+      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
-
-    echo "- Ensuring install of requested brew packages..."
-    brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman tmux bash jesseduffield/lazygit/lazygit shellcheck
-
-    echo "-!- Consider installing the following"
-    echo "brew install zoom homebrew/cask-fonts/font-jetbrains-mono-nerd-font"
-    echo
+  
+    # Load up brew environment, should work on ARM intel systems.
+    if type "brew" > /dev/null; then
+      eval "$(brew shellenv)"
+  
+      read -p "Do you want yabai/skhd configuration? [y/N] " -r YAB
+      echo    # (optional) move to a new line
+      if [[ $YAB =~ ^[Yy]$ ]]
+      then
+        # Tiling window manager and shortcuts
+        brew install koekeishiya/formulae/yabai koekeishiya/formulae/skhd
+  
+        LINKFILES+=(".config/yabai" ".config/skhd")
+      fi
+  
+      echo "- Ensuring install of requested brew packages..."
+      brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman tmux bash jesseduffield/lazygit/lazygit shellcheck
+  
+      echo "-!- Consider installing the following"
+      echo "brew install zoom homebrew/cask-fonts/font-jetbrains-mono-nerd-font"
+      echo
+    else
+      echo "ERROR: Unable to find Brew command"
+    fi
+  
   else
-    echo "ERROR: Unable to find Brew command"
+    echo ".. Skipping Brew based config changes."
   fi
-
-#needs rosetta on m1
-# brew install -q homebrew/cask-drivers/yubico-authenticator
 
   read -r -p "- Execute 'defaults' commands to set specific Mac settings... Continue (N/y) "
   if [ "$REPLY" == "y" ]; then
