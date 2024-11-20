@@ -8,3 +8,5 @@
 .config/tmux/plugins
 # Skip btop log file
 .config/btop/btop.log
+# Skip kitty config backups
+.config/kitty/kitty.conf.bak

@@ -1,8 +1,11 @@
 #!/bin/bash
 
+# This does not need to run as root, it will sudo when needed
 # lots of install stuff.. you should be able to run this over and over without issue
 # TODO: refactor and have more "configuration" instead of hardcoded things like package installs
 # TODO: look into using stow for dotfile management
+
+set -eou pipefail
 
 # Determine what type of machine we are on
 unameOut="$(uname -s)"
@@ -40,7 +43,6 @@ if [ -f /etc/unraid-version ]; then
     ln -s /mnt/user/data-syncthing/matt-personal/wiki ~/data/SYNC/wiki
   fi
 
-
   echo "- Updates to /boot/config have been made."
   # Stop here since unraid is its own beast
   exit
@@ -56,17 +58,6 @@ fi
 ###### Linux specific stuff
 if [ "$MACHINE" == "Linux" ]; then
   echo "Looks like the OS is $PRETTY_NAME"
-  if ! type "starship" &> /dev/null; then
-    read -p "Do you want to install Starship.rs prompt? [y/N] " -r STAR
-    echo    # (optional) move to a new line
-    if [[ $STAR =~ ^[Yy]$ ]]
-    then
-      sudo sh -c "curl -fsSL https://starship.rs/install.sh | sh"
-    fi
-  else
-    echo "- Starship is alredy installed."
-  fi
-
   read -p "Do you want i3 configuration links? [y/N] " -r I3
   echo    # (optional) move to a new line
   if [[ $I3 =~ ^[Yy]$ ]]
@@ -74,13 +65,21 @@ if [ "$MACHINE" == "Linux" ]; then
     LINKFILES+=(".config/i3")
   fi
 
-  PKGS+=("git" "jq" "fzf" "tree" "zsh" "highlight" "tmux")
+  PKGS+=("git"
+    "jq"
+    "fzf"
+    "tree"
+    "zsh"
+    "highlight"
+    "tmux"
+  )
+
   echo "- Ensuring install of requested packages..."
   case "$ID" in
     debian*)    sudo apt install "${PKGS[@]}";;
     ubuntu*)    sudo apt install "${PKGS[@]}";;
     *)  echo "-!- This system is not a supported type, You should check that the following packages are installed:"
-        echo "    ${PKGS[@]}";;
+        echo "    ${PKGS[*]}";;
   esac
 
   if [ ! -f /bin/zsh ]; then
@@ -102,48 +101,103 @@ if [ "$MACHINE" == "Mac" ]; then
     git --version
   fi
 
-  if ! type "brew" > /dev/null; then
-    echo "- Installing Brew tools..."
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  fi
-
-  # Load up brew environment, should work on ARM intel systems.
-  if type "brew" > /dev/null; then
-    eval "$(brew shellenv)"
-
-    read -p "Do you want yabai/skhd configuration? [y/N] " -r YAB
-    echo    # (optional) move to a new line
-    if [[ $YAB =~ ^[Yy]$ ]]
-    then
-      # Tiling window manager and shortcuts
-      brew install koekeishiya/formulae/yabai koekeishiya/formulae/skhd
-
-      LINKFILES+=(".config/yabai" ".config/skhd")
+  # Run NIX if we want ( should probably move to all systems level)
+  read -r -p "- Install NIX based packages... Continue (N/y) "
+  if [ "$REPLY" == "y" ]; then
+    if ! type "nix" > /dev/null; then
+      echo "- Installing NIX tools..."
+      curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
     fi
 
-    echo "- Ensuring install of requested brew packages..."
-    brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman tmux bash jesseduffield/lazygit/lazygit shellcheck
-
-    echo "-!- Consider installing the following"
-    echo "brew install zoom homebrew/cask-fonts/font-jetbrains-mono-nerd-font"
-    echo
+    if type "nix" > /dev/null; then
+      . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+      nix flake update --flake .config/home-manager
+      # Running impure to install 1password gui that is flagged broken due to
+      # /Applications requirement. I am ok because I copy all apps to
+      # /Applications to fix the stupid spotlight problem
+      NIXPKGS_ALLOW_BROKEN=1 nix run home-manager -- switch --impure --flake .config/home-manager
+      #NIXPKGS_ALLOW_BROKEN=1 home-manager --impure switch (this is how you can run it manually)
+    else
+      echo "ERROR: Unable to find NIX command"
+    fi
   else
-    echo "ERROR: Unable to find Brew command"
+    echo ".. Skipping NIX based config changes."
   fi
 
-#needs rosetta on m1
-# brew install -q homebrew/cask-drivers/yubico-authenticator
+  # Run brew if we want
+  read -r -p "- Install Homebrew based packages... Continue (N/y) "
+  if [ "$REPLY" == "yDISABLED" ]; then
+    if ! type "brew" > /dev/null; then
+      echo "- Installing Brew tools..."
+      #/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
 
+    # Load up brew environment, should work on ARM intel systems.
+    if type "brew" > /dev/null; then
+      eval "$(brew shellenv)"
+
+      # Disabling yabai for now as well
+#      read -p "Do you want yabai/skhd configuration? [y/N] " -r YAB
+#      echo    # (optional) move to a new line
+#      if [[ $YAB =~ ^[Yy]$ ]]
+#      then
+#        # Tiling window manager and shortcuts
+#        brew install koekeishiya/formulae/yabai koekeishiya/formulae/skhd
+#
+#        LINKFILES+=(".config/yabai" ".config/skhd")
+#      fi
+
+      echo "- Ensuring install of requested brew packages..."
+      brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman tmux bash jesseduffield/lazygit/lazygit shellcheck
+
+    else
+      echo "ERROR: Unable to find Brew command"
+    fi
+
+  else
+    echo ".. [DISABLED] Skipping Brew based config changes."
+  fi
+
+  # Setup lots of system settings using the "defaults" method
   read -r -p "- Execute 'defaults' commands to set specific Mac settings... Continue (N/y) "
-  if [ "$REPLY" == "y" ]; then
-    ~/dotfiles/.macos
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    sudo ~/dotfiles/.macos
   else
     echo ".. Skipping defaults based config changes."
   fi
+
+  # For some reason /usr/local/bin is not on mac by default. Lets make it for starship
+  if [ ! -d /usr/local/bin ]; then
+    sudo mkdir -p /usr/local/bin
+    sudo chown $(whoami):admin /usr/local/bin
+  fi
 fi
 
-###### Link dotfile configs
-LINKFILES+=(".profile" ".vimrc" ".config/nvim" ".zshrc" ".config/tmux" ".config/git" ".config/btop" ".config/lazygit" ".config/starship.toml")
+# Everyone gets starship!
+if ! type "starship" &> /dev/null; then
+  read -p "Do you want to install Starship.rs prompt? [y/N] " -r STAR
+  echo    # (optional) move to a new line
+  if [[ $STAR =~ ^[Yy]$ ]]; then
+    sudo sh -c "curl -fsSL https://starship.rs/install.sh | sh"
+  fi
+else
+  echo "- Starship is alredy installed."
+fi
+
+###### Link dotfile configs, could I use stow? sure, but less dependancies here
+LINKFILES+=(
+  ".config/btop"
+  ".config/git"
+  ".config/home-manager"
+  ".config/lazygit"
+  ".config/kitty"
+  ".config/nvim"
+  ".config/starship.toml"
+  ".config/tmux"
+  ".profile"
+  ".vimrc"
+  ".zshrc"
+)
 echo "- Checking dotfile config symlinks..."
 for FILE in "${LINKFILES[@]}"
 do
@@ -160,8 +214,9 @@ do
   fi
 done
 
+# Run <prefix> + I to install plugins the first time
 if [ ! -d ~/.config/tmux/plugins/tpm ];then
-  echo "Installing TMUX plugin manager."
+  echo "Installing TMUX plugin manager. Run <prefix> + I to install plugins the first time"
   git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
 fi
 
