@@ -27,7 +27,7 @@ Plug 'vim-pandoc/vim-pandoc-syntax'
 " see: https://github.com/iamcco/markdown-preview.nvim/issues/50
 Plug 'iamcco/markdown-preview.nvim', has_unraid ? { 'on': [] } : { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug'] }
 "Plug 'github/copilot.vim', has_unraid ? { 'on': [] } : {}
-Plug 'Exafunction/codeium.vim', { 'branch': 'main' }
+"Plug 'Exafunction/codeium.vim', { 'branch': 'main' }
 "Plug 'majutsushi/tagbar'       " Needs ctags cli installed
 "Plug 'mileszs/ack.vim'         " Needs ack cli installed
 Plug 'tpope/vim-surround'
@@ -269,7 +269,7 @@ set colorcolumn=80
 
 " DEFINE SOME KEYMAPS
 
-let mapleader=","
+let mapleader=" "
 
 " Tab management
 nnoremap tl :tabnext<CR>
@@ -281,10 +281,10 @@ nnoremap tc :tabclose<CR>
 nnoremap tx :tabclose<CR>
 
 " Buffer management - maybe map to something other than f
-nnoremap ff :enew<CR>   " new buffer
-nnoremap fp :bprev<CR>  " previous buffer
-nnoremap fn :bnext<CR>  " next buffer
-nnoremap fx :bw<CR>     " close buffer
+nnoremap <leader>b :enew<CR>   " new buffer
+nnoremap <leader>p :bprev<CR>  " previous buffer
+nnoremap <leader>n :bnext<CR>  " next buffer
+nnoremap <leader>x :bw<CR>     " close buffer
 
 " Open a terminal
 nnoremap <leader>t :terminal<CR>
@@ -295,7 +295,7 @@ nnoremap <leader>lp :ALEPreviousWrap<CR>
 
 "" FZF related
 " bufferlist
-nnoremap <Leader>b :Buffers<CR>
+"nnoremap <Leader>b :Buffers<CR>
 nnoremap <leader>s :<C-u>FZF<CR>
 nnoremap <leader><tab> :<C-u>FZF<CR>
 
