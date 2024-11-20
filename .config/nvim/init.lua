@@ -108,8 +108,14 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Set up abbreviations
 vim.cmd.abbrev('-...', '-----------------------------------------------------')
-vim.cmd.abbrev('RuL', '----+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8----+----9----+----0')
-vim.cmd.abbrev('NuM', '1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890')
+vim.cmd.abbrev(
+  'RuL',
+  '----+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8----+----9----+----0'
+)
+vim.cmd.abbrev(
+  'NuM',
+  '1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890'
+)
 
 vim.keymap.set('i', 'ii', '<C-[>') -- Quick escape to normal mode TBD if useful
 vim.keymap.set('n', ';', ':') -- map ; for cmd mode so no need for shift
@@ -120,7 +126,12 @@ vim.keymap.set('n', '<leader>tt', ':terminal<cr>', { desc = '[T]oggle [T]erminal
 -- Toggle paste and spell mode with status
 vim.keymap.set('n', '<leader>tn', ':set number!<cr>', { desc = '[T]oggle [P]aste mode', noremap = true, silent = true })
 vim.keymap.set('n', '<leader>tp', ':set paste!<cr>', { desc = '[T]oggle [P]aste mode', noremap = true, silent = true })
-vim.keymap.set('n', '<leader>ts', ':set spell!<cr>', { desc = '[T]oggle [S]pellcheck mode', noremap = true, silent = true })
+vim.keymap.set(
+  'n',
+  '<leader>ts',
+  ':set spell!<cr>',
+  { desc = '[T]oggle [S]pellcheck mode', noremap = true, silent = true }
+)
 --vim.api.nvim_set_hl(0, 'SpellBad', { ctermfg = 12, sp = 12, italic = true, undercurl = true })
 
 -- NOTE: do I want any single character going into the * register unless I specifically want it?  TBD
@@ -138,8 +149,18 @@ vim.keymap.set('n', '<leader>p', ':bp<cr>', { desc = '[P]revious buffer' })
 vim.keymap.set('n', '<leader>x', ':bd<cr>', { desc = 'Close buffer' })
 
 -- Gitsigns show blame line
-vim.keymap.set('n', '<leader>cb', ':Gitsigns blame_line<cr>', { desc = '[C]ode git [b]lame line', noremap = true, silent = true })
-vim.keymap.set('n', '<leader>cB', ':Gitsigns blame<cr>', { desc = '[C]ode git [B]lame full', noremap = true, silent = true })
+vim.keymap.set(
+  'n',
+  '<leader>cb',
+  ':Gitsigns blame_line<cr>',
+  { desc = '[C]ode git [b]lame line', noremap = true, silent = true }
+)
+vim.keymap.set(
+  'n',
+  '<leader>cB',
+  ':Gitsigns blame<cr>',
+  { desc = '[C]ode git [B]lame full', noremap = true, silent = true }
+)
 
 -- yank to clipboard
 vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]], { desc = '[Y]ank selection to clipboard' })
@@ -936,7 +957,12 @@ require('lazy').setup({
     'Exafunction/codeium.vim',
     event = 'BufEnter',
     config = function()
-      vim.keymap.set('n', '<leader>ta', ':CodeiumToggle<cr>', { desc = '[T]oggle AI helper (Codeium)', noremap = true, silent = true })
+      vim.keymap.set(
+        'n',
+        '<leader>ta',
+        ':CodeiumToggle<cr>',
+        { desc = '[T]oggle AI helper (Codeium)', noremap = true, silent = true }
+      )
       -- vim.keymap.set('i', '<C-g>', function() return vim.fn['codeium#Accept']() end, { expr = true, silent = true })
       vim.keymap.set('i', '<C-j>', function()
         return vim.fn['codeium#CycleCompletions'](1)
@@ -973,7 +999,12 @@ require('lazy').setup({
       vim.g.vimwiki_key_mappings = { table_mappings = 0 }
     end,
     config = function()
-      vim.keymap.set('n', '<leader>tl', ':VimwikiToggleListItem<cr>', { desc = '[T]oggle Vimwiki [L]istitem', noremap = true, silent = true })
+      vim.keymap.set(
+        'n',
+        '<leader>tl',
+        ':VimwikiToggleListItem<cr>',
+        { desc = '[T]oggle Vimwiki [L]istitem', noremap = true, silent = true }
+      )
     end,
   },
 
@@ -1084,7 +1115,10 @@ require('lazy').setup({
       }
 
       --require 'nvim-dap-virtual-text'
-      vim.fn.sign_define('DapBreakpoint', { text = '🔴', texthl = 'DapBreakpoint', linehl = 'DapBreakpoint', numhl = 'DapBreakpoint' })
+      vim.fn.sign_define(
+        'DapBreakpoint',
+        { text = '🔴', texthl = 'DapBreakpoint', linehl = 'DapBreakpoint', numhl = 'DapBreakpoint' }
+      )
 
       -- Debugger
       vim.keymap.set('n', '<leader>dt', dapui.toggle, { noremap = true })
@@ -1151,7 +1185,19 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = {
+        'bash',
+        'c',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
