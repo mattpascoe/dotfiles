@@ -1,6 +1,6 @@
-# use `nix flake update` to pull in new available versions
+# use `nix flake update --flake ~/dotfiles/.config/home-manager` to pull in new available versions
 # use `home-manager switch` to apply changes this file
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 
 {
@@ -28,19 +28,25 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
-    #_1password-gui
+    _1password-gui
     _1password-cli
     #beekeeper-studio # not supported on mac
+    brave
+    colima # Mac only, its the stupid docker server itself
     docker
     docker-client
     dockerfile-language-server-nodejs # for LSP
     docker-compose-language-service # for LSP
     fd
     fzf
+    highlight
+    jq
     kitty
     lazydocker
     lazygit
     lazysql
+    maccy  # mac only
+    #mkalias # mac only, to fix spotlight finding apps
     neovim
     newman
     nodejs # needed for stupid LSPs
@@ -48,8 +54,11 @@
     php # for LSPs and maybe more
     php82Extensions.xdebug
     ripgrep
+    shellcheck
     slack
+    syncthing
     telegram-desktop
+    tree
     #trippy
     tmux
     yazi
@@ -60,7 +69,7 @@
     # # overrides. You can do that directly here, just don't forget the
     # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
     # # fonts?
-    # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
+    (pkgs.nerdfonts.override { fonts = [ "Monaspace" "Meslo" ]; })
 
     # # You can also create simple shell scripts directly inside your
     # # configuration. For example, this adds a command 'my-hello' to your
@@ -105,4 +114,22 @@
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+
+  # This copies applications to top level /Apps dir so Spotlight finds them
+  home.activation.postInstallScript = lib.mkAfter ''
+    echo "setting up /Applications links..." >&2
+    rm -rf /Applications/Nix-Apps
+    mkdir -p /Applications/Nix-Apps
+    find ~/Applications/Home\ Manager\ Apps/* -maxdepth 1 -type l -exec readlink '{}' + |
+    while read -r src; do
+      app_name=$(basename "$src")
+      echo "copying $src" >&2
+      # NOTE: I wanted mkalias to work but spotlight doesnt like it.. had to copy the dang things
+      #${pkgs.mkalias}/bin/mkalias "$src" "/Applications/Nix-Apps/$app_name"
+      cp -r "$src" "/Applications/Nix-Apps/$app_name"
+    done
+    chmod -R u+w /Applications/Nix-Apps
+  '';
 }
+
+

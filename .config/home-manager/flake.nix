@@ -1,4 +1,8 @@
 # This file strictly manages standalone home stuff for now
+# My goal for now is just package management to replace brew
+# With all the nix termoil and such, I'm not yet sold on doing everything
+# here. While its compelling, I may not want to go all in?
+# This means that nix will be mostly mac for the time being
 {
   description = "Home Manager config for mdp";
 
@@ -19,7 +23,7 @@
 
   outputs = { nixpkgs, home-manager, ... }:
     let
-      system = "x86_64-darwin";
+      system = "aarch64-darwin";
 
       mkHomeConfiguration = args: home-manager.lib.homeManagerConfiguration (rec {
         pkgs = nixpkgs.legacyPackages.${system};
@@ -36,7 +40,8 @@
       } // args);
 
     in {
-      # run with home-manager switch --flake .#mdp or similar
+
+    # run with home-manager switch --flake .#mdp or similar
       homeConfigurations.mdp = mkHomeConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-darwin;
         modules = [
@@ -51,11 +56,27 @@
         ];
       };
 
-      homeConfigurations.mdpextra = mkHomeConfiguration {
-        extraSpecialArgs = {
-          withGUI = true;
-          isDesktop = true;
-        };
+      homeConfigurations.mpascoe = mkHomeConfiguration {
+        #pkgs = nixpkgs.legacyPackages.x86_64-darwin;
+        pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+        modules = [
+          ./home.nix
+          {
+            home = {
+              username = "mpascoe";
+              homeDirectory = "/Users/mpascoe";
+              stateVersion = "23.05";
+            };
+          }
+        ];
       };
+
+#      homeConfigurations.mdpextra = mkHomeConfiguration {
+#        extraSpecialArgs = {
+#          withGUI = true;
+#          isDesktop = true;
+#        };
+#      };
+
     };
 }
