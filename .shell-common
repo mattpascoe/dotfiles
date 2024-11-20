@@ -164,9 +164,14 @@ if command -v brew &> /dev/null; then
   # FZF Key bindings
   [[ -f ${BREWPREFIX}/opt/fzf/shell/key-bindings.${SHELLTYPE} ]] && source "${BREWPREFIX}/opt/fzf/shell/key-bindings.${SHELLTYPE}"
 
+elif command -v nix &> /dev/null; then
+  # Nix locations
+  [[ -f ~/.nix-profile/share/fzf/completion.${SHELLTYPE} ]] && source ~/.nix-profile/share/fzf/completion.${SHELLTYPE}
+  [[ -f ~/.nix-profile/share/fzf/key-bindings.${SHELLTYPE} ]] && source ~/.nix-profile/share/fzf/key-bindings.${SHELLTYPE}
 else
   # shell completions already installed to system via fzf package
   # Debian linux location for fzf bindings per shell type
+  [[ -f /usr/share/doc/fzf/examples/completion.${SHELLTYPE} ]] && source /usr/share/doc/fzf/examples/completion.${SHELLTYPE}
   [[ -f /usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE} ]] && source /usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE}
   [[ -f /usr/share/fzf/key-bindings.${SHELLTYPE} ]] && source /usr/share/fzf/key-bindings.${SHELLTYPE}
 fi
@@ -243,3 +248,5 @@ mosh() {
   __tm_command mosh "$@"
 }
 ############ TMUX window renaming END ########
+
+# vim: set filetype=sh

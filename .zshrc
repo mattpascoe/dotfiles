@@ -102,4 +102,5 @@ fi
 
 # Debian fzf completions
 # if only the package was consistent in where it put its completions
-[[ -f /usr/share/doc/fzf/examples/completion.zsh ]] && source /usr/share/doc/fzf/examples/completion.zsh
+# TODO shouldnt need this since its in shell-common, test it on linux
+#[[ -f /usr/share/doc/fzf/examples/completion.zsh ]] && source /usr/share/doc/fzf/examples/completion.zsh
