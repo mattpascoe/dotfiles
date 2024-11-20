@@ -28,7 +28,7 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
-    _1password-gui
+    #_1password-gui # doesnt allow integration to browser and is "broken" package
     _1password-cli
     #beekeeper-studio # not supported on mac
     brave
