@@ -14,8 +14,8 @@ echo "Configuring as a $SHELLTYPE shell."
 alias cdd='cd $HOME/data'
 alias vi='nvim'
 # vimwiki
-alias vw='vim -c ":VimwikiIndex 1"'
-alias vww='vim -c ":VimwikiIndex 2"'
+alias vw='vi -c ":VimwikiIndex 1"'
+alias vww='vi -c ":VimwikiIndex 2"'
 
 alias ls='ls -F --color=auto'
 alias la='ls -a'

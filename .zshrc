@@ -98,6 +98,8 @@ else
   echo "Installing zsh-vi-mode plugin."
   git clone https://github.com/jeffreytse/zsh-vi-mode.git $XDG_CONFIG_HOME/zsh/zsh-vi-mode
 fi
+# Tell zsh-vi-mode to use insert mode by default
+export ZVM_LINE_INIT_MODE=$ZVM_MODE_INSERT
 
 
 # Debian fzf completions
