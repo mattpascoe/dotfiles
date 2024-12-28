@@ -162,19 +162,24 @@ if command -v brew &> /dev/null; then
   [[ $- == *i* ]] && source "${BREWPREFIX}/opt/fzf/shell/completion.${SHELLTYPE}" 2> /dev/null
 
   # FZF Key bindings
-  [[ -f ${BREWPREFIX}/opt/fzf/shell/key-bindings.${SHELLTYPE} ]] && source "${BREWPREFIX}/opt/fzf/shell/key-bindings.${SHELLTYPE}"
+  [[ -f ${BREWPREFIX}/opt/fzf/shell/key-bindings.${SHELLTYPE} ]] && KEYBINDPATH="${BREWPREFIX}/opt/fzf/shell/key-bindings.${SHELLTYPE}"
 
 elif command -v nix &> /dev/null; then
   # Nix locations
   [[ -f ~/.nix-profile/share/fzf/completion.${SHELLTYPE} ]] && source ~/.nix-profile/share/fzf/completion.${SHELLTYPE}
-  [[ -f ~/.nix-profile/share/fzf/key-bindings.${SHELLTYPE} ]] && source ~/.nix-profile/share/fzf/key-bindings.${SHELLTYPE}
+  [[ -f ~/.nix-profile/share/fzf/key-bindings.${SHELLTYPE} ]] && KEYBINDPATH=~/.nix-profile/share/fzf/key-bindings.${SHELLTYPE}
 else
   # shell completions already installed to system via fzf package
   # Debian linux location for fzf bindings per shell type
   [[ -f /usr/share/doc/fzf/examples/completion.${SHELLTYPE} ]] && source /usr/share/doc/fzf/examples/completion.${SHELLTYPE}
-  [[ -f /usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE} ]] && source /usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE}
-  [[ -f /usr/share/fzf/key-bindings.${SHELLTYPE} ]] && source /usr/share/fzf/key-bindings.${SHELLTYPE}
+  [[ -f /usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE} ]] && KEYBINDPATH=/usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE}
+  [[ -f /usr/share/fzf/key-bindings.${SHELLTYPE} ]] && KEYBINDPATH=/usr/share/fzf/key-bindings.${SHELLTYPE}
 fi
+
+# Source in the fzf keybindings determined above, may be overkill but it ensures its there.
+source $KEYBINDPATH
+# Add fzf keybindings to zsh vim plugin
+zvm_after_init_commands+=("source $KEYBINDPATH")
 
 export FZF_COMPLETION_TRIGGER=','
 export FZF_TMUX_HEIGHT=60% # not strictly TMUX only
