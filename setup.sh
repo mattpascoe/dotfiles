@@ -66,12 +66,13 @@ if [ "$MACHINE" == "Linux" ]; then
   fi
 
   PKGS+=("git"
-    "jq"
+    "eza"
     "fzf"
+    "highlight"
+    "jq"
+    "tmux"
     "tree"
     "zsh"
-    "highlight"
-    "tmux"
   )
 
   echo "- Ensuring install of requested packages..."
@@ -151,7 +152,7 @@ if [ "$MACHINE" == "Mac" ]; then
 #      fi
 
       echo "- Ensuring install of requested brew packages..."
-      brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman tmux bash jesseduffield/lazygit/lazygit shellcheck
+      brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman tmux bash jesseduffield/lazygit/lazygit shellcheck eza
 
     else
       echo "ERROR: Unable to find Brew command"
