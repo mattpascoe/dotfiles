@@ -1,0 +1,18 @@
+#theme = catppuccin-mocha
+#theme = builtin pastel dark
+#theme = ultradark
+theme = iterm2 tango dark
+background = 000000
+foreground = b2f593
+font-family = MonaspiceNe Nerd Font Mono
+font-size = 12
+#font-family = MesloLGSDZ Nerd Font Mono
+#font-family = Menlo # This is what kitty had
+# Disable ligatures
+font-feature = -calt
+macos-titlebar-style = hidden
+
+# TODO: Look a bit at spacing between lines?
+# check out the quick terminal more
+
+

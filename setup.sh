@@ -188,10 +188,11 @@ else
   echo "- Starship is alredy installed."
 fi
 
-###### Link dotfile configs, could I use stow? sure, but less dependancies here
+###### Link dotfile configs, could I use stow or chezmoi.io? sure, but less dependancies here
 LINKFILES+=(
   ".config/btop"
   ".config/git"
+  ".config/ghostty"
   ".config/home-manager"
   ".config/lazygit"
   ".config/kitty"
