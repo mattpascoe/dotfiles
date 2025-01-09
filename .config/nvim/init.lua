@@ -146,6 +146,7 @@ vim.keymap.set('n', '<leader>R', '<cmd>source $MYVIMRC<CR>', { desc = 'VIM Confi
 vim.keymap.set('n', '<leader>b', ':enew<cr>', { desc = 'Open a new [b]uffer' })
 vim.keymap.set('n', '<leader>n', ':bn<cr>', { desc = '[N]ext buffer' })
 vim.keymap.set('n', '<leader>p', ':bp<cr>', { desc = '[P]revious buffer' })
+vim.keymap.set('n', '<leader>l', ':b#<cr>', { desc = '[L]ast active buffer' })
 vim.keymap.set('n', '<leader>x', ':bd<cr>', { desc = 'Close buffer' })
 
 -- Gitsigns show blame line
@@ -676,6 +677,7 @@ require('lazy').setup({
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
         'php-debug-adapter',
+        'puppet-editor-services',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -1080,12 +1082,14 @@ require('lazy').setup({
 
   -- Setup a debugger
   -- TODO this stuff is not yet fully working. more to do with dap and php
+  --{ 'rcarriga/nvim-dap-ui', dependencies = { 'mfussenegger/nvim-dap', 'nvim-neotest/nvim-nio' } },
   {
     --'rcarriga/nvim-dap-ui',
     'mfussenegger/nvim-dap',
     dependencies = { 'rcarriga/nvim-dap-ui', 'nvim-neotest/nvim-nio' },
     config = function()
       local dap, dapui = require 'dap', require 'dapui'
+      require('dapui').setup()
       dap.listeners.before.attach.dapui_config = function()
         dapui.open()
       end
@@ -1102,7 +1106,7 @@ require('lazy').setup({
       dap.adapters.php = {
         type = 'executable',
         command = 'node',
-        args = { '~/.local/share/nvim/mason/packages/php-debug-adapter/extension/out/phpDebug.js' },
+        args = { '/Users/mpascoe/.local/share/nvim/mason/packages/php-debug-adapter/extension/out/phpDebug.js' },
       }
 
       dap.configurations.php = {
