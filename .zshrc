@@ -33,6 +33,7 @@ setopt HIST_NO_FUNCTIONS  # dont store functions in history
 setopt AUTO_CD # automatically CD to directories without providing cd command
 setopt CORRECT # suggest edits to commands. TBD if I like it
 setopt INTERACTIVE_COMMENTS # allow comments in interactive shell
+setopt NOAUTOMENU # dont select first match on tab completion
 
 # vi bind and reverse search
 bindkey -v
