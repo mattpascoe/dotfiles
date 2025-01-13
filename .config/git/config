@@ -16,4 +16,13 @@
   path = ~/data/workrepos/.gitconfig
 [push]
   # Automatically define new branches on remote when pushing
-	autoSetupRemote = true
+  autoSetupRemote = true
+
+# use diff3 format for mergetool. https://github.com/samoshkin/vim-mergetool
+[merge]
+tool = vim_mergetool
+conflictstyle = diff3
+
+[mergetool "vim_mergetool"]
+cmd = vim -f -c "MergetoolStart" "$MERGED" "$BASE" "$LOCAL" "$REMOTE"
+trustExitCode = true
