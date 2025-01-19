@@ -4,15 +4,21 @@
 theme = iterm2 tango dark
 background = 000000
 foreground = b2f593
-font-family = MonaspiceNe Nerd Font Mono
+
+font-family = Menlo
+#font-family = MesloLGS Nerd Font Mono
+#font-family = MonaspiceNe Nerd Font Mono
 font-size = 12
-#font-family = MesloLGSDZ Nerd Font Mono
-#font-family = Menlo # This is what kitty had
+font-thicken = true
 # Disable ligatures
 font-feature = -calt
+adjust-underline-position = 3
+
 macos-titlebar-style = hidden
+mouse-hide-while-typing = true
 
-# TODO: Look a bit at spacing between lines?
-# check out the quick terminal more
-
+# TODO: check out the quick terminal more
+# Things I dont like here is that its mac only.
+# how does it compare to a native tmux method that works everywhere, even remote?
+keybind = global:cmd+ctrl+t=toggle_quick_terminal
 

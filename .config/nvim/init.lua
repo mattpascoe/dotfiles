@@ -677,7 +677,7 @@ require('lazy').setup({
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
         'php-debug-adapter',
-        'puppet-editor-services',
+        -- 'puppet-editor-services', -- not installing for now as it requires a much newer ruby version
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -1126,6 +1126,7 @@ require('lazy').setup({
           type = 'php',
           request = 'launch',
           name = 'Listen for Xdebug',
+          hostname = '127.0.0.1',
           port = 9003,
         },
       }
