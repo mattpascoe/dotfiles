@@ -2,6 +2,14 @@
 *.swp
 # Add a negative ignore here so telescope can find these files
 !.config
+!.zshrc
+!.macos
+!.shell-common
+!.sshinclude
+!.profile
+!.vimrc
+
+
 # lazygit stores a state file in config, I dont want to track it
 .config/lazygit/state.yml
 # lazy-lock stores a state file in config, I dont want to track it
