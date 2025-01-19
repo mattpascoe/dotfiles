@@ -256,4 +256,92 @@ mosh() {
 }
 ############ TMUX window renaming END ########
 
+#### Useful shell functions ######
+
+# A good overview of alias/functions/scripts: https://www.baeldung.com/linux/bash-alias-vs-script-vs-new-function
+# Tool is a generalized wrapper to manage some common tools
+tool () {
+  case "$1" in
+    list)
+      # This will display the description by convention. Its kinda horrible but it MUST be the first line in the function
+      echo "Available tools:"
+      functions | grep -A1 "^__tool_" | while read -r line; do
+        if [[ $line =~ ^__tool_ ]]; then
+          tool_name=$(echo "$line" | sed -e 's/__tool_\([^ ]*\) (.*/\1/')
+        elif [[ $line =~ ^DESC= ]]; then
+          desc=$(echo "$line" | sed -e 's/DESC="\([^"]*\)"/\1/')
+          echo "$tool_name: $desc"
+        fi
+      done| column -t -s:
+      ;;
+    show)
+      functions "__tool_$2"
+      ;;
+    *)
+      local tool_name="__tool_$1"
+      shift
+      $tool_name "$@"
+      ;;
+  esac
+}
+
+# Wrapper function to print out the command being executed so the user has context
+# Note that there may be other setup and activities that the calling tool does to make the resulting echoed command functional.
+__tool-execute() {
+  local CMD="$@"
+  echo "[FUNCTION] Executing: $CMD"
+  eval "$CMD"
+}
+
+# Run a puppet apply
+#  It will CD to the right place and give the proper default options
+#  you can pass additional options as needed
+__tool_puppet-run() { # Puppet run
+  DESC="Run a puppet apply"
+  cd /opt/puppet
+  __tool-execute "sudo puppet apply manifests $@"
+  cd - > /dev/null
+}
+
+# Puppet disable with prompting and user tagging
+__tool_puppet-disable() {
+  DESC="Disable puppet executions"
+  local USER=$(who am i | awk '{print $1}')
+  echo -n "Provide reason for disabling: "
+  read REPLY
+  __tool-execute "puppet agent --disable \"$USER: ${REPLY}\""
+}
+
+# Simple Puppet enable
+__tool_puppet-enable() {
+  DESC="Enable puppet executions"
+  __tool-execute "puppet agent --enable"
+}
+
+# Run docker compose with our compose file and project
+__tool_compose() {
+  DESC="Run docker compose against our compose file"
+  if [ ! -f /opt/docker/compose.yaml ]; then
+    echo "Compose environment not defined on this server."
+  else
+    __tool-execute "docker compose -f /opt/docker/compose.yaml -p bedrock $@"
+  fi
+}
+
+# Journalctl tail -f of the users instance
+# TODO: Work out journal vs regular log file method here.
+#__tool_tail-app-logs() {
+#  DESC="Tail -f the application logs for the user environment using journalctl"
+#  __tool-execute "journalctl -f -t trader-$USER $@"
+#}
+
+# Generic journalctl wrapper
+__tool_logs() {
+  DESC="Interact with your dev logs using journalctl"
+  cmd=$(printf '%q ' journalctl --no-pager "$@")
+  __tool-execute "$cmd"
+}
+
+
+
 # vim: set filetype=sh

@@ -95,7 +95,13 @@ limited scope.  This is why for now I'm sticking with the setup.sh script.
 
 Maybe NIX can simply layer into this process.
 
+My current position is that NIX is too painful a syntax and the ecosystem seems angsty.
+I do like it as a package manager instead of brew. For now I'll stick to JUST packages.
+I may look at https://www.chezmoi.io/ as an alternative to this dotfiles repo and setup.sh.  I do like I can just use my script anywhere tho.
+
 # Ideas to find a home for
 Interesting zsh 'global' alias option
 
      alias -g H='| head'  # git log H will show only the first 10 lines of the log
+
+Also I have a "tools" method for shell functions. look at shell-common and the __tools* functions.
