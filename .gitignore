@@ -1,5 +1,7 @@
 # Ignore VIM swap files
 *.swp
+# Add a negative ignore here so telescope can find these files
+!.config
 # lazygit stores a state file in config, I dont want to track it
 .config/lazygit/state.yml
 # lazy-lock stores a state file in config, I dont want to track it
