@@ -30,8 +30,9 @@
   home.packages = with pkgs; [
     #_1password-gui # doesnt allow integration to browser and is "broken" package
     _1password-cli
-    #beekeeper-studio # not supported on mac
-    brave
+    #beekeeper-studio # MAC only but, not supported on mac via nix
+    #brave -- not installing here so the 1password integration works
+    btop
     colima # Mac only, its the stupid docker server itself
     docker
     docker-client
@@ -40,8 +41,8 @@
     fd
     fzf
     highlight
+    ice-bar # Mac only menu bar
     jq
-    kitty
     lazydocker
     lazygit
     lazysql
@@ -53,14 +54,20 @@
     #nodejs-slim # needed for stupid LSPs probably better since its 'slim'.. need to test it tho
     php # for LSPs and maybe more
     php82Extensions.xdebug
+    postman
+    puppet-lint # for LSP
+    raycast # mac only
     ripgrep
     shellcheck
+    sketchybar # Mac only
     slack
-    syncthing
     telegram-desktop
     tree
     #trippy
     tmux
+    python3Minimal
+    virtualenv
+    vscode
     yazi
     yubikey-manager
     zoom-us
@@ -69,7 +76,10 @@
     # # overrides. You can do that directly here, just don't forget the
     # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
     # # fonts?
-    (pkgs.nerdfonts.override { fonts = [ "Monaspace" "Meslo" ]; })
+    #(pkgs.nerdfonts.override { fonts = [ "Monaspace" "Meslo" ]; })
+    nerd-fonts.monaspace
+    nerd-fonts.meslo-lg
+
 
     # # You can also create simple shell scripts directly inside your
     # # configuration. For example, this adds a command 'my-hello' to your
