@@ -1173,6 +1173,13 @@ require('lazy').setup({
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
+      require('mini.files').setup()
+      vim.keymap.set(
+        'n',
+        '<leader>tf',
+        ':lua MiniFiles.open()<CR>',
+        { desc = '[T]oggle [F]ile browser', noremap = true }
+      )
 
       local tabline = require 'mini.tabline'
       tabline.setup { MiniTablineFill = '#FF0000' }

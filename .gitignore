@@ -1,13 +1,9 @@
 # Ignore VIM swap files
 *.swp
 # Add a negative ignore here so telescope can find these files
-!.config
-!.zshrc
-!.macos
-!.shell-common
-!.sshinclude
-!.profile
-!.vimrc
+!.*
+# But I dont want to check .git into git
+.git
 
 
 # lazygit stores a state file in config, I dont want to track it
