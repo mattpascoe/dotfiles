@@ -121,17 +121,12 @@ vim.keymap.set('i', 'ii', '<C-[>') -- Quick escape to normal mode TBD if useful
 vim.keymap.set('n', ';', ':') -- map ; for cmd mode so no need for shift
 
 -- Open a terminal
-vim.keymap.set('n', '<leader>tt', ':terminal<cr>', { desc = '[T]oggle [T]erminal', noremap = true, silent = true })
+vim.keymap.set('n', '<leader>tt', ':terminal<cr>', { desc = '[T]erminal', noremap = true, silent = true })
 
 -- Toggle paste and spell mode with status
-vim.keymap.set('n', '<leader>tn', ':set number!<cr>', { desc = '[T]oggle [P]aste mode', noremap = true, silent = true })
-vim.keymap.set('n', '<leader>tp', ':set paste!<cr>', { desc = '[T]oggle [P]aste mode', noremap = true, silent = true })
-vim.keymap.set(
-  'n',
-  '<leader>ts',
-  ':set spell!<cr>',
-  { desc = '[T]oggle [S]pellcheck mode', noremap = true, silent = true }
-)
+vim.keymap.set('n', '<leader>tn', ':set number!<cr>', { desc = 'line [N]umbers', noremap = true, silent = true })
+vim.keymap.set('n', '<leader>tp', ':set paste!<cr>', { desc = '[P]aste mode', noremap = true, silent = true })
+vim.keymap.set('n', '<leader>ts', ':set spell!<cr>', { desc = '[S]pellcheck mode', noremap = true, silent = true })
 --vim.api.nvim_set_hl(0, 'SpellBad', { ctermfg = 12, sp = 12, italic = true, undercurl = true })
 
 -- NOTE: do I want any single character going into the * register unless I specifically want it?  TBD
@@ -343,6 +338,7 @@ require('lazy').setup({
         { '<leader>s', group = '[S]earch' },
         { '<leader>w', group = '[W]orkspace' },
         { '<leader>t', group = '[T]oggle' },
+        { '<leader>m', group = '[M]ergetool' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       },
     },
@@ -424,16 +420,16 @@ require('lazy').setup({
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
-      vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
-      vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
-      vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
-      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
-      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-      vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[H]elp' })
+      vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[K]eymaps' })
+      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[F]iles' })
+      vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]elect Telescope' })
+      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = 'Current [W]ord' })
+      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = 'Using [G]rep' })
+      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[D]iagnostics' })
+      vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[R]esume' })
+      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = 'Recent Files ("." for repeat)' })
+      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = 'Find existing buffers' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -442,7 +438,7 @@ require('lazy').setup({
           winblend = 10,
           previewer = false,
         })
-      end, { desc = '[/] Fuzzily search in current buffer' })
+      end, { desc = 'Fuzzily search in current buffer' })
 
       -- It's also possible to pass additional configuration options.
       --  See `:help telescope.builtin.live_grep()` for information about particular keys
@@ -451,12 +447,12 @@ require('lazy').setup({
           grep_open_files = true,
           prompt_title = 'Live Grep in Open Files',
         }
-      end, { desc = '[S]earch [/] in Open Files' })
+      end, { desc = '[/] in Open Files' })
 
       -- Shortcut for searching your Neovim configuration files
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
-      end, { desc = '[S]earch [N]eovim files' })
+      end, { desc = '[N]eovim files' })
     end,
   },
 
@@ -606,7 +602,7 @@ require('lazy').setup({
           if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
             map('<leader>th', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
-            end, '[T]oggle Inlay [H]ints')
+            end, 'Inlay [H]ints')
           end
         end,
       })
@@ -909,7 +905,7 @@ require('lazy').setup({
   {
     'chrisbra/Colorizer',
     init = function()
-      vim.keymap.set('n', '<leader>tc', ':ColorToggle<cr>', { desc = '[T]oggle [C]olor Preview' })
+      vim.keymap.set('n', '<leader>tc', ':ColorToggle<cr>', { desc = '[C]olor Preview' })
       -- sets the color at the end of the line
       -- Seems to have a bug that toggleing just adds another block
       vim.g.colorizer_use_virtual_text = 1
@@ -959,12 +955,7 @@ require('lazy').setup({
     'Exafunction/codeium.vim',
     event = 'BufEnter',
     config = function()
-      vim.keymap.set(
-        'n',
-        '<leader>ta',
-        ':CodeiumToggle<cr>',
-        { desc = '[T]oggle AI helper (Codeium)', noremap = true, silent = true }
-      )
+      vim.keymap.set('n', '<leader>ta', ':CodeiumToggle<cr>', { desc = '[A]I helper', noremap = true, silent = true })
       -- vim.keymap.set('i', '<C-g>', function() return vim.fn['codeium#Accept']() end, { expr = true, silent = true })
       vim.keymap.set('i', '<C-j>', function()
         return vim.fn['codeium#CycleCompletions'](1)
@@ -1017,7 +1008,7 @@ require('lazy').setup({
         'n',
         '<leader>tl',
         ':VimwikiToggleListItem<cr>',
-        { desc = '[T]oggle Vimwiki [L]istitem', noremap = true, silent = true }
+        { desc = 'Vimwiki [L]istitem', noremap = true, silent = true }
       )
     end,
   },
@@ -1063,7 +1054,7 @@ require('lazy').setup({
     cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
     ft = { 'markdown' },
     init = function()
-      vim.keymap.set('n', '<leader>tm', ':MarkdownPreviewToggle<cr>', { desc = '[T]oggle [M]arkdown Preview' })
+      vim.keymap.set('n', '<leader>tm', ':MarkdownPreviewToggle<cr>', { desc = '[M]arkdown Preview' })
       vim.g.mkdp_filetypes = { 'markdown' }
       vim.g.mkdp_browser = { 'safari' }
       vim.g.mkdp_combine_preview = 1
@@ -1134,14 +1125,19 @@ require('lazy').setup({
       --require 'nvim-dap-virtual-text'
       vim.fn.sign_define(
         'DapBreakpoint',
-        { text = '🔴', texthl = 'DapBreakpoint', linehl = 'DapBreakpoint', numhl = 'DapBreakpoint' }
+        { text = '󰀩', texthl = 'DapBreakpoint', linehl = 'DapBreakpoint', numhl = 'DapBreakpoint' }
       )
 
       -- Debugger
-      vim.keymap.set('n', '<leader>dt', dapui.toggle, { noremap = true })
-      vim.keymap.set('n', '<leader>db', dap.toggle_breakpoint, { noremap = true })
-      vim.keymap.set('n', '<leader>dc', dap.continue, { noremap = true })
-      vim.keymap.set('n', '<leader>dr', ":lua require('dapui').open({reset = true})<CR>", { noremap = true })
+      vim.keymap.set('n', '<leader>dt', dapui.toggle, { desc = 'Debugger UI [T]oggle', noremap = true })
+      vim.keymap.set('n', '<leader>db', dap.toggle_breakpoint, { desc = 'Debugger [B]reakpoint', noremap = true })
+      vim.keymap.set('n', '<leader>dc', dap.continue, { desc = 'Debugger [C]ontinue', noremap = true })
+      vim.keymap.set(
+        'n',
+        '<leader>dr',
+        ":lua require('dapui').open({reset = true})<CR>",
+        { desc = 'Debugger [R]eset', noremap = true }
+      )
       --vim.keymap.set("n", "<leader>ht", ":lua require('harpoon.ui').toggle_quick_menu()<CR>", {noremap=true})
     end,
   },
@@ -1174,12 +1170,7 @@ require('lazy').setup({
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
       require('mini.files').setup()
-      vim.keymap.set(
-        'n',
-        '<leader>tf',
-        ':lua MiniFiles.open()<CR>',
-        { desc = '[T]oggle [F]ile browser', noremap = true }
-      )
+      vim.keymap.set('n', '<leader>tf', ':lua MiniFiles.open()<CR>', { desc = '[F]ile browser', noremap = true })
 
       local tabline = require 'mini.tabline'
       tabline.setup { MiniTablineFill = '#FF0000' }
