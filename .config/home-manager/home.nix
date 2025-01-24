@@ -1,5 +1,11 @@
 # use `nix flake update --flake ~/dotfiles/.config/home-manager` to pull in new available versions
 # use `home-manager switch` to apply changes this file
+# use `nix search nixpkgs spotify` to find a term in all packages/descriptions
+# use `nix search nixpkgs#vscode .` to find a specific package
+# use `home-manager -n expire-generations '-30 days'` to clean up old generations. remove -n dry run flag
+# `home-manager packages` will list what you have installed
+# `nix run nixpkgs#cowsay -- "Hello, world!"` will temp run cowsay with input options without actually installing
+# `nix shell nixpkgs#cowsay` will temp run cowsay in a shell without actually installing
 { config, pkgs, lib, ... }:
 
 
@@ -40,6 +46,7 @@
     docker-compose-language-service # for LSP
     fd
     fzf
+    #ghostty # currently at 1.0.1 and is flagged as broken
     highlight
     ice-bar # Mac only menu bar
     jq
@@ -61,6 +68,7 @@
     shellcheck
     sketchybar # Mac only
     slack
+    spotify
     telegram-desktop
     tree
     #trippy
