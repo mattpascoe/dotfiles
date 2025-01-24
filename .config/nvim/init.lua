@@ -1173,7 +1173,10 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>tf', ':lua MiniFiles.open()<CR>', { desc = '[F]ile browser', noremap = true })
 
       local tabline = require 'mini.tabline'
-      tabline.setup { MiniTablineFill = '#FF0000' }
+      tabline.setup {
+        -- Set the background color all the way across
+        vim.cmd([[highlight MiniTablineFill guibg=#181825]]),
+      }
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
