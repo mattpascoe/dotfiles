@@ -36,6 +36,7 @@
   home.packages = with pkgs; [
     #_1password-gui # doesnt allow integration to browser and is "broken" package
     _1password-cli
+    bat
     #beekeeper-studio # MAC only but, not supported on mac via nix
     #brave -- not installing here so the 1password integration works
     btop
@@ -44,6 +45,7 @@
     docker-client
     dockerfile-language-server-nodejs # for LSP
     docker-compose-language-service # for LSP
+    eza
     fd
     fzf
     #ghostty # currently at 1.0.1 and is flagged as broken
