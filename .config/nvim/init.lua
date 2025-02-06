@@ -118,7 +118,8 @@ vim.cmd.abbrev(
 )
 
 vim.keymap.set('i', 'ii', '<C-[>') -- Quick escape to normal mode TBD if useful
-vim.keymap.set('n', ';', ':') -- map ; for cmd mode so no need for shift
+-- disabled for now to allow for forward movement repeats.  TBD
+-- vim.keymap.set('n', ';', ':') -- map ; for cmd mode so no need for shift
 
 -- Open a terminal
 vim.keymap.set('n', '<leader>tt', ':terminal<cr>', { desc = '[T]erminal', noremap = true, silent = true })
@@ -417,6 +418,7 @@ require('lazy').setup({
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
+      pcall(require('telescope').load_extension, 'fidget')
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
@@ -430,6 +432,8 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = 'Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = 'Find existing buffers' })
+
+      vim.keymap.set('n', '<leader>sm', ':Telescope fidget<CR>', { desc = 'Vim [M]essages' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -481,7 +485,7 @@ require('lazy').setup({
 
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', opts = {} },
+      { 'j-hui/fidget.nvim', opts = { notification = { override_vim_notify = true } } },
 
       -- Allows extra capabilities provided by nvim-cmp
       'hrsh7th/cmp-nvim-lsp',
@@ -1233,6 +1237,22 @@ require('lazy').setup({
     --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+  },
+  {
+    'nvim-treesitter/nvim-treesitter-context',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    event = 'BufReadPost', -- Load when a file is opened
+    config = function()
+      require('treesitter-context').setup {
+        enable = true, -- Enable the plugin
+        max_lines = 3, -- Maximum lines of context to show
+        trim_scope = 'inner', -- Show only the innermost scope
+        min_window_height = 10, -- Disable if window is smaller than this
+        mode = 'cursor', -- "cursor" keeps the function at the top
+        -- separator = '─', -- Adds a separator line
+      }
+      vim.keymap.set('n', '<leader>tx', ':TSContextToggle<CR>', { desc = 'Treesitter Conte[x]t', noremap = true })
+    end,
   },
 
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
