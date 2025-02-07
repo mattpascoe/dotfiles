@@ -11,12 +11,8 @@ fi
 echo "Configuring as a $SHELLTYPE shell."
 
 # Set up some command aliases
+alias sr='sudo -E $SHELL'
 alias cdd='cd $HOME/data'
-alias vi='nvim'
-# vimwiki
-alias vw='vi -c ":VimwikiIndex 1"'
-alias vww='vi -c ":VimwikiIndex 2"'
-
 alias ls='ls -F --color=auto'
 alias la='ls -a'
 alias ll='ls -l'
@@ -68,15 +64,38 @@ alias tct='dct +"%r"'
 alias tet='det +"%r"'
 alias tut='dut +"%r"'
 
-# Turn on vi mode
+# Turn on vi mode and set our default editor
 set -o vi
-export EDITOR=vi
+export EDITOR=nvim
+export VISUAL=$EDITOR
+alias e=$EDITOR
+# vimwiki Assumes $EDITOR is set to nvim or vi
+alias vw="$EDITOR -c ':VimwikiIndex 1'"
+alias vww="$EDITOR -c ':VimwikiIndex 2'"
+
+# Set PAGER
+export PAGER=less
+
+# Lets make things pretty with bat
+# Check which bat binary to use
+[ -x "$(command -v batcat)" ] && BATCATBIN=batcat
+[ -x "$(command -v bat)" ] && BATCATBIN=bat
+
+if [ -n "$BATCATBIN" ]; then
+  alias bat="$BATCATBIN --style=rule"
+  alias b=bat
+
+  # Lets make man pages look nice with bat
+  export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | $BATCATBIN -p -lman --theme ansi --pager \"less -s -M +Gg\"'"
+  # was going to try less as a simple coloring option but it didnt seem to work for some reason
+  #export MANPAGER="less -R --use-color -Dd+r -Du+b"
+fi
 
 # If in tmux, refresh ssh and display variables. This is cleaner than the
 # ssh_reagent function below.
 # taken from https://babushk.in/posts/renew-environment-tmux.html
 if [ -n "$TMUX" ]; then
-  function refreshvars() {
+  function __refreshSSHvars() {
     sshauth=$(tmux show-environment | grep "^SSH_AUTH_SOCK")
     if [ $sshauth ]; then
         export $sshauth
@@ -87,13 +106,14 @@ if [ -n "$TMUX" ]; then
     fi
   }
 else
-  function refreshvars() {
+  function __refreshSSHvars() {
     return
   }
 fi
 # insead of using a preexec, I'm just going to run the function when the shell
 # starts up here.
-refreshvars
+__refreshSSHvars
+alias sshre='__refreshSSHvars'
 
 
 # Create ssh_reagent command to attached to existing agent sockets
