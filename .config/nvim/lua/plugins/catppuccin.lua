@@ -7,7 +7,8 @@ return {
     init = function()
       vim.opt.termguicolors = true
       vim.cmd.colorscheme 'catppuccin'
-      vim.api.nvim_set_hl(0, 'ColorColumn', { bg = '#030307' }) -- Draw a highlight at the colorcolumn position also liked #06060F
+      vim.opt.colorcolumn = '80'
+      vim.api.nvim_set_hl(0, 'ColorColumn', { bg = '#06060F' }) -- Draw a highlight at the colorcolumn position
     end,
     config = function()
       require('catppuccin').setup {
@@ -26,7 +27,12 @@ return {
           gitsigns = true,
           nvimtree = true,
           treesitter = true,
-          notify = false,
+          mason = true,
+          notify = true,
+          fidget = true,
+          vimwiki = true,
+          which_key = true,
+          -- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
           mini = {
             enabled = true,
             indentscope_color = '',
