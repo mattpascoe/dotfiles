@@ -37,15 +37,20 @@ return {
       -- cursor location to LINE:COLUMN
       ---@diagnostic disable-next-line: duplicate-set-field
       statusline.section_location = function()
+        -- Get the current cursor position percentage
         local current_line = vim.api.nvim_win_get_cursor(0)[1]
         local total_lines = vim.api.nvim_buf_line_count(0)
-        local percentage = (current_line / total_lines) * 100
-        percentage = math.floor(percentage)
+        local percentage = string.format(' [%d%%%%] ', math.floor((current_line / total_lines) * 100))
+        -- Get the last modified time of the current file
+        local file = vim.fn.expand('%')
+        local lastm = file ~= '' and vim.fn.getftime(file) or -1
+        local last_mtime = (file ~= '' and lastm ~= -1) and os.date(' %y-%m-%d %H:%M', lastm) or ''
 
         -- Return the status line with a percentage
-        return '%3{codeium#GetStatusString()} ['
+        return '%3{codeium#GetStatusString()}'
+          .. last_mtime
           .. percentage
-          .. "%%] %2l:%-2v%{&paste ? ' ρ' : ''}%{&spell ? ' Ꞩ' : ''}"
+          .. "%2l:%-2v%{&paste ? ' ρ' : ''}%{&spell ? ' Ꞩ' : ''}"
       end
 
       -- ... and there is more!
