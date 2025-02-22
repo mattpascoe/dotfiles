@@ -38,11 +38,11 @@ vim.keymap.set('n', 'X', '"_x', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>R', '<cmd>source $MYVIMRC<CR>', { desc = 'VIM Configuration [R]eload' })
 
 -- buffers
-vim.keymap.set('n', '<leader>b', ':enew<cr>', { desc = 'Open a new [b]uffer' })
-vim.keymap.set('n', '<leader>n', ':bn<cr>', { desc = '[N]ext buffer' })
-vim.keymap.set('n', '<leader>p', ':bp<cr>', { desc = '[P]revious buffer' })
-vim.keymap.set('n', '<leader>l', ':b#<cr>', { desc = '[L]ast active buffer' })
-vim.keymap.set('n', '<leader>x', ':bd<cr>', { desc = 'Close buffer' })
+vim.keymap.set('n', '<leader>b', ':enew<cr>', { desc = 'Open a new [b]uffer', silent = true })
+vim.keymap.set('n', '<leader>n', ':bn<cr>', { desc = '[N]ext buffer', silent = true })
+vim.keymap.set('n', '<leader>p', ':bp<cr>', { desc = '[P]revious buffer', silent = true })
+vim.keymap.set('n', '<leader>l', ':b#<cr>', { desc = '[L]ast active buffer', silent = true })
+vim.keymap.set('n', '<leader>x', ':bd<cr>', { desc = 'Close buffer', silent = true })
 
 -- Gitsigns show blame line
 vim.keymap.set(
