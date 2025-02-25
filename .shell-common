@@ -280,15 +280,35 @@ mosh() {
 
 # A good overview of alias/functions/scripts: https://www.baeldung.com/linux/bash-alias-vs-script-vs-new-function
 # Tool is a generalized wrapper to manage some common tools
+# Allow user to define ~/.toolrc as a way to quickly setup their own tools
+[[ -f ~/.toolrc ]] && source ~/.toolrc
+[[ -f ~/.config/toolrc ]] && source ~/.config/toolrc
 tool () {
+  local TOOLNAME="$0"
+  usage() {
+    cat <<EOF
+Usage: $TOOLNAME [list|show|help] [tool_name] <extra_args>
+  Commands:
+    list               List all available tools and their descriptions
+    show [tool_name]   Show the function definition of the specified tool
+    help [tool_name]   Show help for the specified tool, not all tools have help
+
+  All extra_args are passed directly to the tool in question, they
+  relate to the underlying command defined in the tool
+EOF
+  }
+
+  # Print usage if no arguments were passed
+  [[ -z "$1" ]] && usage && return 1
+
   case "$1" in
     list)
-      # This will display the description by convention. Its kinda horrible but it MUST be the first line in the function
+      # This will display the description by convention. Its kinda horrible but it MUST be the first line in the function and only one line long
       echo "Available tools:"
       functions | grep -A1 "^__tool_" | while read -r line; do
         if [[ $line =~ ^__tool_ ]]; then
           tool_name=$(echo "$line" | sed -e 's/__tool_\([^ ]*\) (.*/\1/')
-        elif [[ $line =~ ^DESC= ]]; then
+        elif [[ $line =~ "^local DESC=" ]]; then
           desc=$(echo "$line" | sed -e 's/DESC="\([^"]*\)"/\1/')
           echo "$tool_name: $desc"
         fi
@@ -296,6 +316,12 @@ tool () {
       ;;
     show)
       functions "__tool_$2"
+      ;;
+    help|usage)
+      [[ -z "$2" ]] && usage && return 1
+      local tool_name="__tool_$2"
+      shift
+      $tool_name "$@" TOOLHELP
       ;;
     *)
       local tool_name="__tool_$1"
@@ -317,7 +343,8 @@ __tool-execute() {
 #  It will CD to the right place and give the proper default options
 #  you can pass additional options as needed
 __tool_puppet-run() { # Puppet run
-  DESC="Run a puppet apply"
+  local DESC="Run a puppet apply"
+  [[ $2 == "TOOLHELP" ]] && { echo "${HELP:-$DESC}"; return; }
   cd /opt/puppet
   __tool-execute "sudo puppet apply manifests $@"
   cd - > /dev/null
@@ -325,7 +352,8 @@ __tool_puppet-run() { # Puppet run
 
 # Puppet disable with prompting and user tagging
 __tool_puppet-disable() {
-  DESC="Disable puppet executions"
+  local DESC="Disable puppet executions"
+  [[ $2 == "TOOLHELP" ]] && { echo "${HELP:-$DESC}"; return; }
   local USER=$(who am i | awk '{print $1}')
   echo -n "Provide reason for disabling: "
   read REPLY
@@ -334,13 +362,15 @@ __tool_puppet-disable() {
 
 # Simple Puppet enable
 __tool_puppet-enable() {
-  DESC="Enable puppet executions"
+  local DESC="Enable puppet executions"
+  [[ $2 == "TOOLHELP" ]] && { echo "${HELP:-$DESC}"; return; }
   __tool-execute "puppet agent --enable"
 }
 
 # Run docker compose with our compose file and project
 __tool_compose() {
-  DESC="Run docker compose against our compose file"
+  local DESC="Run docker compose against our compose file"
+  [[ $2 == "TOOLHELP" ]] && { echo "${HELP:-$DESC}"; return; }
   if [ ! -f /opt/docker/compose.yaml ]; then
     echo "Compose environment not defined on this server."
   else
@@ -357,7 +387,19 @@ __tool_compose() {
 
 # Generic journalctl wrapper
 __tool_logs() {
-  DESC="Interact with your dev logs using journalctl"
+  local DESC="Interact with your dev logs using journalctl"
+  local HELP=$(cat <<EOF
+Usage: $TOOLNAME logs [options]
+$DESC
+
+Options:
+  Any valid journalctl options
+
+  By default you will get --no-pager and -t trader-$USER
+  You could add -f to live tail the logs for example
+EOF
+)
+  [[ $2 == "TOOLHELP" ]] && { echo "${HELP:-$DESC}"; return; }
   cmd=$(printf '%q ' journalctl --no-pager "$@")
   __tool-execute "$cmd"
 }
