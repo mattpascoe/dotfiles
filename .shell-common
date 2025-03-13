@@ -97,12 +97,12 @@ fi
 if [ -n "$TMUX" ]; then
   function __refreshSSHvars() {
     sshauth=$(tmux show-environment | grep "^SSH_AUTH_SOCK")
-    if [ $sshauth ]; then
-        export $sshauth
+    if [ "$sshauth" ]; then
+        export sshauth
     fi
     display=$(tmux show-environment | grep "^DISPLAY")
-    if [ $display ]; then
-        export $display
+    if [ "$display" ]; then
+        export display
     fi
   }
 else
@@ -151,7 +151,7 @@ if command -v starship &> /dev/null; then
   type starship_zle-keymap-select >/dev/null || \
   {
     echo "Enabling starship.."
-    eval "$(starship init $SHELLTYPE)"
+    eval "$(starship init "$SHELLTYPE")"
   }
 fi
 
@@ -188,18 +188,18 @@ if command -v brew &> /dev/null; then
 
 elif command -v nix &> /dev/null; then
   # Nix locations
-  [[ -f ~/.nix-profile/share/fzf/completion.${SHELLTYPE} ]] && source ~/.nix-profile/share/fzf/completion.${SHELLTYPE}
+  [[ -f ~/.nix-profile/share/fzf/completion.${SHELLTYPE} ]] && source ~/.nix-profile/share/fzf/completion."${SHELLTYPE}"
   [[ -f ~/.nix-profile/share/fzf/key-bindings.${SHELLTYPE} ]] && KEYBINDPATH=~/.nix-profile/share/fzf/key-bindings.${SHELLTYPE}
 else
   # shell completions already installed to system via fzf package
   # Debian linux location for fzf bindings per shell type
-  [[ -f /usr/share/doc/fzf/examples/completion.${SHELLTYPE} ]] && source /usr/share/doc/fzf/examples/completion.${SHELLTYPE}
+  [[ -f /usr/share/doc/fzf/examples/completion.${SHELLTYPE} ]] && source /usr/share/doc/fzf/examples/completion."${SHELLTYPE}"
   [[ -f /usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE} ]] && KEYBINDPATH=/usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE}
   [[ -f /usr/share/fzf/key-bindings.${SHELLTYPE} ]] && KEYBINDPATH=/usr/share/fzf/key-bindings.${SHELLTYPE}
 fi
 
 # Source in the fzf keybindings determined above, may be overkill but it ensures its there.
-source $KEYBINDPATH
+source "$KEYBINDPATH"
 # Add fzf keybindings to zsh vim plugin
 zvm_after_init_commands+=("source $KEYBINDPATH")
 
@@ -213,14 +213,13 @@ export FZF_CTRL_R_OPTS='--no-sort'
 # Set up an ONA command for looking into ona from CLI.. acts as ping. Cache results for awhile.
 alias ona='ping -c5'
 _fzf_complete_ona() {
-  local TMPFILE
-  TMPFILE=/tmp/fzf-onalist.out
-  if [ ! -f $TMPFILE -o $(find $TMPFILE -mmin +120 2>/dev/null) ]
+  local TMPFILE; TMPFILE=$(mktemp)
+  if [ ! -f "$TMPFILE" ] || [ "$(find "$TMPFILE" -mmin +120 2>/dev/null)" ]
   then
-    command curl -ks "https://ona/dcm.php?module=ona_sql&sql=list_all_hosts.sql&header=no"|tail -n +2|awk -F':' '{ print $1; print $3; print $4 }'|sort -u|grep "\S" > $TMPFILE
+    command curl -ks "https://ona/dcm.php?module=ona_sql&sql=list_all_hosts.sql&header=no"|tail -n +2|awk -F':' '{ print $1; print $3; print $4 }'|sort -u|grep "\S" > "$TMPFILE"
   fi
   _fzf_complete +m -- "$@" < <(
-    command grep -v '^[[:digit:]]' $TMPFILE|sort -V && grep '^[[:digit:]]' $TMPFILE|sort
+    command grep -v '^[[:digit:]]' "$TMPFILE"|sort -V && grep '^[[:digit:]]' "$TMPFILE"|sort
   )
 }
 
@@ -242,11 +241,11 @@ _fzf_comprun() {
 ########## TMUX window renaming ##############
 # Make short hostname only if its not an IP address
 __tm_get_hostname(){
-  local HOST="$(echo $* | rev | cut -d ' ' -f 1 | rev)"
-  if [[ $HOST =~ "([0-9]{1,3}\.){3}[0-9]{1,3}" ]]; then
-    echo $HOST # It's an IPv4 addr
+  local HOST; HOST="$(echo "$*" | rev | cut -d ' ' -f 1 | rev)"
+  if [[ $HOST =~ ([0-9]{1,3}\.){3}[0-9]{1,3} ]]; then
+    echo "$HOST" # It's an IPv4 addr
   else
-    echo $HOST| cut -d . -f 1-2 # Display first two octets of FQDN as provided
+    echo "$HOST"| cut -d . -f 1-2 # Display first two octets of FQDN as provided
   fi
 }
 
@@ -256,13 +255,12 @@ __tm_get_current_window(){
 
 # Rename window according to __tm_get_hostname and then restore it after the command
 __tm_command() {
- # if [ "$(ps -p $(ps -p $$ -o ppid=) -o comm=| cut -d : -f 1)" = "tmux" ]; then
   if [ -n "$TMUX" ]; then
     __tm_window=$(__tm_get_current_window)
     # Use current window to change back the setting. If not it will be applied to the active window
     [ "$SHELLTYPE" = "bash" ] && trap "tmux set-window-option -t $__tm_window automatic-rename on 1>/dev/null" RETURN
-    [ "$SHELLTYPE" = "zsh"  ] && precmd() { tmux set-window-option -t $__tm_window automatic-rename on 1>/dev/null }
-    tmux rename-window "$(__tm_get_hostname $*)"
+    [ "$SHELLTYPE" = "zsh"  ] && precmd() { tmux set-window-option -t "$__tm_window" automatic-rename on 1>/dev/null; }
+    tmux rename-window "$(__tm_get_hostname "$*")"
   fi
   command "$@"
 }
@@ -345,9 +343,9 @@ __tool-execute() {
 __tool_puppet-run() { # Puppet run
   local DESC="Run a puppet apply"
   [[ $2 == "TOOLHELP" ]] && { echo "${HELP:-$DESC}"; return; }
-  cd /opt/puppet
+  cd /opt/puppet || exit
   __tool-execute "sudo puppet apply manifests $@"
-  cd - > /dev/null
+  cd - > /dev/null || exit
 }
 
 # Puppet disable with prompting and user tagging
