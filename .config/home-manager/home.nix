@@ -40,11 +40,11 @@
     #beekeeper-studio # MAC only but, not supported on mac via nix
     #brave -- not installing here so the 1password integration works
     btop
-    colima # Mac only, its the stupid docker server itself
-    docker
-    docker-client
-    dockerfile-language-server-nodejs # for LSP
-    docker-compose-language-service # for LSP
+    # colima # Mac only, its the stupid docker server itself
+    #docker
+    #docker-client
+    #dockerfile-language-server-nodejs # for LSP
+    #docker-compose-language-service # for LSP
     eza
     fd
     fzf
@@ -80,7 +80,7 @@
     vscode
     yazi
     yubikey-manager
-    zoom-us
+    #    zoom-us  # Disabled for now since it has issues when sharing screens, permissions?
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
