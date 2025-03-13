@@ -58,18 +58,21 @@ fi
 ###### Linux specific stuff
 if [ "$MACHINE" == "Linux" ]; then
   echo "Looks like the OS is $PRETTY_NAME"
-  read -p "Do you want i3 configuration links? [y/N] " -r I3
-  echo    # (optional) move to a new line
-  if [[ $I3 =~ ^[Yy]$ ]]
-  then
-    LINKFILES+=(".config/i3")
-  fi
+#  read -p "Do you want i3 configuration links? [y/N] " -r I3
+#  echo    # (optional) move to a new line
+#  if [[ $I3 =~ ^[Yy]$ ]]
+#  then
+#    LINKFILES+=(".config/i3")
+#  fi
 
   PKGS+=("git"
+    "bat"
+    "btop"
     "eza"
     "fzf"
     "highlight"
     "jq"
+    "neovim"
     "tmux"
     "tree"
     "zsh"
@@ -83,13 +86,21 @@ if [ "$MACHINE" == "Linux" ]; then
         echo "    ${PKGS[*]}";;
   esac
 
-  if [ ! -f /bin/zsh ]; then
+  # Ensure zsh is default
+  if [ "$(grep $USER /etc/passwd|cut -d: -f7)" != "/bin/zsh" ]; then
     echo "- Switching default shell to ZSH, provide your password if prompted..."
     chsh -s /bin/zsh
   fi
 
+  # Ensure Nerd Fonts are installed
+  if [ ! -f /usr/local/share/fonts/MesloLGMNerdFontMono-Regular.ttf ]; then
+    echo "- Installing Nerd Fonts..."
+    sudo curl -s -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Meslo/M/Regular/MesloLGMNerdFontMono-Regular.ttf --output-dir /usr/local/share/fonts
+    fc-cache -fv /usr/local/share/fonts
+  fi
+
   echo "-!- Consider installing the following"
-  echo "lazygit"
+  echo "lazygit yazi"
 fi
 
 
@@ -221,8 +232,10 @@ done
 
 # Run <prefix> + I to install plugins the first time
 if [ ! -d ~/.config/tmux/plugins/tpm ];then
-  echo "Installing TMUX plugin manager. Run <prefix> + I to install plugins the first time"
+  echo "Installing TMUX plugin manager."
   git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
+  echo "Installing TMUX plugins. You may need to run <prefix> + I to install plugins if this doesn't work"
+  ~/.config/tmux/plugins/tpm/bin/install_plugins
 fi
 
 echo
