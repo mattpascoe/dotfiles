@@ -115,21 +115,20 @@ fi
 __refreshSSHvars
 alias sshre='__refreshSSHvars'
 
-
 # Create ssh_reagent command to attached to existing agent sockets
 # Leaving this if needed later, Prefer TMUX refreshvars above
-ssh_reagent () {
-  for agent in /tmp/ssh-*/agent.*; do
-      export SSH_AUTH_SOCK=$agent
-      if ssh-add -l &>/dev/null; then
-         echo Found working SSH Agent:
-         ssh-add -l 2>/dev/null
-         return
-      fi
-  done
-  echo Cannot find ssh agent - maybe you should reconnect and forward it?
-}
-alias sshre='ssh_reagent'
+# ssh_reagent () {
+#   for agent in /tmp/ssh-*/agent.*; do
+#       export SSH_AUTH_SOCK=$agent
+#       if ssh-add -l &>/dev/null; then
+#          echo Found working SSH Agent:
+#          ssh-add -l 2>/dev/null
+#          return
+#       fi
+#   done
+#   echo Cannot find ssh agent - maybe you should reconnect and forward it?
+# }
+# alias sshre='ssh_reagent'
 
 # If we have the brew install of the libfido2 library, use it for ssh
 # https://github.com/Yubico/libfido2/issues/464 on Sonoma and above Macs
@@ -281,11 +280,14 @@ mosh() {
 # Allow user to define ~/.toolrc as a way to quickly setup their own tools
 [[ -f ~/.toolrc ]] && source ~/.toolrc
 [[ -f ~/.config/toolrc ]] && source ~/.config/toolrc
+# Set up a short alias
+alias t=tool
 tool () {
   local TOOLNAME="$0"
+  local YEL='\033[1;33m' NC='\033[0m' UND='\033[4m'
   usage() {
-    cat <<EOF
-Usage: $TOOLNAME [list|show|help] [tool_name] <extra_args>
+    local USAGE; USAGE=$(cat <<EOF
+${YEL}Usage: $TOOLNAME [list|show|help] [tool_name] <extra_args>${NC}
   Commands:
     list               List all available tools and their descriptions
     show [tool_name]   Show the function definition of the specified tool
@@ -294,6 +296,8 @@ Usage: $TOOLNAME [list|show|help] [tool_name] <extra_args>
   All extra_args are passed directly to the tool in question, they
   relate to the underlying command defined in the tool
 EOF
+    )
+    echo -e "$USAGE"
   }
 
   # Print usage if no arguments were passed
@@ -302,12 +306,12 @@ EOF
   case "$1" in
     list)
       # This will display the description by convention. Its kinda horrible but it MUST be the first line in the function and only one line long
-      echo "Available tools:"
+      echo -e "${YEL}${UND}Available tools:${NC}"
       functions | grep -A1 "^__tool_" | while read -r line; do
         if [[ $line =~ ^__tool_ ]]; then
           tool_name=$(echo "$line" | sed -e 's/__tool_\([^ ]*\) (.*/\1/')
         elif [[ $line =~ "^local DESC=" ]]; then
-          desc=$(echo "$line" | sed -e 's/DESC="\([^"]*\)"/\1/')
+          desc=$(echo "$line" | sed -e 's/^local DESC="\([^"]*\)"/\1/')
           echo "$tool_name: $desc"
         fi
       done| column -t -s:
@@ -329,10 +333,11 @@ EOF
   esac
 }
 
+
 # Wrapper function to print out the command being executed so the user has context
 # Note that there may be other setup and activities that the calling tool does to make the resulting echoed command functional.
 __tool-execute() {
-  local CMD="$@"
+  local CMD="$*"
   echo "[FUNCTION] Executing: $CMD"
   eval "$CMD"
 }
@@ -344,7 +349,7 @@ __tool_puppet-run() { # Puppet run
   local DESC="Run a puppet apply"
   [[ $2 == "TOOLHELP" ]] && { echo "${HELP:-$DESC}"; return; }
   cd /opt/puppet || exit
-  __tool-execute "sudo puppet apply manifests $@"
+  __tool-execute "sudo puppet apply manifests $*"
   cd - > /dev/null || exit
 }
 
@@ -352,7 +357,7 @@ __tool_puppet-run() { # Puppet run
 __tool_puppet-disable() {
   local DESC="Disable puppet executions"
   [[ $2 == "TOOLHELP" ]] && { echo "${HELP:-$DESC}"; return; }
-  local USER=$(who am i | awk '{print $1}')
+  local USER; USER=$(who am i | awk '{print $1}')
   echo -n "Provide reason for disabling: "
   read REPLY
   __tool-execute "puppet agent --disable \"$USER: ${REPLY}\""
@@ -365,6 +370,16 @@ __tool_puppet-enable() {
   __tool-execute "puppet agent --enable"
 }
 
+# Do a git pull on the puppet repo using sudo. Only users with sudo will work
+# This uses sudo -E so that the users SSH agent keys will be passed through.
+__tool_puppet-pull() {
+  local DESC="Perform a git pull on the puppet repo using sudo"
+  [[ $2 == "TOOLHELP" ]] && { echo "${HELP:-$DESC}"; return; }
+  cd /opt/puppet || exit
+  __tool-execute "sudo -E git pull"
+  cd - > /dev/null || exit
+}
+
 # Run docker compose with our compose file and project
 __tool_compose() {
   local DESC="Run docker compose against our compose file"
@@ -372,7 +387,7 @@ __tool_compose() {
   if [ ! -f /opt/docker/compose.yaml ]; then
     echo "Compose environment not defined on this server."
   else
-    __tool-execute "docker compose -f /opt/docker/compose.yaml -p bedrock $@"
+    __tool-execute "docker compose -f /opt/docker/compose.yaml -p bedrock $*"
   fi
 }
 
@@ -383,11 +398,10 @@ __tool_compose() {
 #  __tool-execute "journalctl -f -t trader-$USER $@"
 #}
 
-# Generic journalctl wrapper
 __tool_logs() {
   local DESC="Interact with your dev logs using journalctl"
-  local HELP=$(cat <<EOF
-Usage: $TOOLNAME logs [options]
+  local HELP; HELP=$(cat <<EOF
+${YEL}Usage: $TOOLNAME ${0/__tool_/} [options]${NC}
 $DESC
 
 Options:
@@ -398,10 +412,57 @@ Options:
 EOF
 )
   [[ $2 == "TOOLHELP" ]] && { echo "${HELP:-$DESC}"; return; }
-  cmd=$(printf '%q ' journalctl --no-pager "$@")
+  cmd=$(printf '%q ' journalctl --no-pager -t trader-"$USER" "$@")
   __tool-execute "$cmd"
 }
 
+__tool_log-search() {
+  local DESC="Search journalctl logs using fzf"
+  local HELP; HELP=$(cat <<EOF
+${YEL}Usage: $TOOLNAME ${0/__tool_/} [options]${NC}
+$DESC
+
+Options:
+  Any valid journalctl options
+
+  You can use -n 1000 to search the last 1000 lines
+  You can use -t to search a specific tag
+  You can use -u to search a specific unit
+  You can use '--since -2d' to search the last 2 days
+  You can not use -f to live tail the logs however
+EOF
+)
+  [[ $2 == "TOOLHELP" ]] && { echo "${HELP:-$DESC}"; return; }
+
+  local TMPFILE; TMPFILE=$(mktemp)
+  # shellcheck disable=SC2064
+  trap "rm $TMPFILE > /dev/null" TERM INT EXIT
+  journalctl --no-pager "$@" | nl > "$TMPFILE" && \
+  fzf +m --track --ansi --exact \
+      --layout=reverse \
+      --no-sort \
+      --with-nth=2.. \
+      --preview-window=down:65%:wrap \
+      --preview-label="Relative log entries" \
+      --preview-label-pos=5 \
+      --border-label="Journalctl Log Search. Use 'alt-j' to pretty print lines with JSON" \
+      --border-label-pos=5 \
+      --bind "alt-j:preview(
+        entry=\$(sed -n \${1}p < \"$TMPFILE\" | cut -f2-);
+        json_part=\$(echo \"\$entry\" | grep -o '{.*}');
+        if [ -n \"\$json_part\" ]; then
+            echo \"\$json_part\" |jq .| batcat --language=json --style=plain --color=always;
+        else
+            echo \"No JSON detected in selected line.\";
+        fi
+      )" \
+      --preview "line=\$(echo {1} | tr -d '[:alpha:]');
+      start=\$((line - 10));
+      end=\$((line + 10));
+      [ \"\$start\" -lt 1 ] && start=1;
+      sed -n \"\${start},\${end}p\" < \"$TMPFILE\" |cut -f2- | batcat --language=log --style=plain --color=always --highlight-line \$((line - start + 1))
+      " < "$TMPFILE"
+}
 
 
 # vim: set filetype=sh
