@@ -3,6 +3,8 @@
 # With all the nix termoil and such, I'm not yet sold on doing everything
 # here. While its compelling, I may not want to go all in?
 # This means that nix will be mostly mac for the time being
+# Another thing I dont like about NIX as a whole, when I try to have AI help out with
+# config it is NEVER accurate. The DDL is not intuitive enough for general usage.
 {
   description = "Home Manager config for mdp";
 
@@ -13,37 +15,39 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-# For now, comment out darwin as I think this needs to live in .config/darwin separately
-#    darwin = {
-#      url = "github:lnl7/nix-darwin";
-#      inputs.nixpkgs.follows = "nixpkgs";
-#    };
   };
 
   outputs = { nixpkgs, home-manager, ... }:
     let
+      # TODO: find a way to auto detect this
       system = "aarch64-darwin";
 
       mkHomeConfiguration = args: home-manager.lib.homeManagerConfiguration (rec {
         pkgs = nixpkgs.legacyPackages.${system};
-        modules = [
-          ./home.nix
-          {
-            home = {
-              username = args.username;
-              homeDirectory = args.homeDirectory;
-              stateVersion = "23.05";
-            };
-          }
-        ];
+        #        modules = [
+        #          ./home.nix
+        #          {
+        #            home = {
+        #              username = "someuser";
+        #              homeDirectory = "/Users/someuser";
+        #              # This value determines the Home Manager release that your configuration is
+        #              # compatible with. This helps avoid breakage when a new Home Manager release
+        #              # introduces backwards incompatible changes.
+        #              #
+        #              # You should not change this value, even if you update Home Manager. If you do
+        #              # want to update the value, then make sure to first check the Home Manager
+        #              # release notes.
+        #              stateVersion = "23.05";
+        #            };
+        #          }
+        #        ];
       } // args);
 
     in {
 
-    # run with home-manager switch --flake .#mdp or similar
+      # run with home-manager switch --flake .#mdp or similar
       homeConfigurations.mdp = mkHomeConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-darwin;
+        #pkgs = nixpkgs.legacyPackages.x86_64-darwin;
         modules = [
           ./home.nix
           {
@@ -58,7 +62,6 @@
 
       homeConfigurations.mpascoe = mkHomeConfiguration {
         #pkgs = nixpkgs.legacyPackages.x86_64-darwin;
-        pkgs = nixpkgs.legacyPackages.aarch64-darwin;
         modules = [
           ./home.nix
           {
@@ -69,14 +72,10 @@
             };
           }
         ];
+        extraSpecialArgs = {
+          isWork = true;
+        };
       };
-
-#      homeConfigurations.mdpextra = mkHomeConfiguration {
-#        extraSpecialArgs = {
-#          withGUI = true;
-#          isDesktop = true;
-#        };
-#      };
 
     };
 }
