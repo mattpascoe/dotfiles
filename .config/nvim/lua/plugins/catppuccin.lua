@@ -7,8 +7,10 @@ return {
     init = function()
       vim.opt.termguicolors = true
       vim.cmd.colorscheme 'catppuccin'
-      vim.opt.colorcolumn = '80'
-      vim.api.nvim_set_hl(0, 'ColorColumn', { bg = '#06060F' }) -- Draw a highlight at the colorcolumn position
+      -- vim.opt.colorcolumn = '80'
+      -- vim.api.nvim_set_hl(0, 'ColorColumn', { bg = '#06060F' }) -- Draw a highlight at the colorcolumn position
+      -- Using virt-column now instead of the colorcolumn above
+      vim.api.nvim_set_hl(0, 'VirtColumn', { fg = '#06060F' }) -- Draw a highlight at the virtcolumn position
     end,
     config = function()
       require('catppuccin').setup {
