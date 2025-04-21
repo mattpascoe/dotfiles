@@ -16,7 +16,20 @@ return {
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
-      require('mini.files').setup()
+
+      -- Mini-files
+      require('mini.files').setup {
+        windows = {
+          preview = true,
+          width_focus = 30,
+          width_preview = 80,
+        },
+        mappings = {
+          close = '<Esc>',
+          go_out = 'H',
+          go_out_plus = 'h',
+        },
+      }
       vim.keymap.set('n', '<leader>tf', ':lua MiniFiles.open()<CR>', { desc = '[F]ile browser', noremap = true })
 
       local tabline = require 'mini.tabline'
@@ -44,13 +57,16 @@ return {
         -- Get the last modified time of the current file
         local file = vim.fn.expand('%')
         local lastm = file ~= '' and vim.fn.getftime(file) or -1
-        local last_mtime = (file ~= '' and lastm ~= -1) and os.date(' %y-%m-%d %H:%M', lastm) or ''
+        local last_mtime = (file ~= '' and lastm ~= -1) and os.date('%y-%m-%d %H:%M', lastm) or ''
 
         -- Return the status line with a percentage
-        return '%3{codeium#GetStatusString()}'
-          .. last_mtime
-          .. percentage
-          .. "%2l:%-2v%{&paste ? ' ρ' : ''}%{&spell ? ' Ꞩ' : ''}"
+        return ''
+          .. last_mtime -- last modified time
+          .. percentage -- percentage of the current line
+          .. '%2l:%-2v' -- line:column
+          .. "%{codeium#GetStatusString() ==# ' ON' ? ' ' : ''}" -- AI (codeium) status
+          .. "%{&paste ? ' ρ' : ''}" -- PASTE status
+          .. "%{&spell ? ' Ꞩ' : ''}" -- SPELL status
       end
 
       -- ... and there is more!
