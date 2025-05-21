@@ -1,6 +1,7 @@
 return {
   {
-    'Exafunction/codeium.vim',
+    -- Was 'Exafunction/codeium.vim',
+    'Exafunction/windsurf.vim',
     event = 'BufEnter',
     config = function()
       vim.keymap.set('n', '<leader>ta', ':CodeiumToggle<cr>', { desc = '[A]I helper', noremap = true, silent = true })
