@@ -35,7 +35,10 @@ return {
           request = 'launch',
           name = 'Listen for Xdebug',
           hostname = '127.0.0.1',
-          port = 9003,
+          pathMappings = {
+            ['/opt/trader'] = '/Users/mpascoe/data/workrepos/xdt6000',
+          },
+          port = 9009,
         },
       }
 
