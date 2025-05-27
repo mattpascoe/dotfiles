@@ -8,9 +8,7 @@
 set -eou pipefail
 
 # Check if USER is set and try a fallback
-if [ -z "$USER" ]; then
-  USER=$(whoami)
-fi
+USER="${USER:-$(whoami)}"
 
 # Determine what type of machine we are on
 unameOut="$(uname -s)"
@@ -103,6 +101,7 @@ if [ "$MACHINE" == "Linux" ]; then
   # Ensure Nerd Fonts are installed
   if [ ! -f /usr/local/share/fonts/MesloLGMNerdFontMono-Regular.ttf ]; then
     echo "- Installing Nerd Fonts..."
+    sudo mkdir -p /usr/local/share/fonts
     sudo curl -s -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Meslo/M/Regular/MesloLGMNerdFontMono-Regular.ttf --output-dir /usr/local/share/fonts
     fc-cache -fv /usr/local/share/fonts
   fi
@@ -210,12 +209,13 @@ fi
 ###### Link dotfile configs, could I use stow or chezmoi.io? sure, but less dependancies here
 LINKFILES+=(
   ".config/btop"
-  ".config/git"
   ".config/ghostty"
+  ".config/git"
   ".config/home-manager"
+  #".config/kitty"
   ".config/lazygit"
-  ".config/kitty"
   ".config/nvim"
+  ".config/rofi"
   ".config/starship.toml"
   ".config/tmux"
   ".profile"
