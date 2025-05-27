@@ -7,6 +7,11 @@
 
 set -eou pipefail
 
+# Check if USER is set and try a fallback
+if [ -z "$USER" ]; then
+  USER=$(whoami)
+fi
+
 # Determine what type of machine we are on
 unameOut="$(uname -s)"
 case "${unameOut}" in
@@ -82,14 +87,17 @@ if [ "$MACHINE" == "Linux" ]; then
   case "$ID" in
     debian*)    sudo apt install "${PKGS[@]}";;
     ubuntu*)    sudo apt install "${PKGS[@]}";;
+    arch*)      sudo pacman --noconfirm -Sy "${PKGS[@]}";;
     *)  echo "-!- This system is not a supported type, You should check that the following packages are installed:"
         echo "    ${PKGS[*]}";;
   esac
 
-  # Ensure zsh is default
-  if [ "$(grep $USER /etc/passwd|cut -d: -f7)" != "/bin/zsh" ]; then
-    echo "- Switching default shell to ZSH, provide your password if prompted..."
-    chsh -s /bin/zsh
+  # Ensure zsh is default if its available
+  if [ ! -f /usr/bin/zsh ]; then
+    if [ "$(grep "$USER" /etc/passwd|cut -d: -f7)" != "/bin/zsh" ]; then
+      echo "- Switching default shell to ZSH, provide your password if prompted..."
+      chsh -s /bin/zsh
+    fi
   fi
 
   # Ensure Nerd Fonts are installed
