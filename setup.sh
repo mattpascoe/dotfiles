@@ -248,3 +248,8 @@ fi
 
 echo
 echo "Setup complete."
+
+read -r -p "Do you want to source the .shell-common file? [y/N] "
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+  source "$DIR/.shell-common"
+fi
