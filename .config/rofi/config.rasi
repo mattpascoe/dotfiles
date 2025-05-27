@@ -1,11 +1,14 @@
 configuration {
     show-icons: true;
+    modi: "drun,run";
+    font: "MesloLGS NF 10";
+    drun-display-format: "{icon} {name}";
 
-    // display-ssh:    "󰣀 ssh:";
     display-run:    "󱓞 run:";
-    display-drun:   "󰣖 drun:";
-    // display-window: "󱂬 window:";
+    display-drun:   "󰣖 Apps:";
     display-combi:  "󰕘 combi:";
+    // display-window: "󱂬 window:";
+    // display-ssh:    "󰣀 ssh:";
     // display-filebrowser: "󰉋 filebrowser:";
 }
 
