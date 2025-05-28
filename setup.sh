@@ -41,7 +41,7 @@ DIR=$(dirname "$SCRIPT")
 declare -a LINKFILES
 
 echo
-echo "Looks like we are a $MACHINE system."
+echo -e "${BOLD}${BLU}Looks like we are a $MACHINE system.${NC}"
 
 ###### Unraid specific stuff, barebones zsh setup
 if [ -f /etc/unraid-version ]; then
@@ -72,13 +72,7 @@ fi
 
 ###### Linux specific stuff
 if [ "$MACHINE" == "Linux" ]; then
-  echo "Looks like the OS is $PRETTY_NAME"
-#  read -p "Do you want i3 configuration links? [y/N] " -r I3
-#  echo    # (optional) move to a new line
-#  if [[ $I3 =~ ^[Yy]$ ]]
-#  then
-#    LINKFILES+=(".config/i3")
-#  fi
+  echo -e "${BOLD}${BLU}Looks like the OS is ${PRETTY_NAME}.${NC}"
 
   PKGS+=("git"
     "bat"
@@ -98,7 +92,7 @@ if [ "$MACHINE" == "Linux" ]; then
     debian*)    sudo apt install "${PKGS[@]}";;
     ubuntu*)    sudo apt install "${PKGS[@]}";;
     arch*)      sudo pacman --needed --noconfirm -Sy "${PKGS[@]}";;
-    *)  echo "-!- This system is not a supported type, You should check that the following packages are installed:"
+    *)  echo -e "${BOLD}${RED}-!- This system is not a supported type, You should check that the following packages are installed:${NC}"
         echo "    ${PKGS[*]}";;
   esac
 
@@ -128,15 +122,15 @@ if [ "$MACHINE" == "Mac" ]; then
   # Install Git if it does not exist
   if ! command -v "git" &> /dev/null; then
     # run git command, it may ask to install developer tools, go ahead and do that to get the git command
-    echo "- Checking git version. If missing it will prompt to install developer tools..."
+    msg "Checking git version. If missing it will prompt to install developer tools..."
     git --version
   fi
 
   # Run NIX if we want ( should probably move to all systems level)
-  read -r -p "- Install NIX based packages... Continue (N/y) "
+  read -r -p "${BOLD}${GRN}Install NIX based packages... Continue (N/y) ${NC}"
   if [ "$REPLY" == "y" ]; then
     if ! command -v "nix" &> /dev/null; then
-      echo "- Installing NIX tools..."
+      msg "Installing NIX tools..."
       curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
     fi
 
@@ -152,17 +146,17 @@ if [ "$MACHINE" == "Mac" ]; then
       # NIXPKGS_ALLOW_BROKEN=1 nix run home-manager -- switch --impure --flake .config/home-manager
       # #NIXPKGS_ALLOW_BROKEN=1 home-manager --impure switch (this is how you can run it manually)
     else
-      echo "ERROR: Unable to find NIX command"
+      echo -e "${BOLD}${RED}-!- ERROR: Unable to find NIX command. Please install NIX and try again.${NC}"
     fi
   else
-    echo ".. Skipping NIX based config changes."
+    msg ".. Skipping NIX based config changes."
   fi
 
   # Run brew if we want
-  read -r -p "- Install Homebrew based packages... Continue (N/y) "
+  read -r -p "${BOLD}${GRN}Install Homebrew based packages... Continue (N/y) ${NC}"
   if [ "$REPLY" == "yDISABLED" ]; then
     if ! command -v "brew" &> /dev/null; then
-      echo "- Installing Brew tools..."
+      msg "Installing Brew tools..."
       #/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
 
@@ -170,22 +164,11 @@ if [ "$MACHINE" == "Mac" ]; then
     if command -v "brew" &> /dev/null; then
       eval "$(brew shellenv)"
 
-      # Disabling yabai for now as well
-#      read -p "Do you want yabai/skhd configuration? [y/N] " -r YAB
-#      echo    # (optional) move to a new line
-#      if [[ $YAB =~ ^[Yy]$ ]]
-#      then
-#        # Tiling window manager and shortcuts
-#        brew install koekeishiya/formulae/yabai koekeishiya/formulae/skhd
-#
-#        LINKFILES+=(".config/yabai" ".config/skhd")
-#      fi
-
-      echo "- Ensuring install of requested brew packages..."
+      msg "Ensuring install of requested brew packages..."
       brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman tmux bash jesseduffield/lazygit/lazygit shellcheck eza
 
     else
-      echo "ERROR: Unable to find Brew command"
+      echo -e "${BOLD}${RED}-!- ERROR: Unable to find Brew command. Please install Brew and try again.${NC}"
     fi
 
   else
@@ -193,11 +176,11 @@ if [ "$MACHINE" == "Mac" ]; then
   fi
 
   # Setup lots of system settings using the "defaults" method
-  read -r -p "- Execute 'defaults' commands to set specific Mac settings... Continue (N/y) "
+  read -r -p "${BOLD}${GRN}Execute 'defaults' commands to set specific Mac settings... Continue (N/y) ${NC}"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     sudo ~/dotfiles/.macos
   else
-    echo ".. Skipping defaults based config changes."
+    msg ".. Skipping defaults based config changes."
   fi
 
   # For some reason /usr/local/bin is not on mac by default. Lets make it for starship
@@ -209,13 +192,13 @@ fi
 
 # Everyone gets starship!
 if ! command -v "starship" &> /dev/null; then
-  read -p "Do you want to install Starship.rs prompt? [y/N] " -r STAR
+  read -p "${BOLD}${GRN}Do you want to install Starship.rs prompt? [y/N] ${NC}" -r STAR
   echo    # (optional) move to a new line
   if [[ $STAR =~ ^[Yy]$ ]]; then
     sudo sh -c "curl -fsSL https://starship.rs/install.sh | sh"
   fi
 else
-  echo "- Starship is alredy installed."
+  msg "Starship is alredy installed."
 fi
 
 ###### Link dotfile configs, could I use stow or chezmoi.io? sure, but less dependancies here
@@ -239,10 +222,10 @@ for FILE in "${LINKFILES[@]}"
 do
   if [ ! -L "$HOME/$FILE" ]; then
     if [ -e "$HOME/$FILE" ]; then
-      echo "Backing up current file to ${FILE}.bak"
+      msg "Backing up current file to ${FILE}.bak"
       mv "$HOME/$FILE" "$HOME/$FILE.bak"
     fi
-    echo "Linking file $HOME/$FILE -> $DIR/$FILE"
+    msg "Linking file $HOME/$FILE -> $DIR/$FILE"
     ln -s "$DIR/$FILE" "$HOME/$FILE"
   else
     echo -n "Found link: "
@@ -252,16 +235,16 @@ done
 
 # Run <prefix> + I to install plugins the first time
 if [ ! -d ~/.config/tmux/plugins/tpm ];then
-  echo "Installing TMUX plugin manager."
+  msg "Installing TMUX plugin manager."
   git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
-  echo "Installing TMUX plugins. You may need to run <prefix> + I to install plugins if this doesn't work"
+  msg "Installing TMUX plugins. You may need to run <prefix> + I to install plugins if this doesn't work"
   ~/.config/tmux/plugins/tpm/bin/install_plugins
 fi
 
 echo
-echo "Setup complete."
+msg "Setup complete."
 
-read -r -p "Do you want to source the .shell-common file? [y/N] "
+read -r -p "${BOLD}${GRN}Do you want to source the .shell-common file? [y/N] ${NC}"
 if [[ $REPLY =~ ^[Yy]$ ]]; then
   source "$DIR/.shell-common"
 fi
