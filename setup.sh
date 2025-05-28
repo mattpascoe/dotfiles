@@ -41,7 +41,6 @@ SCRIPT=$(readlink -f "$0")
 DIR=$(dirname "$SCRIPT")
 declare -a LINKFILES
 
-echo
 echo -e "${BOLD}${BLU}Looks like we are a $MACHINE system.${NC}"
 
 ###### Unraid specific stuff, barebones zsh setup
@@ -75,20 +74,24 @@ fi
 if [ "$MACHINE" == "Linux" ]; then
   echo -e "${BOLD}${BLU}Looks like the OS is ${PRETTY_NAME}.${NC}"
 
-  PKGS+=("git"
+  # These are base packages I hope to use on all systems
+  PKGS+=(
     "bat"
     "btop"
     "eza"
     "fzf"
+    "git"
     "highlight"
     "jq"
+    "lazygit"
     "neovim"
     "tmux"
     "tree"
+    "yazi"
     "zsh"
   )
 
-  msg "Ensuring install of requested packages..."
+  msg "Ensuring install of requested base packages..."
   case "$ID" in
     debian*)    sudo apt install "${PKGS[@]}";;
     ubuntu*)    sudo apt install "${PKGS[@]}";;
@@ -112,9 +115,6 @@ if [ "$MACHINE" == "Linux" ]; then
     sudo curl -s -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Meslo/M/Regular/MesloLGMNerdFontMono-Regular.ttf --output-dir /usr/local/share/fonts
     fc-cache -fv /usr/local/share/fonts
   fi
-
-  msg "!! Consider installing the following"
-  echo "lazygit yazi"
 fi
 
 
@@ -127,9 +127,10 @@ if [ "$MACHINE" == "Mac" ]; then
     git --version
   fi
 
-  # Run NIX if we want ( should probably move to all systems level)
-  read -r -p "${BOLD}${GRN}Install NIX based packages... Continue (N/y) ${NC}"
-  if [ "$REPLY" == "y" ]; then
+  # Run NIX if we want
+  echo -en "${BOLD}${GRN}Install NIX based packages... Continue (N/y) ${NC}"
+  read -r
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
     if ! command -v "nix" &> /dev/null; then
       msg "Installing NIX tools..."
       curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
@@ -154,30 +155,32 @@ if [ "$MACHINE" == "Mac" ]; then
   fi
 
   # Run brew if we want
-  read -r -p "${BOLD}${GRN}Install Homebrew based packages... Continue (N/y) ${NC}"
-  if [ "$REPLY" == "yDISABLED" ]; then
-    if ! command -v "brew" &> /dev/null; then
-      msg "Installing Brew tools..."
-      #/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    fi
+  #echo -en "${BOLD}${GRN}Install Homebrew based packages... Continue (N/y) ${NC}"
+  #read -r
+  #if [ "$REPLY" == "yDISABLED" ]; then
+  #  if ! command -v "brew" &> /dev/null; then
+  #    msg "Installing Brew tools..."
+  #    #/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  #  fi
 
-    # Load up brew environment, should work on ARM intel systems.
-    if command -v "brew" &> /dev/null; then
-      eval "$(brew shellenv)"
+  #  # Load up brew environment, should work on ARM intel systems.
+  #  if command -v "brew" &> /dev/null; then
+  #    eval "$(brew shellenv)"
 
-      msg "Ensuring install of requested brew packages..."
-      brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman tmux bash jesseduffield/lazygit/lazygit shellcheck eza
+  #    msg "Ensuring install of requested brew packages..."
+  #    brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman tmux bash jesseduffield/lazygit/lazygit shellcheck eza
 
-    else
-      echo -e "${BOLD}${RED}-!- ERROR: Unable to find Brew command. Please install Brew and try again.${NC}"
-    fi
+  #  else
+  #    echo -e "${BOLD}${RED}-!- ERROR: Unable to find Brew command. Please install Brew and try again.${NC}"
+  #  fi
 
-  else
-    echo ".. [DISABLED] Skipping Brew based config changes."
-  fi
+  #else
+  #  echo ".. [DISABLED] Skipping Brew based config changes."
+  #fi
 
   # Setup lots of system settings using the "defaults" method
-  read -r -p "${BOLD}${GRN}Execute 'defaults' commands to set specific Mac settings... Continue (N/y) ${NC}"
+  echo -en "${BOLD}${GRN}Execute 'defaults' commands to set specific Mac settings... Continue (N/y) ${NC}"
+  read -r
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     sudo ~/dotfiles/.macos
   else
@@ -193,8 +196,8 @@ fi
 
 # Everyone gets starship!
 if ! command -v "starship" &> /dev/null; then
-  read -p "${BOLD}${GRN}Do you want to install Starship.rs prompt? [y/N] ${NC}" -r STAR
-  echo    # (optional) move to a new line
+  echo -en "${BOLD}${GRN}Do you want to install Starship.rs prompt? [y/N] ${NC}" -r STAR
+  read -r
   if [[ $STAR =~ ^[Yy]$ ]]; then
     sudo sh -c "curl -fsSL https://starship.rs/install.sh | sh"
   fi
@@ -218,7 +221,7 @@ LINKFILES+=(
   ".vimrc"
   ".zshrc"
 )
-echo "- Checking dotfile config symlinks..."
+msg "Checking dotfile config symlinks..."
 for FILE in "${LINKFILES[@]}"
 do
   if [ ! -L "$HOME/$FILE" ]; then
@@ -245,7 +248,9 @@ fi
 echo
 msg "Setup complete."
 
-read -r -p "${BOLD}${GRN}Do you want to source the .shell-common file? [y/N] ${NC}"
+echo -en "${BOLD}${GRN}Do you want to source the .shell-common file? [y/N] ${NC}"
+read -r
 if [[ $REPLY =~ ^[Yy]$ ]]; then
   source "$DIR/.shell-common"
 fi
+
