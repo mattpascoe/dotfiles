@@ -13,10 +13,11 @@ NC="\033[0m" # no color/format
 YEL="\033[33m"
 BLU="\033[34m"
 RED="\033[31m"
+GRN="\033[32m"
 BOLD="\033[1m"
 
 function msg() {
-  command echo -e "${BOLD}${YEL}dotfiles${NC}: $*"
+  command echo -e "${BOLD}${YEL}---> $*${NC}"
 }
 
 # Check if USER is set and try a fallback
