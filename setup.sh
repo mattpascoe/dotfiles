@@ -7,6 +7,18 @@
 
 set -eou pipefail
 
+# Colors/formatting
+UL="\033[4m" # underline
+NC="\033[0m" # no color/format
+YEL="\033[33m"
+BLU="\033[34m"
+RED="\033[31m"
+BOLD="\033[1m"
+
+function msg() {
+  command echo -e "${BOLD}${YEL}dotfiles${NC}: $*"
+}
+
 # Check if USER is set and try a fallback
 USER="${USER:-$(whoami)}"
 
@@ -33,7 +45,7 @@ echo "Looks like we are a $MACHINE system."
 
 ###### Unraid specific stuff, barebones zsh setup
 if [ -f /etc/unraid-version ]; then
-  echo "- Setting up as an Unraid system."
+  msg "Setting up as an Unraid system."
 
   # Combine the zshrc and shell-common files into /boot/config
   cat .zshrc .shell-common > /boot/config/myzshrc
@@ -46,7 +58,7 @@ if [ -f /etc/unraid-version ]; then
     ln -s /mnt/user/data-syncthing/matt-personal/wiki ~/data/SYNC/wiki
   fi
 
-  echo "- Updates to /boot/config have been made."
+  msg "Updates to /boot/config have been made."
   # Stop here since unraid is its own beast
   exit
 fi
@@ -54,7 +66,7 @@ fi
 ###### Ensure ~/data exists. Also used in .macos script
 if [ ! -d ~/data ]
 then
-  echo "- Creating ~/data directory. PUT YOUR DATA HERE!"
+  msg "Creating ~/data directory. PUT YOUR DATA HERE!"
   mkdir ~/data
 fi
 
@@ -81,7 +93,7 @@ if [ "$MACHINE" == "Linux" ]; then
     "zsh"
   )
 
-  echo "- Ensuring install of requested packages..."
+  msg "Ensuring install of requested packages..."
   case "$ID" in
     debian*)    sudo apt install "${PKGS[@]}";;
     ubuntu*)    sudo apt install "${PKGS[@]}";;
@@ -91,22 +103,22 @@ if [ "$MACHINE" == "Linux" ]; then
   esac
 
   # Ensure zsh is default if its available
-  if ! command -v "zsh" &> /dev/null; then
+  if command -v "zsh" &> /dev/null; then
     if [ "$(grep "$USER" /etc/passwd|cut -d: -f7)" != "/bin/zsh" ]; then
-      echo "- Switching default shell to ZSH, provide your password if prompted..."
+      msg "Switching default shell to ZSH, provide your password if prompted..."
       chsh -s /bin/zsh
     fi
   fi
 
   # Ensure Nerd Fonts are installed
   if [ ! -f /usr/local/share/fonts/MesloLGMNerdFontMono-Regular.ttf ]; then
-    echo "- Installing Nerd Fonts..."
+    msg "Installing Nerd Fonts..."
     sudo mkdir -p /usr/local/share/fonts
     sudo curl -s -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Meslo/M/Regular/MesloLGMNerdFontMono-Regular.ttf --output-dir /usr/local/share/fonts
     fc-cache -fv /usr/local/share/fonts
   fi
 
-  echo "-!- Consider installing the following"
+  msg "!! Consider installing the following"
   echo "lazygit yazi"
 fi
 
