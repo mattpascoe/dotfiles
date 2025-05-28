@@ -85,13 +85,13 @@ if [ "$MACHINE" == "Linux" ]; then
   case "$ID" in
     debian*)    sudo apt install "${PKGS[@]}";;
     ubuntu*)    sudo apt install "${PKGS[@]}";;
-    arch*)      sudo pacman --noconfirm -Sy "${PKGS[@]}";;
+    arch*)      sudo pacman --needed --noconfirm -Sy "${PKGS[@]}";;
     *)  echo "-!- This system is not a supported type, You should check that the following packages are installed:"
         echo "    ${PKGS[*]}";;
   esac
 
   # Ensure zsh is default if its available
-  if [ ! -f /usr/bin/zsh ]; then
+  if ! command -v "zsh" &> /dev/null; then
     if [ "$(grep "$USER" /etc/passwd|cut -d: -f7)" != "/bin/zsh" ]; then
       echo "- Switching default shell to ZSH, provide your password if prompted..."
       chsh -s /bin/zsh
@@ -114,7 +114,7 @@ fi
 ###### Mac specific stuff
 if [ "$MACHINE" == "Mac" ]; then
   # Install Git if it does not exist
-  if ! type "git" > /dev/null; then
+  if ! command -v "git" &> /dev/null; then
     # run git command, it may ask to install developer tools, go ahead and do that to get the git command
     echo "- Checking git version. If missing it will prompt to install developer tools..."
     git --version
@@ -123,12 +123,12 @@ if [ "$MACHINE" == "Mac" ]; then
   # Run NIX if we want ( should probably move to all systems level)
   read -r -p "- Install NIX based packages... Continue (N/y) "
   if [ "$REPLY" == "y" ]; then
-    if ! type "nix" > /dev/null; then
+    if ! command -v "nix" &> /dev/null; then
       echo "- Installing NIX tools..."
       curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
     fi
 
-    if type "nix" > /dev/null; then
+    if command -v "nix" &> /dev/null; then
       . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
       nix flake update --flake .config/home-manager
       nix run home-manager -- switch --flake .config/home-manager
@@ -149,13 +149,13 @@ if [ "$MACHINE" == "Mac" ]; then
   # Run brew if we want
   read -r -p "- Install Homebrew based packages... Continue (N/y) "
   if [ "$REPLY" == "yDISABLED" ]; then
-    if ! type "brew" > /dev/null; then
+    if ! command -v "brew" &> /dev/null; then
       echo "- Installing Brew tools..."
       #/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
 
     # Load up brew environment, should work on ARM intel systems.
-    if type "brew" > /dev/null; then
+    if command -v "brew" &> /dev/null; then
       eval "$(brew shellenv)"
 
       # Disabling yabai for now as well
@@ -196,7 +196,7 @@ if [ "$MACHINE" == "Mac" ]; then
 fi
 
 # Everyone gets starship!
-if ! type "starship" &> /dev/null; then
+if ! command -v "starship" &> /dev/null; then
   read -p "Do you want to install Starship.rs prompt? [y/N] " -r STAR
   echo    # (optional) move to a new line
   if [[ $STAR =~ ^[Yy]$ ]]; then
