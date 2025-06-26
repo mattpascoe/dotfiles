@@ -83,11 +83,11 @@ if [ "$MACHINE" == "Linux" ]; then
     "git"
     "highlight"
     "jq"
-    "lazygit"
+  #  "lazygit" # not on ubuntu but is on arch
     "neovim"
     "tmux"
     "tree"
-    "yazi"
+  #  "yazi" # not on ubuntu but is on arch
     "zsh"
   )
 
@@ -196,9 +196,9 @@ fi
 
 # Everyone gets starship!
 if ! command -v "starship" &> /dev/null; then
-  echo -en "${BOLD}${GRN}Do you want to install Starship.rs prompt? [y/N] ${NC}" -r STAR
+  echo -en "${BOLD}${GRN}Do you want to install Starship.rs prompt? [y/N] ${NC}"
   read -r
-  if [[ $STAR =~ ^[Yy]$ ]]; then
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
     sudo sh -c "curl -fsSL https://starship.rs/install.sh | sh"
   fi
 else
@@ -217,6 +217,7 @@ LINKFILES+=(
   ".config/rofi"
   ".config/starship.toml"
   ".config/tmux"
+  ".config/zk"
   ".profile"
   ".vimrc"
   ".zshrc"
