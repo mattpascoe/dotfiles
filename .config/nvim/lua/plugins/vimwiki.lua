@@ -22,12 +22,12 @@ return {
       vim.g.vimwiki_key_mappings = { table_mappings = 0 }
     end,
     config = function()
-      vim.keymap.set(
-        'n',
-        '<leader>tl',
-        ':VimwikiToggleListItem<cr>',
-        { desc = 'Vimwiki [L]istitem', noremap = true, silent = true }
-      )
+      -- vim.keymap.set(
+      --   'n',
+      --   '<leader>tl',
+      --   ':VimwikiToggleListItem<cr>',
+      --   { desc = 'Vimwiki [L]istitem', noremap = true, silent = true }
+      -- )
     end,
   },
 }
