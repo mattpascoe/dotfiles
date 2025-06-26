@@ -34,6 +34,9 @@ vim.keymap.set('n', '<leader>ts', ':set spell!<cr>', { desc = '[S]pellcheck mode
 vim.keymap.set('n', 'x', '"_x', { noremap = true, silent = true })
 vim.keymap.set('n', 'X', '"_x', { noremap = true, silent = true })
 
+-- Redraw the screen, tmux-navigator remaps CTRL-l and :redraw alone does not work
+vim.keymap.set('n', '<leader>r', ':mode<cr>', { desc = '[R]edraw screen', noremap = true, silent = false })
+
 -- Reload the configuration file without restarting vim
 vim.keymap.set('n', '<leader>R', '<cmd>source $MYVIMRC<CR>', { desc = 'VIM Configuration [R]eload' })
 
