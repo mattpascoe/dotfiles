@@ -93,8 +93,8 @@ if [ "$MACHINE" == "Linux" ]; then
 
   msg "Ensuring install of requested base packages..."
   case "$ID" in
-    debian*)    sudo apt install "${PKGS[@]}";;
-    ubuntu*)    sudo apt install "${PKGS[@]}";;
+    debian*)    sudo apt install -y "${PKGS[@]}";;
+    ubuntu*)    sudo apt install -y "${PKGS[@]}";;
     arch*)      sudo pacman --needed --noconfirm -Sy "${PKGS[@]}";;
     *)  echo -e "${BOLD}${RED}-!- This system is not a supported type, You should check that the following packages are installed:${NC}"
         echo "    ${PKGS[*]}";;

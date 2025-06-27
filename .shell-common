@@ -1,6 +1,11 @@
 # This file should contain common shell setups that are sourced in to each
 # rc file.  At this time it supports Bash and Zsh.  Maybe others?
 
+# Don't do anything if not an interactive shell
+if [[ $- != *i* ]]; then
+  return
+fi
+
 # Determine our shell type
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
@@ -32,6 +37,7 @@ alias ports="sudo lsof -i -n | egrep 'COMMAND|LISTEN|UDP|TCP'"
 alias h='history'
 # let diff know the width of my screen
 alias diff='diff -W $(( $(tput cols) - 2 ))'
+alias dmesg='dmesg -T'
 # git aliases
 alias gs='git status'
 alias gsb='git status -sb'
@@ -198,7 +204,11 @@ else
 fi
 
 # Source in the fzf keybindings determined above, may be overkill but it ensures its there.
-source "$KEYBINDPATH"
+if [ -f "$KEYBINDPATH" ]; then
+  source "$KEYBINDPATH"
+else
+  echo "Could not find fzf keybindings at $KEYBINDPATH"
+fi
 # Add fzf keybindings to zsh vim plugin
 zvm_after_init_commands+=("source $KEYBINDPATH")
 
@@ -206,8 +216,8 @@ export FZF_COMPLETION_TRIGGER=','
 export FZF_TMUX_HEIGHT=60% # not strictly TMUX only
 export FZF_DEFAULT_OPTS="--layout=reverse --border --info=inline --bind ctrl-h:preview-up,ctrl-l:preview-down"
 export FZF_CTRL_T_OPTS="--preview '(highlight -O ansi -l {} 2> /dev/null || cat {} ) 2> /dev/null | head -100'"
-# history in chronological order
-export FZF_CTRL_R_OPTS='--no-sort'
+# history in chronological order with exact matches instead of fuzzy
+export FZF_CTRL_R_OPTS='--no-sort --exact'
 
 # Set up an ONA command for looking into ona from CLI.. acts as ping. Cache results for awhile.
 alias ona='ping -c5'
@@ -277,13 +287,15 @@ mosh() {
 
 # A good overview of alias/functions/scripts: https://www.baeldung.com/linux/bash-alias-vs-script-vs-new-function
 # Tool is a generalized wrapper to manage some common tools
+# It should support zsh and bash like shells
 # Allow user to define ~/.toolrc as a way to quickly setup their own tools
 [[ -f ~/.toolrc ]] && source ~/.toolrc
 [[ -f ~/.config/toolrc ]] && source ~/.config/toolrc
 # Set up a short alias
 alias t=tool
 tool () {
-  local TOOLNAME="$0"
+  # Get toolname with bash funcname then fall back to zsh
+  local TOOLNAME="${FUNCNAME[0]:-$0}"
   local YEL='\033[1;33m' NC='\033[0m' UND='\033[4m'
   usage() {
     local USAGE; USAGE=$(cat <<EOF
@@ -304,20 +316,27 @@ EOF
   [[ -z "$1" ]] && usage && return 1
 
   case "$1" in
-    list)
+    list|ls)
       # This will display the description by convention. Its kinda horrible but it MUST be the first line in the function and only one line long
       echo -e "${YEL}${UND}Available tools:${NC}"
-      functions | grep -A1 "^__tool_" | while read -r line; do
-        if [[ $line =~ ^__tool_ ]]; then
-          tool_name=$(echo "$line" | sed -e 's/__tool_\([^ ]*\) (.*/\1/')
-        elif [[ $line =~ "^local DESC=" ]]; then
-          desc=$(echo "$line" | sed -e 's/^local DESC="\([^"]*\)"/\1/')
-          echo "$tool_name: $desc"
+      if [[ -n "$ZSH_VERSION" ]]; then
+        tools=$(typeset -f | grep -E '^__tool_' -A5)
+      else
+        tools=$(declare -f | grep -E '^__tool_' -A5)
+      fi
+      current_tool=""
+      echo "$tools" | while IFS= read -r line; do
+        if [[ "$line" =~ ^__tool_ ]]; then
+          current_tool=$(echo "$line" | sed -E 's/^__tool_([^( ]*).*/\1/')
+        elif [[ "$line" =~ DESC= ]]; then
+          desc=$(echo "$line" | sed -E 's/.*DESC="?([^";]*)"?;?/\1/')
+          [[ -n "$current_tool" ]] && echo "$current_tool: $desc"
+          current_tool=""
         fi
       done| column -t -s:
       ;;
     show)
-      functions "__tool_$2"
+      [[ -n "$ZSH_VERSION" ]] && functions "__tool_$2" || declare -f "__tool_$2"
       ;;
     help|usage)
       [[ -z "$2" ]] && usage && return 1
@@ -347,7 +366,7 @@ __tool-execute() {
 #  you can pass additional options as needed
 __tool_puppet-run() { # Puppet run
   local DESC="Run a puppet apply"
-  [[ $2 == "TOOLHELP" ]] && { echo "${HELP:-$DESC}"; return; }
+  [[ $2 == "TOOLHELP" ]] && { echo -e "${HELP:-$DESC}"; return; }
   cd /opt/puppet || exit
   __tool-execute "sudo puppet apply manifests $*"
   cd - > /dev/null || exit
@@ -356,7 +375,7 @@ __tool_puppet-run() { # Puppet run
 # Puppet disable with prompting and user tagging
 __tool_puppet-disable() {
   local DESC="Disable puppet executions"
-  [[ $2 == "TOOLHELP" ]] && { echo "${HELP:-$DESC}"; return; }
+  [[ $2 == "TOOLHELP" ]] && { echo -e "${HELP:-$DESC}"; return; }
   local USER; USER=$(who am i | awk '{print $1}')
   echo -n "Provide reason for disabling: "
   read REPLY
@@ -366,7 +385,7 @@ __tool_puppet-disable() {
 # Simple Puppet enable
 __tool_puppet-enable() {
   local DESC="Enable puppet executions"
-  [[ $2 == "TOOLHELP" ]] && { echo "${HELP:-$DESC}"; return; }
+  [[ $2 == "TOOLHELP" ]] && { echo -e "${HELP:-$DESC}"; return; }
   __tool-execute "puppet agent --enable"
 }
 
@@ -374,7 +393,7 @@ __tool_puppet-enable() {
 # This uses sudo -E so that the users SSH agent keys will be passed through.
 __tool_puppet-pull() {
   local DESC="Perform a git pull on the puppet repo using sudo"
-  [[ $2 == "TOOLHELP" ]] && { echo "${HELP:-$DESC}"; return; }
+  [[ $2 == "TOOLHELP" ]] && { echo -e "${HELP:-$DESC}"; return; }
   cd /opt/puppet || exit
   __tool-execute "sudo -E git pull"
   cd - > /dev/null || exit
@@ -383,7 +402,24 @@ __tool_puppet-pull() {
 # Run docker compose with our compose file and project
 __tool_compose() {
   local DESC="Run docker compose against our compose file"
-  [[ $2 == "TOOLHELP" ]] && { echo "${HELP:-$DESC}"; return; }
+  local FN="${FUNCNAME[0]:-$0}"
+  local HELP; HELP=$(cat <<EOF
+${YEL}Usage: $TOOLNAME ${FN/__tool_/} [options]${NC}
+$DESC
+
+This is simply docker compose. Its just wrapped with the location of our compose file
+and the project name. You can use all the standard compose options.
+
+Examples:
+  $TOOLNAME ${FN/__tool_/} --help
+  $TOOLNAME ${FN/__tool_/} up -d
+  $TOOLNAME ${FN/__tool_/} down thetadata-terminal
+  $TOOLNAME ${FN/__tool_/} ps
+  $TOOLNAME ${FN/__tool_/} logs thetadata-terminal
+
+EOF
+)
+  [[ $2 == "TOOLHELP" ]] && { echo -e "${HELP:-$DESC}"; return; }
   if [ ! -f /opt/docker/compose.yaml ]; then
     echo "Compose environment not defined on this server."
   else
@@ -398,10 +434,33 @@ __tool_compose() {
 #  __tool-execute "journalctl -f -t trader-$USER $@"
 #}
 
+# Simple helper for healthcheck.sh
+# Healthcheck.sh is a much more complex script than merits putting as a native tool
+__tool_healthcheck() {
+  local DESC="Alias for healtcheck.sh"
+  local FN="${FUNCNAME[0]:-$0}"
+  local HELP; HELP=$(cat <<EOF
+${YEL}Usage: $TOOLNAME ${FN/__tool_/} [options]${NC}
+$DESC
+
+This is basically here to make it easier to call healthcheck.sh
+You can call healthcheck.sh directly if you want as well.
+Healthcheck.sh is a much more complex script than merits putting as a native tool
+
+Also note that sometimes its useful to pipe it to more if there are a lot
+of error logs at the moment.
+EOF
+)
+  [[ $2 == "TOOLHELP" ]] && { echo -e "${HELP:-$DESC}"; return; }
+  # The actual call to healthcheck.sh
+  __tool-execute "healthcheck.sh"
+}
+
 __tool_logs() {
   local DESC="Interact with your dev logs using journalctl"
+  local FN="${FUNCNAME[0]:-$0}"
   local HELP; HELP=$(cat <<EOF
-${YEL}Usage: $TOOLNAME ${0/__tool_/} [options]${NC}
+${YEL}Usage: $TOOLNAME ${FN/__tool_/} [options]${NC}
 $DESC
 
 Options:
@@ -411,58 +470,160 @@ Options:
   You could add -f to live tail the logs for example
 EOF
 )
-  [[ $2 == "TOOLHELP" ]] && { echo "${HELP:-$DESC}"; return; }
+  [[ $2 == "TOOLHELP" ]] && { echo -e "${HELP:-$DESC}"; return; }
   cmd=$(printf '%q ' journalctl --no-pager -t trader-"$USER" "$@")
   __tool-execute "$cmd"
 }
 
 __tool_log-search() {
   local DESC="Search journalctl logs using fzf"
+
+  local FN="${FUNCNAME[0]:-$0}"
+  # This help info is used when inside the FZF tool
+  local APP_HELP
+  APP_HELP=$(cat <<EOF
+Use up or down arrow keys to select another line from the search results list
+
+  Use 'alt-h' to show this help
+
+  Press Enter on a selected line to pretty print the JSON contained in that line
+  Press Escape to exit the search tool
+  alt-b to go to the bottom of the search results
+  alt-t to go to the top of the search results
+
+FZF Filter examples (use without quotes):
+Spaces make new search terms. Searches are case insensitive.
+You can combine all of these together in any combination.
+  "Mar\\\ 15"      - Search for a specific month and day
+  "!cron !sshd"  - Search for all logs except cron and sshd services
+  "trader error" - Search for errors on lines with "trader" in them.
+  "\'fuzzy"       - Fuzzy search for the letters f-u-z-y
+
+EOF
+)
+
   local HELP; HELP=$(cat <<EOF
-${YEL}Usage: $TOOLNAME ${0/__tool_/} [options]${NC}
+${YEL}Usage: $TOOLNAME ${FN/__tool_/} [options]${NC}
 $DESC
 
 Options:
   Any valid journalctl options
 
-  You can use -n 1000 to search the last 1000 lines
-  You can use -t to search a specific tag
-  You can use -u to search a specific unit
-  You can use '--since -2d' to search the last 2 days
-  You can not use -f to live tail the logs however
+  You can use -f to live tail the logs
+  You can use -n1000 to search the last 1000 lines (the default)
+  You can use -t<tag> to search a specific tag
+  You can use -u<unit> to search a specific unit
+  You can use -p<priority> to use info, warning, error, or crit etc
+  You can use "--since -2d" to search the last 2 days
+
+${APP_HELP}
 EOF
 )
-  [[ $2 == "TOOLHELP" ]] && { echo "${HELP:-$DESC}"; return; }
+  [[ $2 == "TOOLHELP" ]] && { echo -e "${HELP:-$DESC}"; return; }
 
-  local TMPFILE; TMPFILE=$(mktemp)
-  # shellcheck disable=SC2064
-  trap "rm $TMPFILE > /dev/null" TERM INT EXIT
-  journalctl --no-pager "$@" | nl > "$TMPFILE" && \
-  fzf +m --track --ansi --exact \
-      --layout=reverse \
-      --no-sort \
-      --with-nth=2.. \
-      --preview-window=down:65%:wrap \
-      --preview-label="Relative log entries" \
-      --preview-label-pos=5 \
-      --border-label="Journalctl Log Search. Use 'alt-j' to pretty print lines with JSON" \
-      --border-label-pos=5 \
-      --bind "alt-j:preview(
-        entry=\$(sed -n \${1}p < \"$TMPFILE\" | cut -f2-);
-        json_part=\$(echo \"\$entry\" | grep -o '{.*}');
-        if [ -n \"\$json_part\" ]; then
-            echo \"\$json_part\" |jq .| batcat --language=json --style=plain --color=always;
-        else
-            echo \"No JSON detected in selected line.\";
-        fi
-      )" \
-      --preview "line=\$(echo {1} | tr -d '[:alpha:]');
-      start=\$((line - 10));
-      end=\$((line + 10));
-      [ \"\$start\" -lt 1 ] && start=1;
-      sed -n \"\${start},\${end}p\" < \"$TMPFILE\" |cut -f2- | batcat --language=log --style=plain --color=always --highlight-line \$((line - start + 1))
-      " < "$TMPFILE"
+  # Set a default search if one is not passed in
+  # Setting it in an array so it properly handles spaces
+  local OPTS
+  if [[ "$*" == "" ]]; then
+    OPTS=('-n' '1000')
+  else
+    OPTS=("$@")
+  fi
+
+  # We are in follow mode
+  local FOLLOW_MODE FOLLOW_TXT
+  FOLLOW_MODE=false
+  if [[ "${OPTS[*]}" == *"-f"* ]]; then
+    # An indicator if we are in follow mode
+    FOLLOW_MODE=true
+    FOLLOW_TXT='- In Follow Mode'
+  fi
+
+
+  local BASE_CMD
+  BASE_DEFAULT="journalctl --no-pager"
+  # Read the default command into an array based on the shell type
+  if [[ -n ${ZSH_VERSION:-} ]]; then
+    # Zsh-specific syntax
+    read -rA BASE_CMD <<< "$BASE_DEFAULT"
+  else
+    # Bash syntax
+    read -ra BASE_CMD <<< "$BASE_DEFAULT"
+  fi
+
+  # Make a temp file so we can use it for the fzf preview
+  local TMPFILE
+  TMPFILE=$(mktemp) || { echo "Error: Failed to create temporary file." >&2; return 1; }
+
+  # Set up a trap to clean up the temp file. This does not always work so we do one below as well
+  # shellcheck disable=SC2064 # We want this to expand now
+  trap "rm $TMPFILE > /dev/null 2>&1" TERM INT EXIT
+
+  local FZF_BORDER_LABEL
+  FZF_BORDER_LABEL="[INPUT: ${BASE_CMD[*]} ${OPTS[*]}]   Use 'alt-h' for help"
+
+  # Define the FZF options we will execute FZF with
+  local -a FZF_OPTIONS=(
+    --no-multi
+    #--track
+    --ansi
+    --exact
+    #--layout=reverse
+    --no-sort
+    --with-nth=2.. # This is important for the preview to work with nl
+    --preview-window=down:65%:wrap
+    --preview-label="Relative log entries"
+    --preview-label-pos=5
+    # Use OPTS here for display as its the original string
+    --border-label="$FZF_BORDER_LABEL"
+    --border-label-pos=5
+    # When we start up, move the bottom of the dataset, for some reason does not work when in follow mode
+    --bind "load:last"
+    --bind "start:last"
+    # Reset primary UI elements back to initial state. Also allows us to update the clock when we move around.
+    --bind "focus:change-preview-label(Relative Entries)+transform-border-label(echo \"  \$(date '+%b %d %H:%M:%S') ${FOLLOW_TXT} ${FZF_BORDER_LABEL}\")"
+    --bind "enter:change-preview-label(JSON Preview)+preview(
+                entry=\$(sed -n \${1}p < \"$TMPFILE\" | cut -f2-)
+                json_part=\$(echo \"\$entry\" | grep -o '{.*}')
+                echo 'Use up or down arrow keys to select another line from the search results list.'
+                echo
+                if [ -n \"\$json_part\" ]; then
+                  echo 'JSON Preview of selected line:'
+                  echo \"\$json_part\" |jq .| \"$BATCATBIN\" --language=json --style=plain --color=always
+                else
+                  echo 'No JSON detected in selected line.'
+                fi
+               )"
+    --bind "alt-h:change-preview-label(Help Context)+preview(echo \"${APP_HELP}\")"
+    --bind "alt-b:last"
+    --bind "alt-t:first"
+    # Generate the preview. This reads the selected line number in the search results
+    # and then displays relative lines from the tempfile using batcat for coloring.
+    --preview "line=\$(echo {1} | tr -d '[:alpha:]');
+               start=\$((line - 15));
+               end=\$((line + 15));
+               [ \"\$start\" -lt 1 ] && start=1;
+               sed -n \"\${start},\${end}p\" < \"$TMPFILE\" |cut -f2- | \"$BATCATBIN\" --language=log --style=plain --color=always --highlight-line \$((line - start + 1))
+              "
+  )
+
+  echo "Command used to gather input: ${BASE_CMD[*]} ${OPTS[*]}"
+  # Gather input and send it to FZF, but determine if it is using a follow method
+  # This simply is looking for -f since it is a common follow option, this is likely to not cover all situations
+  if [[ $FOLLOW_MODE == true ]]; then
+    echo "Waiting for log input... You might need to CTRL-C to stop the intput stream if it does not exit on it's own"
+    # Tee to a file while we follow new input for use by the preview window
+    "${BASE_CMD[@]}" "${OPTS[@]}" | stdbuf -oL nl | tee "$TMPFILE" | fzf "${FZF_OPTIONS[@]}"
+  else
+    "${BASE_CMD[@]}" "${OPTS[@]}" | nl > "$TMPFILE"
+
+    fzf "${FZF_OPTIONS[@]}" < "$TMPFILE"
+  fi
+
+  # Remove our trap
+  trap - TERM INT EXIT
+  # An extra cleanup just to be sure since the trap is not reliable
+  rm "$TMPFILE" > /dev/null 2>&1
 }
-
 
 # vim: set filetype=sh
