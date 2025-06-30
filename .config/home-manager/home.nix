@@ -39,6 +39,7 @@ let
     tmux
     yazi
     yubikey-manager
+    zk
 
     # fonts
     nerd-fonts.monaspace
@@ -80,8 +81,8 @@ let
     telegram-desktop
     php # for LSPs and maybe more
     php82Extensions.xdebug
-    postman
-    newman
+    #    postman
+    #newman
     python3Minimal
     puppet-lint # for LSP
     virtualenv
