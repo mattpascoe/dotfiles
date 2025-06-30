@@ -207,7 +207,7 @@ fi
 if [ -f "$KEYBINDPATH" ]; then
   source "$KEYBINDPATH"
 else
-  echo "Could not find fzf keybindings at $KEYBINDPATH"
+  echo "Could not find fzf keybindings $KEYBINDPATH"
 fi
 # Add fzf keybindings to zsh vim plugin
 zvm_after_init_commands+=("source $KEYBINDPATH")
