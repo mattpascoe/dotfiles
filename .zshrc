@@ -74,6 +74,30 @@ preexec() { echo -ne '\e[2 q' ;} # Use beam shape cursor for each new prompt.
 # Enable completion system
 autoload -Uz compinit && compinit
 
+# Set window/tab title specifically for lnav if using remote sessions
+function lnav_preexec() {
+  # Full command
+  local cmd="$1"
+  local shortcmd="${cmd%% *}"
+  local context=""
+
+  # Check for lnav with host:path pattern
+  if [[ "$cmd" =~ ^(lnav)[[:space:]]+([^[:space:]]+): ]]; then
+    shortcmd="${match[1]}"
+    context="${match[2]}"
+
+    # Set terminal title to "command context"
+    echo -ne "\033k${shortcmd} ${context}\033\\"
+  else
+    print -Pn "\e]0;${USER}@${HOST}\a"
+  fi
+}
+
+# Add lnav_preexec to preexec_functions, this is what will call extra functions
+# before commands are executed
+#preexec_functions+=("lnav_preexec")
+
+
 # Pull in common shell configuration
 SCRIPT=$(readlink "${(%):-%x}")
 SP=$(dirname "$SCRIPT")
