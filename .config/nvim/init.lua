@@ -329,6 +329,28 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
+-- Set the TMUX title to the file name of current buffer
+-- This requires the following tmux settings:
+--   set -g allow-rename on
+--   set -g automatic-rename off
+vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter', 'BufFilePost', 'BufWritePost' }, {
+  callback = function()
+    local filename = vim.fn.expand('%:t')
+    if filename == '' then
+      return
+    end
+    -- Special case for Zettelkasten files so I can quick switch to them using my tmux bindings
+    if string.match(vim.fn.expand('%:p'), 'data/SYNC/zk') then
+      return
+    end
+    -- truncate to len characters
+    local len = 15
+    local shortname = #filename > len and filename:sub(1, len) .. '…' or filename
+    -- Update tmux window name
+    io.write('\027kVI:' .. shortname .. '\027\\')
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
