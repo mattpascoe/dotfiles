@@ -6,14 +6,15 @@ background = 000000
 foreground = b2f593
 
 font-family = Menlo
-#font-family = MesloLGS Nerd Font Mono
-#font-family = MonaspiceNe Nerd Font Mono
+#font-family = MesloLGM Nerd Font Propo
+#font-family = MonaspiceNe Nerd Font Propo
 font-size = 16
 font-thicken = true
 # Disable ligatures
 font-feature = -calt
 adjust-underline-position = 3
 
+gtk-titlebar-hide-when-maximized = true
 macos-titlebar-style = hidden
 mouse-hide-while-typing = true
 
