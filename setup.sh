@@ -109,10 +109,11 @@ if [ "$MACHINE" == "Linux" ]; then
   fi
 
   # Ensure Nerd Fonts are installed
-  if [ ! -f /usr/local/share/fonts/MesloLGMNerdFontMono-Regular.ttf ]; then
+  if [[ ! -f /usr/local/share/fonts/MesloLGMNerdFontMono-Regular.ttf || ! -f /usr/local/share/fonts/MesloLGMNerdFontPropo-Regular.ttf ]]; then
     msg "Installing Nerd Fonts..."
     sudo mkdir -p /usr/local/share/fonts
     sudo curl -s -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Meslo/M/Regular/MesloLGMNerdFontMono-Regular.ttf --output-dir /usr/local/share/fonts
+    sudo curl -s -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Meslo/M/Regular/MesloLGMNerdFontPropo-Regular.ttf --output-dir /usr/local/share/fonts
     fc-cache -fv /usr/local/share/fonts
   fi
 fi
