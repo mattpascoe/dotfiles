@@ -20,6 +20,7 @@ let
 
   commonPackages = with pkgs; [
     _1password-cli
+    aichat
     bat
     btop
     eza
@@ -29,7 +30,10 @@ let
     jq
     lazygit
     lazysql  # still playing with this. not sure I want it
+    lnav
+    #mods  # a cli tool for interacting with AI, interesting but I'm not using it, using aichat instead
     neovim
+    ollama # I have a beefy M4, why not use it for local AI
     ripgrep
     shellcheck
     slack
@@ -57,11 +61,12 @@ let
   macOnlyPackages = with pkgs; [
     #_1password-gui # doesnt allow integration to browser and is "broken" package
     #brave          # not installing here so the 1password integration works
-    #ghostty        # currently at 1.0.1 and is flagged as broken on mac and may never get fixed?
+    ghostty-bin     # this -bin version is for mac
     # ---- pkgs above are not really mac only but did merrit some comments as to why they are not installed
     #ice-bar        # kinda buggy and crashes
     #beekeeper-studio # not supported on mac via nix
     #colima         # its the stupid docker server itself for m1 and is really work only
+    kanata          # virtual keyboard to emulate QMK type actions. requires karabiner hid driver
     maccy           # clipboard manager
     raycast         # spotlight replacement, how I do app hotkey navigation may try karabiner
     shortcat        # keyboard mouse navigations
@@ -81,7 +86,7 @@ let
     telegram-desktop
     php # for LSPs and maybe more
     php82Extensions.xdebug
-    #    postman
+    postman
     #newman
     python3Minimal
     puppet-lint # for LSP
