@@ -18,8 +18,8 @@ gtk-titlebar-hide-when-maximized = true
 macos-titlebar-style = hidden
 mouse-hide-while-typing = true
 
-# TODO: check out the quick terminal more
-# Things I dont like here is that its mac only.
-# how does it compare to a native tmux method that works everywhere, even remote?
+# Enable quick terminal
+quick-terminal-position = right
+quick-terminal-size = 50%,75% # does not seem to work for primary number but I can resize
+quick-terminal-animation-duration = 0
 keybind = global:cmd+ctrl+t=toggle_quick_terminal
-
