@@ -20,6 +20,8 @@ mouse-hide-while-typing = true
 
 # Enable quick terminal
 quick-terminal-position = right
-quick-terminal-size = 50%,75% # does not seem to work for primary number but I can resize
+# Size does not seem to work for primary number but I can resize after its
+# open
+quick-terminal-size = 50%,75%
 quick-terminal-animation-duration = 0
 keybind = global:cmd+ctrl+t=toggle_quick_terminal
