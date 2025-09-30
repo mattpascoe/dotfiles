@@ -41,7 +41,7 @@ esac
 # Test if the dotfiles dir already exists.
 if [ ! -d ~/dotfiles ]; then
   echo "  Cloning dotfiles..."
-  echo git clone https://github.com/mattpascoe/dotfiles ~/dotfiles >/dev/null
+  git clone https://github.com/mattpascoe/dotfiles ~/dotfiles >/dev/null
 else
   echo "  Git repo already exists."
 #  echo "Updating dotfiles..."
