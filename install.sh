@@ -22,8 +22,7 @@ debian*)    sudo apt update -y ;
 	    sudo apt install -y git ;;
 ubuntu*)    sudo apt update -y ;
 	    sudo apt install -y git ;;
-arch*)      sudo pacman --needed --noconfirm -Sy ;
-            sudo pacman --needed --noconfirm -Sy git ;;
+arch*)      sudo pacman --needed --noconfirm -Sy git ;;
 *)
 	    if [ "$MACHINE" == "Mac" ]; then
 	      # Install Git if it does not exist
@@ -39,7 +38,7 @@ arch*)      sudo pacman --needed --noconfirm -Sy ;
 esac
 
 
-# test if the dotfiles dir already exists.  if not clone it, if it does git pull
+# Test if the dotfiles dir already exists.
 if [ ! -d ~/dotfiles ]; then
   echo "  Cloning dotfiles..."
   echo git clone https://github.com/mattpascoe/dotfiles ~/dotfiles >/dev/null
@@ -51,10 +50,10 @@ else
 #  cd - > /dev/null || exit
 fi
 
-# ask if you want to run installer or not
-echo -en "Run setup scripts? Continue (N/y) "
-read -r
+# Ask if you want to run installer or not
+echo -en "Run setup scripts? Continue [y/N] "
+read -r REPLY < /dev/tty
 if [[ $REPLY =~ ^[Yy]$ ]]; then
   echo "  Running setup scripts..."
-  echo source ~/dotfiles/setup.sh
+  source ~/dotfiles/setup.sh
 fi
