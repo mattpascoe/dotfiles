@@ -130,7 +130,7 @@ if [ "$MACHINE" == "Mac" ]; then
 
   # Run NIX if we want
   echo -en "${BOLD}${GRN}Install NIX based packages... Continue (N/y) ${NC}"
-  read -r
+  read -r REPLY < /dev/tty
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     if ! command -v "nix" &> /dev/null; then
       msg "Installing NIX tools..."
@@ -157,7 +157,7 @@ if [ "$MACHINE" == "Mac" ]; then
 
   # Run brew if we want
   #echo -en "${BOLD}${GRN}Install Homebrew based packages... Continue (N/y) ${NC}"
-  #read -r
+  #read -r REPLY < /dev/tty
   #if [ "$REPLY" == "yDISABLED" ]; then
   #  if ! command -v "brew" &> /dev/null; then
   #    msg "Installing Brew tools..."
@@ -181,7 +181,7 @@ if [ "$MACHINE" == "Mac" ]; then
 
   # Setup lots of system settings using the "defaults" method
   echo -en "${BOLD}${GRN}Execute 'defaults' commands to set specific Mac settings... Continue (N/y) ${NC}"
-  read -r
+  read -r REPLY < /dev/tty
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     sudo ~/dotfiles/.macos
   else
@@ -198,7 +198,7 @@ fi
 # Everyone gets starship!
 if ! command -v "starship" &> /dev/null; then
   echo -en "${BOLD}${GRN}Do you want to install Starship.rs prompt? [y/N] ${NC}"
-  read -r
+  read -r REPLY < /dev/tty
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     sudo sh -c "curl -fsSL https://starship.rs/install.sh | sh"
   fi
@@ -251,7 +251,7 @@ echo
 msg "Setup complete."
 
 echo -en "${BOLD}${GRN}Do you want to source the .shell-common file? [y/N] ${NC}"
-read -r
+read -r REPLY < /dev/tty
 if [[ $REPLY =~ ^[Yy]$ ]]; then
   source "$DIR/.shell-common"
 fi
