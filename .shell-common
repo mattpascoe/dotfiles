@@ -75,9 +75,6 @@ set -o vi
 export EDITOR=nvim
 export VISUAL=$EDITOR
 alias e=$EDITOR
-# vimwiki Assumes $EDITOR is set to nvim or vi
-alias vw="$EDITOR -c ':VimwikiIndex 1'"
-alias vww="$EDITOR -c ':VimwikiIndex 2'"
 
 # Set PAGER
 export PAGER=less
@@ -142,16 +139,12 @@ if [ -f /usr/local/lib/libsk-libfido2.dylib ] &> /dev/null; then
   export SSH_SK_PROVIDER=/usr/local/lib/libsk-libfido2.dylib
 fi
 
-# Load iterm2 shell integration on Macs
-test -e "${HOME}/.iterm2_shell_integration.${SHELLTYPE}" && source "${HOME}/.iterm2_shell_integration.${SHELLTYPE}"
-
 # Load up brew environment on ARM systems, do I need this for intel?
 if [ -f /opt/homebrew/bin/brew ] &> /dev/null; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
 # https://starship.rs - a shell augmentation that seems simple
-# get dejavumono nerdfont for iterm.
 if command -v starship &> /dev/null; then
   type starship_zle-keymap-select >/dev/null || \
   {
