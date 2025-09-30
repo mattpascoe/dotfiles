@@ -249,10 +249,4 @@ fi
 
 echo
 msg "Setup complete."
-
-echo -en "${BOLD}${GRN}Do you want to source the .shell-common file? [y/N] ${NC}"
-read -r REPLY < /dev/tty
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-  source "$DIR/.shell-common"
-fi
-
+msg "Please restart your terminal for changes to take effect."
