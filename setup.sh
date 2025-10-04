@@ -249,4 +249,10 @@ fi
 
 echo
 msg "Setup complete."
-msg "Please restart your terminal for changes to take effect."
+
+echo -en "${BOLD}${GRN}Do you want to start a tmux session? [y/N] ${NC}"
+read -r REPLY < /dev/tty
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+  tmux
+fi
+
