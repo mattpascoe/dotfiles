@@ -122,6 +122,10 @@ if [ "$MACHINE" == "Linux" ]; then
   if command -v "gsettings" &> /dev/null; then
     # Set caps escape key
     gsettings set org.gnome.desktop.input-sources xkb-options "['caps:escape']"
+    # Move dock to bottom
+    gsettings set org.gnome.shell.extensions.dash-to-dock dock-position BOTTOM
+    # Hide dock
+    gsettings set org.gnome.shell.extensions.dash-to-dock autohide true
   fi
 
 
@@ -259,4 +263,4 @@ fi
 
 echo
 msg "Setup complete."
-msg "Please restart your terminal or run 'source ~/.zshrc' to load the new config."
+msg "Please log out or start a 'tmux' session to utilize new shell changes."
