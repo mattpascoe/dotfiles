@@ -121,11 +121,14 @@ if [ "$MACHINE" == "Linux" ]; then
   # Set some gnome settings if we have gsettings
   if command -v "gsettings" &> /dev/null; then
     # Set caps escape key
+    gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
     gsettings set org.gnome.desktop.input-sources xkb-options "['caps:escape']"
-    # Move dock to bottom
+    # Dock settings
     gsettings set org.gnome.shell.extensions.dash-to-dock dock-position BOTTOM
-    # Hide dock
     gsettings set org.gnome.shell.extensions.dash-to-dock autohide true
+    gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false
+    gsettings set org.gnome.shell.extensions.dash-to-dock show-trash false
+    gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false # panel mode
   fi
 
 
