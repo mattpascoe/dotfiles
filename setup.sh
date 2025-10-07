@@ -104,7 +104,7 @@ if [ "$MACHINE" == "Linux" ]; then
   # Ensure zsh is default if its available
   if command -v "zsh" &> /dev/null; then
     if [ "$(grep "$USER" /etc/passwd|cut -d: -f7)" != "/bin/zsh" ]; then
-      msg "Switching default shell to ZSH, provide your password if prompted..."
+      msg "Switching default shell to ZSH..."
       sudo usermod -s /bin/zsh "$USER"
     fi
   fi
@@ -117,7 +117,16 @@ if [ "$MACHINE" == "Linux" ]; then
     sudo curl -s -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Meslo/M/Regular/MesloLGMNerdFontPropo-Regular.ttf --output-dir /usr/local/share/fonts
     fc-cache -fv /usr/local/share/fonts
   fi
+
+  # Set some gnome settings if we have gsettings
+  if command -v "gsettings" &> /dev/null; then
+    # Set caps escape key
+    gsettings set org.gnome.desktop.input-sources xkb-options "['caps:escape']"
+  fi
+
+
 fi
+# End linux section
 
 
 ###### Mac specific stuff
@@ -250,10 +259,4 @@ fi
 
 echo
 msg "Setup complete."
-
-echo -en "${BOLD}${GRN}Do you want to start a tmux session? [y/N] ${NC}"
-read -r REPLY < /dev/tty
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-  tmux
-fi
-
+msg "Please restart your terminal or run 'source ~/.zshrc' to load the new config."
