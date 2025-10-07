@@ -74,4 +74,7 @@ vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 
 -- rounded window borders
-vim.opt.winborder = 'rounded'
+-- only if version is > 10
+if vim.fn.has 'nvim-0.10' == 1 then
+  vim.opt.winborder = 'rounded'
+end
