@@ -78,6 +78,7 @@ if [ "$MACHINE" == "Linux" ]; then
   PKGS+=(
     "bat"
     "btop"
+    "curl"
     "eza"
     "fzf"
     "git"
@@ -104,7 +105,7 @@ if [ "$MACHINE" == "Linux" ]; then
   if command -v "zsh" &> /dev/null; then
     if [ "$(grep "$USER" /etc/passwd|cut -d: -f7)" != "/bin/zsh" ]; then
       msg "Switching default shell to ZSH, provide your password if prompted..."
-      chsh -s /bin/zsh
+      sudo usermod -s /bin/zsh "$USER"
     fi
   fi
 
