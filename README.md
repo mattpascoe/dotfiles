@@ -5,19 +5,22 @@ These days I'm primarily on Mac but this is intended to work on linux as well.
 
 # Install
 These steps assume a factory default state or initial setup of these scripts
+You can run the setup script multiple times without issue (short of resetting some settings).
+It will attempt to upgrade and set the settings as defined in this repo.
 
+If you are not me and you are crazy, you can run one of the following to get started.
 ```
-curl -sSL https://raw.githubusercontent.com/mattpascoe/dotfiles/master/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/mattpascoe/dotfiles/master/install.sh | bash
+curl -fsSL http://demo.opennetadmin.com/dotinstall.sh | bash
+wget http://demo.opennetadmin.com/dotinstall.sh -O- | bash
 ```
 
 or
 
 ```
 git clone https://github.com/mattpascoe/dotfiles.git ~/dotfiles
- ~/dotfiles/setup.sh
+~/dotfiles/setup.sh
 ```
-
-You should be able to run the setup.sh script multiple times without issue at any time afterwards.
 
 ## MISC MAC info
 Started using the .macos file or similar from https://github.com/mathiasbynens/dotfiles
