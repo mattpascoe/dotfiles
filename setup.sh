@@ -37,8 +37,8 @@ if [ -f /etc/os-release ]; then
   . /etc/os-release
 fi
 
-# if DOTDIR variable is set, use it
-if [ -z "$DOTDIR" ]; then
+# If DOTDIR variable is set, use it (usually from install.sh)
+if [ -n "${DOTDIR:-}" ]; then
   DIR=$DOTDIR
 else
   SCRIPT=$(readlink -f "$0")
@@ -135,7 +135,7 @@ if [ "$MACHINE" == "Linux" ]; then
   # Get the desktop environment
   DESK=$(echo "$XDG_CURRENT_DESKTOP")
   case "${DESK}" in
-    *GNOME) source ~/dotfiles/.gnome.sh;;
+    *GNOME) source "$DIR/.gnome.sh";;
     *)      echo -e "${BOLD}${RED}-!- ${DESK} is not a managed desktop environment.${NC}";;
   esac
 
@@ -209,7 +209,7 @@ if [ "$MACHINE" == "Mac" ]; then
   echo -en "${BOLD}${GRN}Execute 'defaults' commands to set specific Mac settings... Continue (N/y) ${NC}"
   read -r REPLY < /dev/tty
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-    sudo ~/dotfiles/.macos
+    sudo "$DIR/.macos"
   else
     msg ".. Skipping defaults based config changes."
   fi
