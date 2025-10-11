@@ -140,14 +140,19 @@ if [ "$MACHINE" == "Linux" ]; then
   esac
 
   # Install extra tools. These should have a prompt for each one.
-  for FILE in $(find "$DIR/extra_installs" -type f -name "*.sh"); do
-    EXTRA=$(basename "$FILE"|cut -d. -f1)
-    echo -e "${BOLD}${GRN}Install ${EXTRA}... Continue (N/y) ${NC}"
-    read -r REPLY < /dev/tty
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-      source "$FILE"
-    fi
-  done
+  echo "--------------------------------------------"
+  echo -en "${BOLD}${GRN}Do you want to install extra tools? You will be prompted for each one. (N/y) ${NC}"
+  read -r REPLY < /dev/tty
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    for FILE in $(find "$DIR/extra_installs" -type f -name "*.sh"); do
+      EXTRA=$(basename "$FILE"|cut -d. -f1)
+      echo -en "${BOLD}${GRN}Install ${EXTRA}... Continue (N/y) ${NC}"
+      read -r REPLY < /dev/tty
+      if [[ $REPLY =~ ^[Yy]$ ]]; then
+        source "$FILE"
+      fi
+    done
+  fi
 
 fi
 # End linux section
@@ -233,7 +238,7 @@ fi
 
 # Everyone gets starship!
 if ! command -v "starship" &> /dev/null; then
-  echo -en "${BOLD}${GRN}Do you want to install Starship.rs prompt? [y/N] ${NC}"
+  echo -en "${BOLD}${GRN}Do you want to install Starship.rs prompt? (N/y) ${NC}"
   read -r REPLY < /dev/tty
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force
