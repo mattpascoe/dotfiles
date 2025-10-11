@@ -21,19 +21,19 @@
   meh  (multi lctl lalt lsft)
   th_meh (tap-hold $tap-time $hold-time spc @meh)
 
-  l_cmd (layer-toggle cmd)
-  l_num (layer-toggle num)
-  l_symbols (layer-toggle symbols)
+  layerCmd (layer-toggle cmd)
+  layerNum (layer-toggle num)
+  layerSymbols (layer-toggle symbols)
 
   a (tap-hold $tap-time $hold-time-slow a lctl)
-  d (tap-hold $tap-time $hold-time d @l_symbols)
-  f (tap-hold $tap-time $hold-time f @l_num)
+  d (tap-hold $tap-time $hold-time d @layerSymbols)
+  f (tap-hold $tap-time $hold-time f @layerNum)
   ; (tap-hold $tap-time $hold-time ; S-;) ;; hold for :
   = (tap-hold $tap-time $hold-time = S-=) ;; hold for +
+  s (tap-hold $tap-time $hold-time s @layerCmd)
 
-   s (tap-hold $tap-time $hold-time s @l_cmd)
-   h (tap-hold $tap-time $hold-time h @l_cmd)
-   i (tap-hold $tap-time $hold-time-slow i @l_num)
+   h (tap-hold $tap-time $hold-time h @layerCmd)
+   i (tap-hold $tap-time $hold-time-slow i @layerNum)
    l (tap-hold $tap-time $hold-time-slow l lctl)
    w (tap-hold $tap-time $hold-time w lmet)
    u (tap-hold $tap-time $hold-time-slow u lctl)
@@ -70,7 +70,7 @@
   esc     🔅    🔆    @mc   @sls  @dtn  @dnd  ◀◀    ▶⏸    ▶▶    🔇    🔉    🔊
   Backquote      1    2    3    4    5       6    7    8    9    0       -   @=    bspc
   tab            q    w    e    r    t       y    u    i    o    p       [    ]    ret
-  esc           @a    s   @d   @f    g       h    j    k    l   @;       '    \
+  esc           @a   @s   @d   @f    g       h    j    k    l   @;       '    \
   lsft           z    x    c    v    b       n    m    ,    .    /       rsft
   lctl           lalt lmet          @th_meh            rmet ralt
 )
@@ -84,20 +84,29 @@
 ;;  XX        XX    XX         @tmeh        XX XX
 ;;)
 
+;; The original example cmd layer
+;;(deflayer cmd
+;;  esc     🔅    🔆    @mc   @sls  @dtn  @dnd  ◀◀    ▶⏸    ▶▶    🔇    🔉    🔊
+;;  XX   XX   XX     XX        XX     XX     XX    XX     XX    XX      XX     XX    XX    XX
+;;  XX   tab   esc    C-S-tab   C-tab  XX    XX    M-c    up    bspc    M-v    XX    XX    XX
+;;  XX   M-tab   @d_h   @p_e      M-]    C-M-S-4    XX    left   down  right   ret    XX    XX
+;;  XX        XX     XX        XX     XX    XX     lsft     XX    XX      XX     XX    XX
+;;  XX   XX   XX lmet XX XX
+;;)
 (deflayer cmd
   esc     🔅    🔆    @mc   @sls  @dtn  @dnd  ◀◀    ▶⏸    ▶▶    🔇    🔉    🔊
-  XX   XX   XX     XX        XX     XX     XX    XX     XX    XX      XX     XX    XX    XX
-  XX   tab   esc    C-S-tab   C-tab  XX    XX    M-c    up    bspc    M-v    XX    XX    XX
-  XX   M-tab   @d_h   @p_e      M-]    C-M-S-4    XX    left   down  right   ret    XX    XX
-  XX        XX     XX        XX     XX    XX     lsft     XX    XX      XX     XX    XX
-  XX   XX   XX lmet XX XX
+  XX         XX    XX   XX     XX     XX       XX    XX    XX    XX    XX     -    @=    bspc
+  XX         XX    XX   XX     XX     XX       XX    XX    XX    XX    XX     XX    XX    XX
+  XX         XX    XX   XX     XX     XX     left  down   up  right    XX     @=    XX
+  XX         XX    XX   XX     XX     XX     lsft    XX    XX    XX    XX     XX
+  XX         XX    XX          spc             XX    XX
 )
 
 (deflayer num
   esc     🔅    🔆    @mc   @sls  @dtn  @dnd  ◀◀    ▶⏸    ▶▶    🔇    🔉    🔊
-  XX         XX    XX   XX     XX     XX       XX    XX    XX    XX    XX     -    @=    bspc
+  XX         XX    XX   XX     XX     XX       XX    XX    XX    XX    XX     -    XX    bspc
   XX         XX    XX   XX     XX     XX       XX    7     8     9     0     XX    XX    XX
-  XX         XX    XX   XX     XX     XX       XX    4     5     6     .     @=    XX
+  XX         XX    XX   XX     XX     XX       XX    4     5     6     .     XX    XX
   XX         XX    XX   XX     XX     XX     lsft    1     2     3     XX    XX
   XX         XX    XX          spc             XX    XX
 )
