@@ -37,7 +37,13 @@ if [ -f /etc/os-release ]; then
   . /etc/os-release
 fi
 
-SCRIPT=$(readlink -f "$0")
+if [ -t 0 ]; then
+  SCRIPT=$(readlink -f "$0")
+else
+  SCRIPT="(stdin)"
+fi
+
+#SCRIPT=$(readlink -f "$0")
 DIR=$(dirname "$SCRIPT")
 declare -a LINKFILES
 
