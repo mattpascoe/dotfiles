@@ -139,6 +139,16 @@ if [ "$MACHINE" == "Linux" ]; then
     *)      echo -e "${BOLD}${RED}-!- ${DESK} is not a managed desktop environment.${NC}";;
   esac
 
+  # Install extra tools. These should have a prompt for each one.
+  for FILE in $(find "$DIR/extra_installs" -type f -name "*.sh"); do
+    EXTRA=$(basename "$FILE"|cut -d. -f1)
+    echo -e "${BOLD}${GRN}Install ${EXTRA}... Continue (N/y) ${NC}"
+    read -r REPLY < /dev/tty
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      source "$FILE"
+    fi
+  done
+
 fi
 # End linux section
 
@@ -156,7 +166,7 @@ if [ "$MACHINE" == "Mac" ]; then
   echo -en "${BOLD}${GRN}Install NIX based packages... Continue (N/y) ${NC}"
   read -r REPLY < /dev/tty
   # Think long and hard if you want another box using NIX
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
+  if [[ $REPLY =~ ^[Yy]DISABLED$ ]]; then
     if ! command -v "nix" &> /dev/null; then
       msg "Installing NIX tools..."
       msg "Disabled for now"
@@ -232,6 +242,12 @@ else
   msg "Starship is alredy installed. Running installer again to get updates..."
   curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force
 fi
+# Starship installer leaves a bunch of mktemp dirs all over. This will clean them up even ones that are not ours!
+find /tmp/ -name "tmp.*.tar.gz" -print0 | while IFS= read -r -d '' file; do
+  prefix="${file%.tar.gz}"
+  sudo rm "${prefix}"*
+done
+
 
 ###### Link dotfile configs, could I use stow or chezmoi.io? sure, but less dependancies here
 LINKFILES+=(
