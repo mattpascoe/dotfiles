@@ -57,6 +57,5 @@ echo -en "Run setup scripts? Continue [Y/n] "
 read -r REPLY < /dev/tty
 REPLY=${REPLY:-Y} # Default to yes
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-  echo "  Running setup scripts..."
   source "$DOTDIR/setup.sh"
 fi
