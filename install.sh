@@ -37,23 +37,25 @@ arch*)      sudo pacman --needed --noconfirm -Sy git ;;
 	    ;;
 esac
 
+# set the location of our dotfiles install
+DOTDIR=~/dotfiles
 
 # Test if the dotfiles dir already exists.
-if [ ! -d ~/dotfiles ]; then
-  echo "  Cloning dotfiles..."
-  git clone https://github.com/mattpascoe/dotfiles ~/dotfiles
+if [ ! -d "$DOTDIR" ]; then
+  echo "  Cloning dotfiles to $DOTDIR..."
+  git clone https://github.com/mattpascoe/dotfiles "$DOTDIR"
 else
   echo "  Git repo already exists."
 #  echo "Updating dotfiles..."
-#  cd '~/dotfiles' || exit
+#  cd "$DOTDIR" || exit
 #  git pull >/dev/null
 #  cd - > /dev/null || exit
 fi
 
 # Ask if you want to run installer or not
-echo -en "Run setup scripts? Continue [y/N] "
+echo -en "Run setup scripts? Continue [Y/n] "
 read -r REPLY < /dev/tty
 if [[ $REPLY =~ ^[Yy]$ ]]; then
   echo "  Running setup scripts..."
-  source ~/dotfiles/setup.sh
+  source "$DOTDIR/setup.sh"
 fi

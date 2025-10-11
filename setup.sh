@@ -37,14 +37,15 @@ if [ -f /etc/os-release ]; then
   . /etc/os-release
 fi
 
-if [ -t 0 ]; then
-  SCRIPT=$(readlink -f "$0")
+# if DOTDIR variable is set, use it
+if [ -z "$DOTDIR" ]; then
+  DIR=$DOTDIR
 else
-  SCRIPT="(stdin)"
+  SCRIPT=$(readlink -f "$0")
+  DIR=$(dirname "$SCRIPT")
 fi
+echo -e "${BOLD}${BLU}Running from $DIR.${NC}"
 
-#SCRIPT=$(readlink -f "$0")
-DIR=$(dirname "$SCRIPT")
 declare -a LINKFILES
 
 echo -e "${BOLD}${BLU}Looks like we are a $MACHINE system.${NC}"
