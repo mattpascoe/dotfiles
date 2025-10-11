@@ -84,19 +84,26 @@ if [ "$MACHINE" == "Linux" ]; then
     "git"
     "highlight"
     "jq"
-  #  "lazygit" # not on ubuntu but is on arch
-    "neovim"
+  #  "lazygit" # not on ubuntu but is on arch, installing via direct download
+  #  "neovim" # old version, installing via direct download
     "tmux"
     "tree"
-  #  "yazi" # not on ubuntu but is on arch
+  #  "yazi" # not on ubuntu but is on arch, installing via direct download
     "zsh"
+  )
+
+  # Packages that Arch has
+  ARCH_PKGS+=(
+    "lazygit"
+    "neovim"
+    "yazi"
   )
 
   msg "Ensuring install of requested base packages..."
   case "$ID" in
     debian*)    sudo apt install -y "${PKGS[@]}";;
     ubuntu*)    sudo apt install -y "${PKGS[@]}";;
-    arch*)      sudo pacman --needed --noconfirm -Sy "${PKGS[@]}";;
+    arch*)      PKGS+=("${ARCH_PKGS[@]}"); sudo pacman --needed --noconfirm -Sy "${PKGS[@]}";;
     *)  echo -e "${BOLD}${RED}-!- This system is not a supported type, You should check that the following packages are installed:${NC}"
         echo "    ${PKGS[*]}";;
   esac
@@ -118,19 +125,12 @@ if [ "$MACHINE" == "Linux" ]; then
     fc-cache -fv /usr/local/share/fonts
   fi
 
-  # Set some gnome settings if we have gsettings
-  if command -v "gsettings" &> /dev/null; then
-    # Set caps escape key
-    gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
-    gsettings set org.gnome.desktop.input-sources xkb-options "['caps:escape']"
-    # Dock settings
-    gsettings set org.gnome.shell.extensions.dash-to-dock dock-position BOTTOM
-    gsettings set org.gnome.shell.extensions.dash-to-dock autohide true
-    gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false
-    gsettings set org.gnome.shell.extensions.dash-to-dock show-trash false
-    gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false # panel mode
-  fi
-
+  # Get the desktop environment
+  DESK=$(echo "$XDG_CURRENT_DESKTOP")
+  case "${DESK}" in
+    *GNOME) source ~/dotfiles/.gnome.sh;;
+    *)      echo -e "${BOLD}${RED}-!- ${DESK} is not a managed desktop environment.${NC}";;
+  esac
 
 fi
 # End linux section
@@ -148,10 +148,12 @@ if [ "$MACHINE" == "Mac" ]; then
   # Run NIX if we want
   echo -en "${BOLD}${GRN}Install NIX based packages... Continue (N/y) ${NC}"
   read -r REPLY < /dev/tty
+  # Think long and hard if you want another box using NIX
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     if ! command -v "nix" &> /dev/null; then
       msg "Installing NIX tools..."
-      curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+      msg "Disabled for now"
+      #curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
     fi
 
     if command -v "nix" &> /dev/null; then
@@ -186,7 +188,7 @@ if [ "$MACHINE" == "Mac" ]; then
   #    eval "$(brew shellenv)"
 
   #    msg "Ensuring install of requested brew packages..."
-  #    brew install -q iterm2 maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman tmux bash jesseduffield/lazygit/lazygit shellcheck eza
+  #    brew install -q maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman tmux bash jesseduffield/lazygit/lazygit shellcheck eza
 
   #  else
   #    echo -e "${BOLD}${RED}-!- ERROR: Unable to find Brew command. Please install Brew and try again.${NC}"
@@ -217,10 +219,11 @@ if ! command -v "starship" &> /dev/null; then
   echo -en "${BOLD}${GRN}Do you want to install Starship.rs prompt? [y/N] ${NC}"
   read -r REPLY < /dev/tty
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-    sudo sh -c "curl -fsSL https://starship.rs/install.sh | sh"
+    curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force
   fi
 else
-  msg "Starship is alredy installed."
+  msg "Starship is alredy installed. Running installer again to get updates..."
+  curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force
 fi
 
 ###### Link dotfile configs, could I use stow or chezmoi.io? sure, but less dependancies here
@@ -229,6 +232,7 @@ LINKFILES+=(
   ".config/ghostty"
   ".config/git"
   ".config/home-manager"
+  ".config/kanata"
   #".config/kitty"
   ".config/lazygit"
   ".config/nvim"
