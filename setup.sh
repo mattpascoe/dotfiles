@@ -140,6 +140,8 @@ if [ "$MACHINE" == "Linux" ]; then
   esac
 
   # Install extra tools. These should have a prompt for each one.
+  # TODO: IDEA: I chould also have a profiles dir.  it would just list the extras we want to install without prompting for each
+  #       Then if we dont select a profile, we can do this loop of all them individually?
   echo "--------------------------------------------"
   echo -en "${BOLD}${GRN}Do you want to install extra tools? You will be prompted for each one. (N/y) ${NC}"
   read -r REPLY < /dev/tty
