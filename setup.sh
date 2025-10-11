@@ -146,7 +146,8 @@ if [ "$MACHINE" == "Linux" ]; then
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     for FILE in $(find "$DIR/extra_installs" -type f -name "*.sh"); do
       EXTRA=$(basename "$FILE"|cut -d. -f1)
-      echo -en "${BOLD}${GRN}Install ${EXTRA}... Continue (N/y) ${NC}"
+      DESC=$(sed -n '2p' "$FILE")
+      echo -en "${BOLD}${GRN}Install ${EXTRA} -- ${DESC} (N/y) ${NC}"
       read -r REPLY < /dev/tty
       if [[ $REPLY =~ ^[Yy]$ ]]; then
         source "$FILE"

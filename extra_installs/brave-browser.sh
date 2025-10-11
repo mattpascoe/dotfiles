@@ -1,10 +1,11 @@
 #!/bin/bash
+# Brave web browser
 
 # Get linux os type
 [ -f /etc/os-release ] && . /etc/os-release
 case "$ID" in
   debian*|ubuntu*)
-    # Install using
+    # Install using brave official repo script
     curl -fsS https://dl.brave.com/install.sh | sh
     xdg-settings set default-web-browser brave-browser.desktop
     ;;
