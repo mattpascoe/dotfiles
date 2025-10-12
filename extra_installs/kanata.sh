@@ -6,16 +6,20 @@
 # Get linux os type
 [ -f /etc/os-release ] && . /etc/os-release
 case "$ID" in
-  debian*|ubuntu*)
+  #debian*|ubuntu*)
+  # Should work on anyone as long as it is x86 based
+  *)
     tmpdir=$(mktemp -d)
     ARCH=${ARCH:-$(uname -m)}; ARCH=${ARCH/aarch64/arm64}
-    VERSION=$(curl -s https://api.github.com/repos/jtroo/kanata/releases/latest | grep -Po '"tag_name": "v\K[0-9.]+')
-    wget -P "$tmpdir" https://github.com/jtroo/kanata/releases/download/v"${VERSION}"/kanata
-    sudo install -b "$tmpdir"/kanata /usr/local/bin/kanata
-    rm -rf "$tmpdir"
+    if [ "$ARCH" != "arm64" ]; then
+      VERSION=$(curl -s https://api.github.com/repos/jtroo/kanata/releases/latest | grep -Po '"tag_name": "v\K[0-9.]+')
+      wget -P "$tmpdir" https://github.com/jtroo/kanata/releases/download/v"${VERSION}"/kanata
+      sudo install -b "$tmpdir"/kanata /usr/local/bin/kanata
+      rm -rf "$tmpdir"
+    fi
     ;;
-  *)
-    echo "-!- Install not supported."
-    ;;
+  #*)
+  #  echo "-!- Install not supported."
+  #  ;;
 esac
 

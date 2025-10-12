@@ -8,8 +8,9 @@ case "$ID" in
     # Install using the community managed ubuntu install script
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)"
     ;;
-  arch*)
-    sudo pacman --needed --noconfirm -Sy ghostty ;;
+ # arch*)
+   # Ghostty says they have a package in the extras repo of arch.. I dont get one
+ #   sudo pacman --needed --noconfirm -Sy ghostty ;;
   *)
     echo "-!- Install not supported."
     ;;

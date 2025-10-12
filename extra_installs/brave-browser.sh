@@ -9,8 +9,11 @@ case "$ID" in
     curl -fsS https://dl.brave.com/install.sh | sh
     xdg-settings set default-web-browser brave-browser.desktop
     ;;
-  arch*)
-    sudo pacman --needed --noconfirm -Sy brave-browser ;;
+#  arch*)
+#    sudo pacman --needed --noconfirm -Sy brave-browser ;;
+    # Install using brave official repo script
+    # This requires an AUR like yay
+    #curl -fsS https://dl.brave.com/install.sh | sh
   *)
     echo "-!- Install not supported."
     ;;

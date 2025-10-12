@@ -111,7 +111,7 @@ if [ "$MACHINE" == "Linux" ]; then
       sudo apt install -y "${PKGS[@]}"
       ;;
     arch*)
-      dmesg -n 3 # Disable kernel messages since we are likely on a console
+      sudo dmesg -n 3 # Disable kernel messages since we are likely on a console
       PKGS+=("${ARCH_PKGS[@]}")
       sudo pacman --disable-sandbox --needed --noconfirm -Syu "${PKGS[@]}"
       ;;
@@ -328,4 +328,4 @@ msg "Setup complete."
 msg "Please log out or start a 'tmux' session to utilize new shell changes."
 
 # Set the console log level to 6 on arch
-[[ "$ID" == arch* ]] && dmesg -n 6
+[[ "$ID" == arch* ]] && sudo dmesg -n 6
