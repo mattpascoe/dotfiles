@@ -108,11 +108,17 @@ if [ "$MACHINE" == "Linux" ]; then
 
   msg "Ensuring install of requested base packages..."
   case "$ID" in
-    debian*)    sudo apt install -y "${PKGS[@]}";;
-    ubuntu*)    sudo apt install -y "${PKGS[@]}";;
-    arch*)      PKGS+=("${ARCH_PKGS[@]}"); sudo pacman --needed --noconfirm -Sy "${PKGS[@]}";;
-    *)  echo -e "${BOLD}${RED}-!- This system is not a supported type, You should check that the following packages are installed:${NC}"
-        echo "    ${PKGS[*]}";;
+    debian*|ubuntu*)
+      sudo apt install -y "${PKGS[@]}"
+      ;;
+    arch*)
+      PKGS+=("${ARCH_PKGS[@]}")
+      sudo pacman --disable-sandbox --needed --noconfirm -Syu "${PKGS[@]}"
+      ;;
+    *)
+      echo -e "${BOLD}${RED}-!- This system is not a supported type, You should check that the following packages are installed:${NC}"
+      echo "    ${PKGS[*]}"
+      ;;
   esac
 
   # Ensure zsh is default if its available
@@ -133,7 +139,7 @@ if [ "$MACHINE" == "Linux" ]; then
   fi
 
   # Get the desktop environment
-  DESK=$(echo "$XDG_CURRENT_DESKTOP")
+  DESK=$(echo "${XDG_CURRENT_DESKTOP:-}")
   case "${DESK}" in
     *GNOME) source "$DIR/.gnome.sh";;
     *)      echo -e "${BOLD}${RED}-!- ${DESK} is not a managed desktop environment.${NC}";;
@@ -276,6 +282,9 @@ LINKFILES+=(
   ".zshrc"
 )
 msg "Checking dotfile config symlinks..."
+if [ ! -d "$HOME/.config" ]; then
+  mkdir -p "$HOME/.config"
+fi
 for FILE in "${LINKFILES[@]}"
 do
   if [ ! -L "$HOME/$FILE" ]; then

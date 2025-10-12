@@ -18,23 +18,26 @@ fi
 
 echo "Updating system packages..."
 case "$ID" in
-debian*)    sudo apt update -y ;
-	    sudo apt install -y git ;;
-ubuntu*)    sudo apt update -y ;
-	    sudo apt install -y git ;;
-arch*)      sudo pacman --needed --noconfirm -Sy git ;;
+debian*|ubuntu*)
+  sudo apt update -y
+  sudo apt install -y git
+  ;;
+arch*)
+  # Update the system and ensure git is installed
+  sudo pacman --disable-sandbox --needed --noconfirm -Syu git curl wget sudo fontconfig
+  ;;
 *)
-	    if [ "$MACHINE" == "Mac" ]; then
-	      # Install Git if it does not exist
-	      if ! command -v "git" &> /dev/null; then
-	        # run git command, it may ask to install developer tools, go ahead and do that to get the git command
-	        msg "Checking git version. If missing it will prompt to install developer tools..."
-	        git --version
-	      fi
-            else
-              echo -e "-!- This system is not a supported type"
-	    fi
-	    ;;
+  if [ "$MACHINE" == "Mac" ]; then
+    # Install Git if it does not exist
+    if ! command -v "git" &> /dev/null; then
+      # run git command, it may ask to install developer tools, go ahead and do that to get the git command
+      msg "Checking git version. If missing it will prompt to install developer tools..."
+      git --version
+    fi
+  else
+    echo -e "-!- This system is not a supported type"
+  fi
+  ;;
 esac
 
 # set the location of our dotfiles install
