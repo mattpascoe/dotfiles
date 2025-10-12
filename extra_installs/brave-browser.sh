@@ -1,5 +1,5 @@
 #!/bin/bash
-# Brave web browser
+# The Brave web browser
 
 # Get linux os type
 [ -f /etc/os-release ] && . /etc/os-release

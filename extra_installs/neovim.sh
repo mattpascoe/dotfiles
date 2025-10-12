@@ -8,7 +8,7 @@ case "$ID" in
     tmpdir=$(mktemp -d)
     ARCH=${ARCH:-$(uname -m)}; ARCH=${ARCH/aarch64/arm64}
     # Install gcc so it can compile extensions etc. If you are using an IDE I bet you might want a compiler too
-    apt install -y gcc
+    sudo apt install -y gcc
     wget -P "$tmpdir" https://github.com/neovim/neovim/releases/download/stable/nvim-linux-"${ARCH}".tar.gz
     tar xf "$tmpdir/nvim"*.tar.gz -C "$tmpdir"
     sudo install -b "$tmpdir"/nvim-linux*/bin/nvim /usr/local/bin/nvim
