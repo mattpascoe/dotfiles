@@ -91,8 +91,7 @@ if [ "$MACHINE" == "Linux" ]; then
     "git"
     "highlight"
     "jq"
-  #  "lazygit" # not on ubuntu but is on arch, installing via direct download
-  #  "neovim" # old version, installing via direct download
+  #  "neovim" # old version, installing via direct download instead
     "tmux"
     "tree"
   #  "yazi" # not on ubuntu but is on arch, installing via direct download
@@ -112,6 +111,7 @@ if [ "$MACHINE" == "Linux" ]; then
       sudo apt install -y "${PKGS[@]}"
       ;;
     arch*)
+      dmesg -n 3 # Disable kernel messages since we are likely on a console
       PKGS+=("${ARCH_PKGS[@]}")
       sudo pacman --disable-sandbox --needed --noconfirm -Syu "${PKGS[@]}"
       ;;
@@ -139,7 +139,7 @@ if [ "$MACHINE" == "Linux" ]; then
   fi
 
   # Get the desktop environment
-  DESK=$(echo "${XDG_CURRENT_DESKTOP:-}")
+  DESK=$(echo "${XDG_CURRENT_DESKTOP:-UNKNOWN}")
   case "${DESK}" in
     *GNOME) source "$DIR/.gnome.sh";;
     *)      echo -e "${BOLD}${RED}-!- ${DESK} is not a managed desktop environment.${NC}";;
@@ -250,11 +250,11 @@ if ! command -v "starship" &> /dev/null; then
   echo -en "${BOLD}${GRN}Do you want to install Starship.rs prompt? (N/y) ${NC}"
   read -r REPLY < /dev/tty
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-    curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force
+    curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force | sed '/Please follow the steps/,$d'
   fi
 else
   msg "Starship is alredy installed. Running installer again to get updates..."
-  curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force
+  curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force | sed '/Please follow the steps/,$d'
 fi
 # Starship installer leaves a bunch of mktemp dirs all over. This will clean them up even ones that are not ours!
 find /tmp/ -name "tmp.*.tar.gz" -print0 | while IFS= read -r -d '' file; do
@@ -311,3 +311,6 @@ fi
 echo
 msg "Setup complete."
 msg "Please log out or start a 'tmux' session to utilize new shell changes."
+
+# Set the console log level to 6 on arch
+[[ "$ID" == arch* ]] && dmesg -n 6
