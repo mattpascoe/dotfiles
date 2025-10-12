@@ -23,6 +23,9 @@ debian*|ubuntu*)
   sudo apt install -y git
   ;;
 arch*)
+  # Disable kernel messages since we are likely on a console
+  # We'll turn it back on in setup.sh
+  sudo dmesg -n 3
   # Update the system and ensure git is installed
   sudo pacman --disable-sandbox --needed --noconfirm -Syu git curl wget sudo fontconfig
   ;;

@@ -35,11 +35,15 @@ if command -v "gsettings" &> /dev/null; then
   gsettings set org.gnome.desktop.wm.keybindings maximize "['<Super>k']"
 
   # Dock settings
-  gsettings set org.gnome.shell.extensions.dash-to-dock dock-position BOTTOM
-  gsettings set org.gnome.shell.extensions.dash-to-dock autohide true
-  gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false
-  gsettings set org.gnome.shell.extensions.dash-to-dock show-trash false
-  gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false # panel mode
+  # NOTE: this is not installed by default... do I care
+#  gsettings set org.gnome.shell.extensions.dash-to-dock dock-position BOTTOM
+#  gsettings set org.gnome.shell.extensions.dash-to-dock autohide true
+#  gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false
+#  gsettings set org.gnome.shell.extensions.dash-to-dock show-trash false
+#  gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false # panel mode
+
+  gsettings set org.gnome.desktop.peripherals.mouse natural-scroll true
+  gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll true
 
   # Center new windows in the middle of the screen
   gsettings set org.gnome.mutter center-new-windows true

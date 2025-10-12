@@ -142,7 +142,22 @@ if [ "$MACHINE" == "Linux" ]; then
   DESK=$(echo "${XDG_CURRENT_DESKTOP:-UNKNOWN}")
   case "${DESK}" in
     *GNOME) source "$DIR/.gnome.sh";;
-    *)      echo -e "${BOLD}${RED}-!- ${DESK} is not a managed desktop environment.${NC}";;
+    UNKNOWN)
+      # We'll assume one is not installed.
+      case "$ID" in
+        arch*)
+          echo -en "${BOLD}${GRN}Do you want to install Gnome desktop? (N/y) ${NC}"
+          read -r REPLY < /dev/tty
+          if [[ $REPLY =~ ^[Yy]$ ]]; then
+            sudo pacman --needed --noconfirm -Sy gnome gnome-extra
+            export DESK="GNOME"
+          fi
+          ;;
+        *)
+          ;;
+      esac
+      ;;
+    *) echo -e "${BOLD}${RED}-!- ${DESK} is not a managed desktop environment.${NC}";;
   esac
 
   # Install extra tools. These should have a prompt for each one.
@@ -257,7 +272,7 @@ else
   curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force | sed '/Please follow the steps/,$d'
 fi
 # Starship installer leaves a bunch of mktemp dirs all over. This will clean them up even ones that are not ours!
-find /tmp/ -name "tmp.*.tar.gz" -print0 | while IFS= read -r -d '' file; do
+sudo find /tmp/ -name "tmp.*.tar.gz" -print0 | while IFS= read -r -d '' file; do
   prefix="${file%.tar.gz}"
   sudo rm "${prefix}"*
 done
