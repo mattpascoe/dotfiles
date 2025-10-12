@@ -35,4 +35,4 @@ crust = "#11111b"
 
 [time]
 disabled = false
-format = ' [$time]($style) '
+format = '[$time]($style)'
