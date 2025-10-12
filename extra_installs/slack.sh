@@ -5,7 +5,15 @@
 [ -f /etc/os-release ] && . /etc/os-release
 case "$ID" in
   debian*|ubuntu*)
-    curl 'https://slack.com/downloads/instructions/linux?ddl=1&build=deb' -o /tmp/slack.deb
+    # Lame extract of latest version of the deb file. Probably will break in the future
+    curl -s "https://slack.com/downloads/instructions/linux?ddl=1&build=deb" \
+    | tr "\t\r\n'" '   "' \
+    | grep -ioE 'href\s*=\s*"?https://[^" >]+' \
+    | sed -E 's/^href\s*=\s*"?(https:[^" >]+).*/\1/' \
+    | grep 'slack-desktop' \
+    | head -n 1 \
+    | xargs -r curl -L -o /tmp/slack.deb
+
     sudo dpkg -i /tmp/slack.deb
     sudo rm /tmp/slack.deb
     ;;
