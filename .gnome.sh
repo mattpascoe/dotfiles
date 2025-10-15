@@ -67,6 +67,9 @@ if command -v "gsettings" &> /dev/null; then
   gsettings set org.gnome.desktop.wm.keybindings switch-panels-backward "[]"
   gsettings set org.gnome.desktop.wm.keybindings switch-group "['<Super>Above_Tab', '<Alt>Above_Tab', '<Shift><Control><Alt>Tab']"
 
+  # Reserve slots for custom keybindings
+  gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']"
+
   # Set ROFI custom keybind
   # First remove existing keybind
   gsettings set org.gnome.desktop.wm.keybindings switch-input-source "@as []"
