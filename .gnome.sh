@@ -4,6 +4,14 @@ echo -en "${BOLD}${GRN}Execute Gnome installation and setup commands... Continue
 read -r REPLY < /dev/tty
 if [[ $REPLY =~ ^[Yy]$ ]]; then
 
+# Install some basic desktop packages
+[[ -f /etc/os-release && -z "$ID" ]] && . /etc/os-release
+case "$ID" in
+  debian*|ubuntu*)
+    sudo apt install -y rofi
+    ;;
+esac
+
 # Set some gnome settings if we have gsettings
 if command -v "gsettings" &> /dev/null; then
   # Meh.. I hear about it but not yet using
@@ -72,6 +80,7 @@ if command -v "gsettings" &> /dev/null; then
   gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 
   # set default terminal?
+  # Having issues and having to start it with LIBGL_ALLOW_SOFTWARE=1 ghostty
   #gsettings set org.gnome.desktop.default-applications.terminal exec "ghostty"
 
   # set background
