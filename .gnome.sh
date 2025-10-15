@@ -35,12 +35,13 @@ if command -v "gsettings" &> /dev/null; then
   gsettings set org.gnome.desktop.wm.keybindings maximize "['<Super>k']"
 
   # Dock settings
-  # NOTE: this is not installed by default... do I care
-#  gsettings set org.gnome.shell.extensions.dash-to-dock dock-position BOTTOM
-#  gsettings set org.gnome.shell.extensions.dash-to-dock autohide true
-#  gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false
-#  gsettings set org.gnome.shell.extensions.dash-to-dock show-trash false
-#  gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false # panel mode
+  if gnome-extensions list --enabled | grep -q "ubuntu-dock@ubuntu.com"; then
+    gsettings set org.gnome.shell.extensions.dash-to-dock dock-position BOTTOM
+    gsettings set org.gnome.shell.extensions.dash-to-dock autohide true
+    gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false
+    gsettings set org.gnome.shell.extensions.dash-to-dock show-trash false
+    gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false # panel mode
+  fi
 
   gsettings set org.gnome.desktop.peripherals.mouse natural-scroll true
   gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll true
@@ -69,6 +70,14 @@ if command -v "gsettings" &> /dev/null; then
   # AM/PM clock
   gsettings set org.gnome.desktop.interface clock-format '12h'
   gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+
+  # set default terminal?
+  #gsettings set org.gnome.desktop.default-applications.terminal exec "ghostty"
+
+  # set background
+  gsettings set org.gnome.desktop.background picture-uri "file://${HOME}/.wallpaper.png"
+  gsettings set org.gnome.desktop.background picture-uri-dark "file://${HOME}/.wallpaper.png"
+  gsettings set org.gnome.desktop.background primary-color "#ffffff"
 
   # Turn off animations so things are snappy
   gsettings set org.gnome.desktop.interface enable-animations false

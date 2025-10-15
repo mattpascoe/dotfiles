@@ -16,6 +16,8 @@ case "$ID" in
       wget -P "$tmpdir" https://github.com/jtroo/kanata/releases/download/v"${VERSION}"/kanata
       sudo install -b "$tmpdir"/kanata /usr/local/bin/kanata
       rm -rf "$tmpdir"
+    else
+      echo "-!- Install not supported on ARM."
     fi
     ;;
   #*)
