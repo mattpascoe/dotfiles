@@ -77,7 +77,7 @@ if command -v "gsettings" &> /dev/null; then
   # set background
   gsettings set org.gnome.desktop.background picture-uri "file://${HOME}/.wallpaper.png"
   gsettings set org.gnome.desktop.background picture-uri-dark "file://${HOME}/.wallpaper.png"
-  gsettings set org.gnome.desktop.background primary-color "#ffffff"
+  gsettings set org.gnome.desktop.background primary-color "#000000" # black
 
   # Turn off animations so things are snappy
   gsettings set org.gnome.desktop.interface enable-animations false
