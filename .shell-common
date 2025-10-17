@@ -191,6 +191,9 @@ elif command -v nix &> /dev/null; then
 else
   # shell completions already installed to system via fzf package
   # Debian linux location for fzf bindings per shell type
+  # NOTE: I've seen some fzf packages that are missing the examples files. specifically the arm64 one but not the amd64??
+  # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1040715. For now I'm not going to try and solve this. maybe just have my own in .config
+  KEYBINDPATH="Can't find defaults check https://bugs.debian.org/1040715"
   [[ -f /usr/share/doc/fzf/examples/completion.${SHELLTYPE} ]] && source /usr/share/doc/fzf/examples/completion."${SHELLTYPE}"
   [[ -f /usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE} ]] && KEYBINDPATH=/usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE}
   [[ -f /usr/share/fzf/key-bindings.${SHELLTYPE} ]] && KEYBINDPATH=/usr/share/fzf/key-bindings.${SHELLTYPE}
@@ -199,11 +202,11 @@ fi
 # Source in the fzf keybindings determined above, may be overkill but it ensures its there.
 if [ -f "$KEYBINDPATH" ]; then
   source "$KEYBINDPATH"
+  # Add fzf keybindings to zsh vim plugin
+  zvm_after_init_commands+=("source $KEYBINDPATH")
 else
-  echo "Could not find fzf keybindings $KEYBINDPATH"
+  echo "Could not find fzf keybindings: $KEYBINDPATH"
 fi
-# Add fzf keybindings to zsh vim plugin
-zvm_after_init_commands+=("source $KEYBINDPATH")
 
 export FZF_COMPLETION_TRIGGER=','
 export FZF_TMUX_HEIGHT=60% # not strictly TMUX only
