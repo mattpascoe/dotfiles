@@ -19,20 +19,25 @@ if command -v "gsettings" &> /dev/null; then
   # TODO: this should check the OS type to install packages right
   #sudo apt install gnome-tweaks
 
+  # These are the old way I installed extensions using direct github links. Keeping for a ref just in case
+  #INSTALL_VER=$(curl -s https://api.github.com/repos/corecoding/Vitals/releases/latest | grep -Po '"tag_name": "v\K[0-9.]+')
+  #wget -P "$tmpdir" https://github.com/corecoding/Vitals/releases/download/v"${INSTALL_VER}"/vitals.zip
+  #gnome-extensions install --force "${tmpdir}/vitals.zip"
   # Install some extensions
   tmpdir=$(mktemp -d)
-  ARCH=${ARCH:-$(uname -m)}; ARCH=${ARCH/aarch64/arm64}
-  # ----- Install latest application hotkeys gnome extension
-  INSTALL_VER=$(curl -s https://api.github.com/repos/aaimio/application-hotkeys/releases/latest | grep -Po '"tag_name": "v\K[0-9.]+')
-  wget -P "$tmpdir" https://github.com/aaimio/application-hotkeys/releases/download/v"${INSTALL_VER}"/application-hotkeys@aaimio.github.com.shell-extension.zip
-  sudo gnome-extensions install --force "${tmpdir}/application-hotkeys@aaimio.github.com.shell-extension.zip"
-  # I think there might be a command to reload gnome extensions?
-
-  # VITALS extension seems nice: https://extensions.gnome.org/away/https%253A%252F%252Fgithub.com%252Fcorecoding%252FVitals
-  INSTALL_VER=$(curl -s https://api.github.com/repos/corecoding/Vitals/releases/latest | grep -Po '"tag_name": "v\K[0-9.]+')
-  wget -P "$tmpdir" https://github.com/corecoding/Vitals/releases/download/v"${INSTALL_VER}"/vitals.zip
-  sudo gnome-extensions install --force "${tmpdir}/vitals.zip"
-
+  # List the UUIDs of the extensions you want to install
+  EXTENSIONS=( application-hotkeys@aaimio.github.com Vitals@CoreCoding.com )
+  for i in "${EXTENSIONS[@]}"
+  do
+      VERSION_TAG=$(curl -Lfs "https://extensions.gnome.org/extension-query/?search=${i}" | jq '.extensions[0] | .shell_version_map | map(.pk) | max')
+      wget -O "${tmpdir}/${i}.zip" "https://extensions.gnome.org/download-extension/${i}.shell-extension.zip?version_tag=$VERSION_TAG"
+      gnome-extensions install --force "${tmpdir}/${i}.zip"
+      if ! gnome-extensions list | grep --quiet "${i}"; then
+          echo "Failed direct install, trying remote install"
+          busctl --user call org.gnome.Shell.Extensions /org/gnome/Shell/Extensions org.gnome.Shell.Extensions InstallRemoteExtension s "${i}"
+      fi
+      gnome-extensions enable "${i}"
+  done
   rm -rf "$tmpdir"
 
   # Set caps escape key
