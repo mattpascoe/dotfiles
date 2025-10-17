@@ -16,7 +16,8 @@ case "$ID" in
     sudo mv "$tmpdir"/1password-*/* /opt/1Password && \
     sudo /opt/1Password/after-install.sh
     sudo chown root:root /opt/1Password/1password
-    sudo chmod 4755 /opt/1Password/1password
+    # I saw somewhere they wanted 4755 permissions but I saw issues with that.
+    sudo chmod 0755 /opt/1Password/1password
 
     # ----- Install 1password cli, find a way to get latest instead of a specific version
     # This can be run over and over to update the version.
