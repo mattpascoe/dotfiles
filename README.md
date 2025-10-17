@@ -22,6 +22,11 @@ git clone https://github.com/mattpascoe/dotfiles.git ~/dotfiles
 ~/dotfiles/setup.sh
 ```
 
+On a basic Arch install you first need to run:
+```
+pacman -Syu wget sudo
+```
+
 ## MISC MAC info
 Started using the .macos file or similar from https://github.com/mathiasbynens/dotfiles
 

@@ -8,6 +8,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 [[ -f /etc/os-release && -z "$ID" ]] && . /etc/os-release
 case "$ID" in
   debian*|ubuntu*)
+    # May need to deal with wofi. Rofi seems to struggle on wayland systems
     sudo apt install -y rofi
     ;;
 esac

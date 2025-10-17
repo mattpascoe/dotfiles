@@ -193,7 +193,7 @@ else
   # Debian linux location for fzf bindings per shell type
   # NOTE: I've seen some fzf packages that are missing the examples files. specifically the arm64 one but not the amd64??
   # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1040715. For now I'm not going to try and solve this. maybe just have my own in .config
-  KEYBINDPATH="Can't find defaults check https://bugs.debian.org/1040715"
+  KEYBINDPATH="Probably bad packaging. TODO in shell-common https://bugs.debian.org/1040715"
   [[ -f /usr/share/doc/fzf/examples/completion.${SHELLTYPE} ]] && source /usr/share/doc/fzf/examples/completion."${SHELLTYPE}"
   [[ -f /usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE} ]] && KEYBINDPATH=/usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE}
   [[ -f /usr/share/fzf/key-bindings.${SHELLTYPE} ]] && KEYBINDPATH=/usr/share/fzf/key-bindings.${SHELLTYPE}

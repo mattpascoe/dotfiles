@@ -149,7 +149,8 @@ if [ "$MACHINE" == "Linux" ]; then
           echo -en "${BOLD}${GRN}Do you want to install Gnome desktop? (N/y) ${NC}"
           read -r REPLY < /dev/tty
           if [[ $REPLY =~ ^[Yy]$ ]]; then
-            sudo pacman --needed --noconfirm -Sy gnome gnome-extra
+            sudo pacman --disable-sandbox --needed --noconfirm -Sy gnome
+            sudo systemctl enable --now gdm
             export DESK="GNOME"
           fi
           ;;
