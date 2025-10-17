@@ -72,6 +72,13 @@ fzf, zsh packages have been installed.
 Unraid will run from /boot/config so if there are any changes to vimrc, zshrc or
 shell-common, you will need to run `setup.sh` again.
 
+# Hyprland
+It looks cool. Tiling is nice. So far its too new to be common. I'm going to 
+let it go for awhile and check later.  Right now Gnome is common, simple and predictable.
+For my needs I'm not trying to get fancy anyway. I just use Kanata to jump between apps
+on a single window in mostly full screen. Then if I really want to fall back to a window
+Gnome will just be there and I dont have to fight things.
+
 # NIX
 I'm exploring it. TBD how it fits in here.
 

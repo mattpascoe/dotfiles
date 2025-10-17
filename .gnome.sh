@@ -39,9 +39,33 @@ if command -v "gsettings" &> /dev/null; then
   gsettings set org.gnome.desktop.input-sources xkb-options "['caps:escape']"
   # Close apps like a Mac.
   gsettings set org.gnome.desktop.wm.keybindings close "['<Super>q']"
-  # Make it easy to maximize like you can fill left/right
-  # TODO: I want super hjkl to do window sizing.  test the rest of these something seems to be doing alt-super-hl but I'm not sure what
+
+  # Experiment with some remapping of default keys to my own taste.  Makes it more Mac like?? is that a bad idea?
+  gsettings set org.gnome.settings-daemon.plugins.media-keys screensaver "[]" # remove default binding
+  gsettings set org.gnome.shell.keybindings focus-active-notification "[]" # remove default binding
+  gsettings set org.gnome.shell.keybindings toggle-message-tray "['<Super>n']" # change to n for notifications
   gsettings set org.gnome.desktop.wm.keybindings maximize "['<Super>k']"
+  gsettings set org.gnome.desktop.wm.keybindings minimize "['<Super>j']"
+  gsettings set org.gnome.shell.extensions.tiling-assistant tile-left-half "['<Super>Left', '<Super>KP_4', '<Super>h']"
+  gsettings set org.gnome.shell.extensions.tiling-assistant tile-right-half "['<Super>Right', '<Super>KP_6', '<Super>l']"
+
+
+
+  # Careful here.. need to test this more
+  # There is other info about adjusting all GTK apps using this
+  # https://unix.stackexchange.com/questions/342628/gnome-3-keybindings-in-source-where-are-ctrl-c-cut-copy-and-paste-defin/399632
+  gsettings set org.gnome.Ptyxis.Shortcuts paste-clipboard '<Super>v'
+  #gsettings set org.gnome.Terminal.Legacy.Keybindings paste '<Super>v'
+  gsettings set org.gnome.Ptyxis.Shortcuts copy-clipboard '<Super>c'
+  #gsettings set org.gnome.Terminal.Legacy.Keybindings copy '<Super>c'
+  # This seems to work well for terminal.
+  dconf write /org/gnome/terminal/legacy/keybindings/copy  \'"<Super>c"\'
+  dconf write /org/gnome/terminal/legacy/keybindings/paste \'"<Super>v"\'
+  #default values
+  #org.gnome.Ptyxis.Shortcuts paste-clipboard '<ctrl><shift>v'
+  #org.gnome.Terminal.Legacy.Keybindings paste '<Control><Shift>v'
+
+
 
   # Dock settings
   if gnome-extensions list --enabled | grep -q "ubuntu-dock@ubuntu.com"; then
@@ -75,12 +99,17 @@ if command -v "gsettings" &> /dev/null; then
   # First remove existing keybind
   gsettings set org.gnome.desktop.wm.keybindings switch-input-source "@as []"
   # Set our new keybind
-  #gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name "Rofi Launcher"
-  #gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command "rofi -show drun"
-  #gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding "<Super>space"
-  dconf write /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/name "'Rofi Launcher'"
-  dconf write /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/command "'rofi -show drun'"
-  dconf write /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/binding "'<Super>space'"
+  if command -v "wofi" &> /dev/null; then
+    LAUNCHER_CMD="wofi --show drun"
+  else
+    LAUNCHER_CMD="rofi -show drun"
+  fi
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name "Rofi Launcher"
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command "${LAUNCHER_CMD}"
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding "<Super>space"
+  #dconf write /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/name "'Rofi Launcher'"
+  #dconf write /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/command "'rofi -show drun'"
+  #dconf write /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/binding "'<Super>space'"
 
   # AM/PM clock
   gsettings set org.gnome.desktop.interface clock-format '12h'
