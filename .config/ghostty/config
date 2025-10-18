@@ -18,6 +18,11 @@ gtk-titlebar-hide-when-maximized = true
 macos-titlebar-style = hidden
 mouse-hide-while-typing = true
 
+# Handle clipboard actions
+right-click-action = copy-or-paste
+keybind = super+c=copy_to_clipboard
+keybind = super+v=paste_from_clipboard
+
 # Enable quick terminal
 quick-terminal-position = right
 # Size does not seem to work for primary number but I can resize after its
