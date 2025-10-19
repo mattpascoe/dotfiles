@@ -19,7 +19,7 @@ case "$ID" in
 
       sudo rm -f /etc/kanata.cfg
       sudo ln -s ~/.config/kanata.cfg /etc/kanata.cfg
-      cat <<EOF > /etc/systemd/system/kanata.service
+      sudo tee /etc/systemd/system/kanata.service > /dev/null <<'EOF'
 [Unit]
 Description=Kanata keyboard remapping daemon
 After=graphical.target
