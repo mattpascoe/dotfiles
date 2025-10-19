@@ -11,7 +11,8 @@ case "$ID" in
     sudo apt install -y gcc
     # Remove neovim if it is already installed via package manager
     sudo apt remove -y neovim
-    wget -P "$tmpdir" https://github.com/neovim/neovim/releases/download/stable/nvim-linux-"${ARCH}".tar.gz
+    echo "Installing neovim..."
+    wget -q -P "$tmpdir" https://github.com/neovim/neovim/releases/download/stable/nvim-linux-"${ARCH}".tar.gz
     tar xf "$tmpdir/nvim"*.tar.gz -C "$tmpdir"
     sudo install -b "$tmpdir"/nvim-linux*/bin/nvim /usr/local/bin/nvim
     sudo cp -R "$tmpdir"/nvim-linux*/lib /usr/local/

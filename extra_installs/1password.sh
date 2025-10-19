@@ -10,7 +10,8 @@ case "$ID" in
     # NOTE: didnt always work I think due to architecture issues.. yea does not support arm64. use uname -m instead to get aarch64
     # works on x86_64
     # Need to test if running multiple times will do proper upgrades
-    wget -P "$tmpdir" https://downloads.1password.com/linux/tar/stable/$(uname -m)/1password-latest.tar.gz && \
+    echo "Installing 1password..."
+    wget -q -P "$tmpdir" https://downloads.1password.com/linux/tar/stable/$(uname -m)/1password-latest.tar.gz && \
     tar xf "$tmpdir"/1password-latest.tar.gz -C "$tmpdir" && \
     sudo mkdir -p /opt/1Password && \
     sudo mv "$tmpdir"/1password-*/* /opt/1Password && \
