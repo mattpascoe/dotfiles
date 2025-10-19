@@ -181,35 +181,20 @@ if command -v brew &> /dev/null; then
   if [[ ! "$PATH" == *${BREWPREFIX}/opt/fzf/bin* ]]; then
     PATH="${PATH:+${PATH}:}${BREWPREFIX}/opt/fzf/bin"
   fi
-
-  # FZF Auto-completion
-  [[ $- == *i* ]] && source "${BREWPREFIX}/opt/fzf/shell/completion.${SHELLTYPE}" 2> /dev/null
-
-  # FZF Key bindings
-  [[ -f ${BREWPREFIX}/opt/fzf/shell/key-bindings.${SHELLTYPE} ]] && KEYBINDPATH="${BREWPREFIX}/opt/fzf/shell/key-bindings.${SHELLTYPE}"
-
-elif command -v nix &> /dev/null; then
-  # Nix locations
-  [[ -f ~/.nix-profile/share/fzf/completion.${SHELLTYPE} ]] && source ~/.nix-profile/share/fzf/completion."${SHELLTYPE}"
-  [[ -f ~/.nix-profile/share/fzf/key-bindings.${SHELLTYPE} ]] && KEYBINDPATH=~/.nix-profile/share/fzf/key-bindings.${SHELLTYPE}
-else
-  # shell completions already installed to system via fzf package
-  # Debian linux location for fzf bindings per shell type
-  # NOTE: I've seen some fzf packages that are missing the examples files. specifically the arm64 one but not the amd64??
-  # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1040715. For now I'm not going to try and solve this. maybe just have my own in .config
-  KEYBINDPATH="Probably bad packaging. TODO in shell-common https://bugs.debian.org/1040715"
-  [[ -f /usr/share/doc/fzf/examples/completion.${SHELLTYPE} ]] && source /usr/share/doc/fzf/examples/completion."${SHELLTYPE}"
-  [[ -f /usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE} ]] && KEYBINDPATH=/usr/share/doc/fzf/examples/key-bindings.${SHELLTYPE}
-  [[ -f /usr/share/fzf/key-bindings.${SHELLTYPE} ]] && KEYBINDPATH=/usr/share/fzf/key-bindings.${SHELLTYPE}
 fi
 
-# Source in the fzf keybindings determined above, may be overkill but it ensures its there.
-if [ -f "$KEYBINDPATH" ]; then
-  source "$KEYBINDPATH"
-  # Add fzf keybindings to zsh vim plugin
-  zvm_after_init_commands+=("source $KEYBINDPATH")
+# FZF Auto-completion
+if [ -f "${XDG_CONFIG_HOME}/fzf/completion.${SHELLTYPE}" ]; then
+  source "${XDG_CONFIG_HOME}/fzf/completion.${SHELLTYPE}"
 else
-  echo "Could not find fzf keybindings: $KEYBINDPATH"
+  echo "No FZF completion file found at ${XDG_CONFIG_HOME}/fzf/completion.${SHELLTYPE}"
+fi
+
+# FZF Key bindings
+if [ -f "${XDG_CONFIG_HOME}/fzf/key-bindings.${SHELLTYPE}" ]; then
+  source "${XDG_CONFIG_HOME}/fzf/key-bindings.${SHELLTYPE}"
+else
+  echo "No FZF key bindings file found at ${XDG_CONFIG_HOME}/fzf/key-bindings.${SHELLTYPE}"
 fi
 
 export FZF_COMPLETION_TRIGGER=','
