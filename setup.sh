@@ -295,6 +295,7 @@ LINKFILES+=(
   ".config/btop"
   ".config/ghostty"
   ".config/git"
+  ".config/fzf"
   ".config/home-manager"
   ".config/kanata"
   #".config/kitty"
