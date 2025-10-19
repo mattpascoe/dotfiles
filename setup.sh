@@ -112,7 +112,7 @@ if [ "$MACHINE" == "Linux" ]; then
       # Also set timezone
       sudo timedatectl set-timezone "America/Boise"
       # Remove some useless crap
-      sudo apt purge whoopsie
+      sudo apt purge -y whoopsie
       ;;
     arch*)
       sudo dmesg -n 3 # Disable kernel messages since we are likely on a console
