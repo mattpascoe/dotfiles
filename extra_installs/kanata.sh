@@ -26,7 +26,7 @@ Description=Kanata keyboard remapping daemon
 After=graphical.target
 
 [Service]
-ExecStart=/usr/local/bin/kanata --cfg /etc/kanata.cfg
+ExecStart=/usr/local/bin/kanata --cfg /etc/kanata.cfg --quiet
 Restart=on-failure
 
 [Install]
