@@ -30,7 +30,7 @@ if command -v "gsettings" &> /dev/null; then
   do
       echo "Installing Gnome extension: $i"
       VERSION_TAG=$(curl -Lfs "https://extensions.gnome.org/extension-query/?search=${i}" | jq '.extensions[0] | .shell_version_map | map(.pk) | max')
-      wget -p -O "${tmpdir}/${i}.zip" "https://extensions.gnome.org/download-extension/${i}.shell-extension.zip?version_tag=$VERSION_TAG"
+      wget -q -O "${tmpdir}/${i}.zip" "https://extensions.gnome.org/download-extension/${i}.shell-extension.zip?version_tag=$VERSION_TAG"
       gnome-extensions install --force "${tmpdir}/${i}.zip"
       if ! gnome-extensions list | grep --quiet "${i}"; then
           echo "Failed direct install, trying remote install"
