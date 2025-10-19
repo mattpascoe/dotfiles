@@ -17,22 +17,23 @@ case "$ID" in
       sudo install -b "$tmpdir"/kanata /usr/local/bin/kanata
       rm -rf "$tmpdir"
 
-      mkdir -p ~/.config/systemd/user
-      cat <<EOF > ~/.config/systemd/user/kanata.service
+      sudo rm -f /etc/kanata.cfg
+      sudo ln -s ~/.config/kanata.cfg /etc/kanata.cfg
+      cat <<EOF > /etc/systemd/system/kanata.service
 [Unit]
 Description=Kanata keyboard remapping daemon
 After=graphical.target
 
 [Service]
-ExecStart=/usr/local/bin/kanata --cfg ~/.config/kanata/kanata.kbd
+ExecStart=/usr/local/bin/kanata --cfg /etc/kanata.cfg
 Restart=on-failure
 
 [Install]
 WantedBy=default.target
 EOF
 
-      systemctl --user enable kanata.service
-      systemctl --user start kanata.service
+      sudo systemctl enable kanata.service
+      sudo systemctl start kanata.service
     else
       echo "-!- Install not supported on ARM."
     fi
