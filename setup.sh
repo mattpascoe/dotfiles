@@ -142,9 +142,16 @@ if [ "$MACHINE" == "Linux" ]; then
       case "$ID" in
         ubuntu*)
           if [[ $REPLY =~ ^[Yy]$ ]]; then
-            sudo apt install -y ubuntu-gnome-desktop
+            sudo apt install -y ubuntu-gnome-desktop rsyslog
             sudo systemctl set-default graphical.target
             export DESK="GNOME"
+            if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+              sudo apt install -y wofi
+            elif [ "$XDG_SESSION_TYPE" = "x11" ]; then
+              sudo apt install -y rofi
+            else
+                echo "Unknown window manager session type"
+            fi
           fi
           ;;
         arch*)
