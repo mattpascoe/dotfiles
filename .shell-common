@@ -75,6 +75,10 @@ set -o vi
 export EDITOR=nvim
 export VISUAL=$EDITOR
 alias e=$EDITOR
+# If we dont have vim installed add an alias to nvim
+if ! command -v vim &> /dev/null; then
+  alias vim=$EDITOR
+fi
 
 # Set PAGER
 export PAGER=less
