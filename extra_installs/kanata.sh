@@ -18,7 +18,7 @@ case "$ID" in
       rm -rf "$tmpdir"
 
       mkdir -p ~/.config/systemd/user
-      echo <<EOF > ~/.config/systemd/user/kanata.service
+      cat <<EOF > ~/.config/systemd/user/kanata.service
 [Unit]
 Description=Kanata keyboard remapping daemon
 After=graphical.target
@@ -31,8 +31,8 @@ Restart=on-failure
 WantedBy=default.target
 EOF
 
-      sudo systemctl --user enable kanata.service
-      sudo systemctl --user start kanata.service
+      systemctl --user enable kanata.service
+      systemctl --user start kanata.service
     else
       echo "-!- Install not supported on ARM."
     fi
