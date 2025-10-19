@@ -111,6 +111,8 @@ if [ "$MACHINE" == "Linux" ]; then
       sudo apt install -y "${PKGS[@]}"
       # Also set timezone
       sudo timedatectl set-timezone "America/Boise"
+      # Remove some useless crap
+      sudo apt remove purge whoopsie
       ;;
     arch*)
       sudo dmesg -n 3 # Disable kernel messages since we are likely on a console
@@ -142,16 +144,9 @@ if [ "$MACHINE" == "Linux" ]; then
       case "$ID" in
         ubuntu*)
           if [[ $REPLY =~ ^[Yy]$ ]]; then
-            sudo apt install -y ubuntu-gnome-desktop rsyslog
+            sudo apt install -y ubuntu-gnome-desktop rsyslog rofi
             sudo systemctl set-default graphical.target
             export DESK="GNOME"
-            if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
-              sudo apt install -y wofi
-            elif [ "$XDG_SESSION_TYPE" = "x11" ]; then
-              sudo apt install -y rofi
-            else
-                echo "Unknown window manager session type"
-            fi
           fi
           ;;
         arch*)

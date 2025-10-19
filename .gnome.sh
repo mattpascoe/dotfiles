@@ -58,9 +58,9 @@ if command -v "gsettings" &> /dev/null; then
   # Careful here.. need to test this more
   # There is other info about adjusting all GTK apps using this
   # https://unix.stackexchange.com/questions/342628/gnome-3-keybindings-in-source-where-are-ctrl-c-cut-copy-and-paste-defin/399632
-  gsettings set org.gnome.Ptyxis.Shortcuts paste-clipboard '<Super>v'
+  #gsettings set org.gnome.Ptyxis.Shortcuts paste-clipboard '<Super>v'
   #gsettings set org.gnome.Terminal.Legacy.Keybindings paste '<Super>v'
-  gsettings set org.gnome.Ptyxis.Shortcuts copy-clipboard '<Super>c'
+  #gsettings set org.gnome.Ptyxis.Shortcuts copy-clipboard '<Super>c'
   #gsettings set org.gnome.Terminal.Legacy.Keybindings copy '<Super>c'
   # This seems to work well for terminal.
   dconf write /org/gnome/terminal/legacy/keybindings/copy  \'"<Super>c"\'
@@ -103,13 +103,8 @@ if command -v "gsettings" &> /dev/null; then
   # First remove existing keybind
   gsettings set org.gnome.desktop.wm.keybindings switch-input-source "@as []"
   # Set our new keybind
-  if command -v "wofi" &> /dev/null; then
-    LAUNCHER_CMD="wofi --show drun"
-  else
-    LAUNCHER_CMD="rofi -show drun"
-  fi
-  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name "Rofi Launcher"
-  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command "${LAUNCHER_CMD}"
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name "App Launcher"
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command "rofi -show drun -normal-window"
   gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding "<Super>space"
   #dconf write /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/name "'Rofi Launcher'"
   #dconf write /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/command "'rofi -show drun'"
