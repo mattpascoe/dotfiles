@@ -5,7 +5,7 @@
 # TODO: refactor and have more "configuration" instead of hardcoded things like package installs
 # TODO: look into using stow for dotfile management
 
-set -eou pipefail
+#set -eou pipefail
 
 # Colors/formatting
 UL="\033[4m" # underline
@@ -109,6 +109,8 @@ if [ "$MACHINE" == "Linux" ]; then
   case "$ID" in
     debian*|ubuntu*)
       sudo apt install -y "${PKGS[@]}"
+      # Also set timezone
+      sudo timedatectl set-timezone "America/Boise"
       ;;
     arch*)
       sudo dmesg -n 3 # Disable kernel messages since we are likely on a console
@@ -129,25 +131,23 @@ if [ "$MACHINE" == "Linux" ]; then
     fi
   fi
 
-  # Ensure Nerd Fonts are installed
-  if [[ ! -f /usr/local/share/fonts/MesloLGMNerdFontMono-Regular.ttf || ! -f /usr/local/share/fonts/MesloLGMNerdFontPropo-Regular.ttf ]]; then
-    msg "Installing Nerd Fonts..."
-    sudo mkdir -p /usr/local/share/fonts
-    sudo curl -s -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Meslo/M/Regular/MesloLGMNerdFontMono-Regular.ttf --output-dir /usr/local/share/fonts
-    sudo curl -s -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Meslo/M/Regular/MesloLGMNerdFontPropo-Regular.ttf --output-dir /usr/local/share/fonts
-    fc-cache -fv /usr/local/share/fonts
-  fi
-
   # Get the desktop environment
   DESK=$(echo "${XDG_CURRENT_DESKTOP:-UNKNOWN}")
   case "${DESK}" in
     *GNOME) source "$DIR/.gnome.sh";;
     UNKNOWN)
       # We'll assume one is not installed.
+      echo -en "${BOLD}${GRN}Do you want to install Gnome desktop? (N/y) ${NC}"
+      read -r REPLY < /dev/tty
       case "$ID" in
+        ubuntu*)
+          if [[ $REPLY =~ ^[Yy]$ ]]; then
+            sudo apt install -y ubuntu-gnome-desktop
+            sudo systemctl set-default graphical.target
+            export DESK="GNOME"
+          fi
+          ;;
         arch*)
-          echo -en "${BOLD}${GRN}Do you want to install Gnome desktop? (N/y) ${NC}"
-          read -r REPLY < /dev/tty
           if [[ $REPLY =~ ^[Yy]$ ]]; then
             sudo pacman --disable-sandbox --needed --noconfirm -Sy gnome
             sudo systemctl enable --now gdm
@@ -160,6 +160,15 @@ if [ "$MACHINE" == "Linux" ]; then
       ;;
     *) echo -e "${BOLD}${RED}-!- ${DESK} is not a managed desktop environment.${NC}";;
   esac
+
+  # Ensure Nerd Fonts are installed
+  if [[ ! -f /usr/local/share/fonts/MesloLGMNerdFontMono-Regular.ttf || ! -f /usr/local/share/fonts/MesloLGMNerdFontPropo-Regular.ttf ]]; then
+    msg "Installing Nerd Fonts..."
+    sudo mkdir -p /usr/local/share/fonts
+    sudo curl -s -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Meslo/M/Regular/MesloLGMNerdFontMono-Regular.ttf --output-dir /usr/local/share/fonts
+    sudo curl -s -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Meslo/M/Regular/MesloLGMNerdFontPropo-Regular.ttf --output-dir /usr/local/share/fonts
+    fc-cache -fv /usr/local/share/fonts
+  fi
 
   # Install extra tools. These should have a prompt for each one.
   # TODO: IDEA: I chould also have a profiles dir.  it would just list the extras we want to install without prompting for each
