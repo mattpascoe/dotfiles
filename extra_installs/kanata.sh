@@ -13,9 +13,26 @@ case "$ID" in
     ARCH=${ARCH:-$(uname -m)}; ARCH=${ARCH/aarch64/arm64}
     if [ "$ARCH" != "arm64" ]; then
       VERSION=$(curl -s https://api.github.com/repos/jtroo/kanata/releases/latest | grep -Po '"tag_name": "v\K[0-9.]+')
-      wget -P "$tmpdir" https://github.com/jtroo/kanata/releases/download/v"${VERSION}"/kanata
+      wget -q -P "$tmpdir" https://github.com/jtroo/kanata/releases/download/v"${VERSION}"/kanata
       sudo install -b "$tmpdir"/kanata /usr/local/bin/kanata
       rm -rf "$tmpdir"
+
+      mkdir -p ~/.config/systemd/user
+      echo <<EOF > ~/.config/systemd/user/kanata.service
+[Unit]
+Description=Kanata keyboard remapping daemon
+After=graphical.target
+
+[Service]
+ExecStart=/usr/local/bin/kanata --cfg ~/.config/kanata/kanata.kbd
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+EOF
+
+      sudo systemctl --user enable kanata.service
+      sudo systemctl --user start kanata.service
     else
       echo "-!- Install not supported on ARM."
     fi
