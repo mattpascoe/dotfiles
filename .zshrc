@@ -20,6 +20,16 @@ case $TERM in
         ;;
 esac
 
+# Set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$PATH"
+fi
+
+# Set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/.local/bin" ] ; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+
 HISTFILE="$XDG_STATE_HOME/zsh/history" #Where to save history to disk
 HISTSIZE=50000               #How many lines of history to keep in memory
 SAVEHIST=$HISTSIZE           #Number of history entries to save to disk

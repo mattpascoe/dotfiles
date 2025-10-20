@@ -135,9 +135,11 @@ if [ "$MACHINE" == "Linux" ]; then
 
   # Install FZF directly
   # This installs in ~/bin
-  if command -v "fzf" &> /dev/null; then
+  pushd "$HOME" || exit
+  if ! command -v "fzf" &> /dev/null; then
     wget -qO- https://raw.githubusercontent.com/junegunn/fzf/master/install | bash -s -- --bin --xdg --no-update-rc --no-completion --no-key-bindings
   fi
+  popd || exit
 
   # Get the desktop environment
   DESK=$(echo "${XDG_CURRENT_DESKTOP:-UNKNOWN}")
