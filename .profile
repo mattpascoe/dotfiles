@@ -39,6 +39,16 @@ HISTCONTROL=ignoreboth
 shopt -s histappend # Append history, don't overwrite
 shopt -s autocd # use autocd so you dont need to use cd command, just path
 
+# Set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$PATH"
+fi
+
+# Set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/.local/bin" ] ; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+
 # include .bashrc if it exists
 if [ -f "$HOME/.bashrc" ]; then
     . "$HOME/.bashrc"
@@ -47,7 +57,7 @@ fi
 ## Pull in common shell configuration
 SCRIPT=$(readlink "$BASH_SOURCE")
 SP=$(dirname "$SCRIPT")
-[ -f $SP/.shell-common ] && source $SP/.shell-common
+[ -f "$SP"/.shell-common ] && source "$SP"/.shell-common
 
 # Debian fzf completions
 [[ -f /usr/share/bash-completion/completions/fzf ]] && source /usr/share/bash-completion/completions/fzf
