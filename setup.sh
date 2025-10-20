@@ -152,7 +152,7 @@ if [ "$MACHINE" == "Linux" ]; then
       case "$ID" in
         ubuntu*)
           if [[ $REPLY =~ ^[Yy]$ ]]; then
-            sudo apt install -y vanilla-gnome-desktop rsyslog rofi
+            sudo apt install -y ubuntu-desktop-minimal rsyslog rofi
             sudo systemctl set-default graphical.target
             export DESK="GNOME"
           fi
