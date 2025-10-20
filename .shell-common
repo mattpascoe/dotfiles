@@ -183,18 +183,11 @@ if command -v brew &> /dev/null; then
   fi
 fi
 
-# FZF Auto-completion
-if [ -f "${XDG_CONFIG_HOME}/fzf/completion.${SHELLTYPE}" ]; then
-  source "${XDG_CONFIG_HOME}/fzf/completion.${SHELLTYPE}"
+# FZF Auto-completion and Key bindings
+if [[ $SHELLTYPE == zsh ]]; then
+  source <(fzf --"$SHELLTYPE")
 else
-  echo "No FZF completion file found at ${XDG_CONFIG_HOME}/fzf/completion.${SHELLTYPE}"
-fi
-
-# FZF Key bindings
-if [ -f "${XDG_CONFIG_HOME}/fzf/key-bindings.${SHELLTYPE}" ]; then
-  source "${XDG_CONFIG_HOME}/fzf/key-bindings.${SHELLTYPE}"
-else
-  echo "No FZF key bindings file found at ${XDG_CONFIG_HOME}/fzf/key-bindings.${SHELLTYPE}"
+  eval "$(fzf --"$SHELLTYPE")"
 fi
 
 export FZF_COMPLETION_TRIGGER=','

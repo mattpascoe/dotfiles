@@ -87,7 +87,7 @@ if [ "$MACHINE" == "Linux" ]; then
     "btop"
     "curl"
     "eza"
-    "fzf"
+    #"fzf"
     "git"
     "highlight"
     "jq"
@@ -131,6 +131,12 @@ if [ "$MACHINE" == "Linux" ]; then
       msg "Switching default shell to ZSH..."
       sudo usermod -s /bin/zsh "$USER"
     fi
+  fi
+
+  # Install FZF directly
+  # This installs in ~/bin
+  if command -v "fzf" &> /dev/null; then
+    wget -qO- https://raw.githubusercontent.com/junegunn/fzf/master/install | bash -s -- --bin --xdg --no-update-rc --no-completion --no-key-bindings
   fi
 
   # Get the desktop environment
@@ -295,7 +301,6 @@ LINKFILES+=(
   ".config/btop"
   ".config/ghostty"
   ".config/git"
-  ".config/fzf"
   ".config/home-manager"
   ".config/kanata"
   #".config/kitty"
