@@ -155,6 +155,7 @@ if [ "$MACHINE" == "Linux" ]; then
             sudo apt install -y ubuntu-desktop-minimal rsyslog rofi
             sudo systemctl set-default graphical.target
             export DESK="GNOME"
+            source "$DIR/.gnome.sh"
           fi
           ;;
         arch*)
@@ -162,6 +163,7 @@ if [ "$MACHINE" == "Linux" ]; then
             sudo pacman --disable-sandbox --needed --noconfirm -Sy gnome
             sudo systemctl enable --now gdm
             export DESK="GNOME"
+            source "$DIR/.gnome.sh"
           fi
           ;;
         *)
