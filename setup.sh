@@ -258,7 +258,7 @@ if [ "$MACHINE" == "Mac" ]; then
       eval "$($BREWPATH/brew shellenv)"
 
       msg "Ensuring install of requested brew packages..."
-      $BREWPATH/brew install -q \
+      sudo $BREWPATH/brew install -q \
         maccy \
         1password \
         brave-browser \
