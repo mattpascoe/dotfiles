@@ -214,33 +214,33 @@ if [ "$MACHINE" == "Mac" ]; then
   fi
 
   # Run NIX if we want
-  echo -en "${BOLD}${GRN}Install NIX based packages... Continue (N/y) ${NC}"
-  read -r REPLY < /dev/tty
-  # Think long and hard if you want another box using NIX
-  if [[ $REPLY =~ ^[Yy]DISABLED$ ]]; then
-    if ! command -v "nix" &> /dev/null; then
-      msg "Installing NIX tools..."
-      msg "Disabled for now"
-      #curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
-    fi
-
-    if command -v "nix" &> /dev/null; then
-      . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-      nix flake update --flake .config/home-manager
-      nix run home-manager -- switch --flake .config/home-manager
-      # INFO: ok I'm leaving this impure info here for reference. https://nixos.wiki/wiki/1Password
-      # I stopped using it since 1password does not integrate properly with the browser plugins
-      # Running impure to install 1password gui that is flagged broken due to
-      # /Applications requirement. I am ok because I copy all apps to
-      # /Applications to fix the stupid spotlight problem
-      # NIXPKGS_ALLOW_BROKEN=1 nix run home-manager -- switch --impure --flake .config/home-manager
-      # #NIXPKGS_ALLOW_BROKEN=1 home-manager --impure switch (this is how you can run it manually)
-    else
-      echo -e "${BOLD}${RED}-!- ERROR: Unable to find NIX command. Please install NIX and try again.${NC}"
-    fi
-  else
-    msg ".. Skipping NIX based config changes."
-  fi
+#  echo -en "${BOLD}${GRN}Install NIX based packages... Continue (N/y) ${NC}"
+#  read -r REPLY < /dev/tty
+#  # Think long and hard if you want another box using NIX
+#  if [[ $REPLY =~ ^[Yy]DISABLED$ ]]; then
+#    if ! command -v "nix" &> /dev/null; then
+#      msg "Installing NIX tools..."
+#      msg "Disabled for now"
+#      #curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+#    fi
+#
+#    if command -v "nix" &> /dev/null; then
+#      . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+#      nix flake update --flake .config/home-manager
+#      nix run home-manager -- switch --flake .config/home-manager
+#      # INFO: ok I'm leaving this impure info here for reference. https://nixos.wiki/wiki/1Password
+#      # I stopped using it since 1password does not integrate properly with the browser plugins
+#      # Running impure to install 1password gui that is flagged broken due to
+#      # /Applications requirement. I am ok because I copy all apps to
+#      # /Applications to fix the stupid spotlight problem
+#      # NIXPKGS_ALLOW_BROKEN=1 nix run home-manager -- switch --impure --flake .config/home-manager
+#      # #NIXPKGS_ALLOW_BROKEN=1 home-manager --impure switch (this is how you can run it manually)
+#    else
+#      echo -e "${BOLD}${RED}-!- ERROR: Unable to find NIX command. Please install NIX and try again.${NC}"
+#    fi
+#  else
+#    msg ".. Skipping NIX based config changes."
+#  fi
 
   # Run brew if we want
   echo -en "${BOLD}${GRN}Install Homebrew based packages... Continue (N/y) ${NC}"
