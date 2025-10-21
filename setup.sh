@@ -248,8 +248,7 @@ if [ "$MACHINE" == "Mac" ]; then
   if [ "$REPLY" == "y" ]; then
     if ! command -v "brew" &> /dev/null; then
       msg "Installing Brew tools..."
-      curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o /tmp/brewinstall.sh
-      bash /tmp/brewinstall.sh
+      NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
 
     BREWPATH=/opt/homebrew/bin
