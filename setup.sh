@@ -308,6 +308,7 @@ if [ "$MACHINE" == "Mac" ]; then
   echo -e "${BOLD}${BLU}
 The following items are not currently controllable and will need to be done manually:
   - Reduce Motion: System Preferences -> Accessibility -> Display -> Reduce Motion
+  - Install Raycast, then setup app keybinds for MEH+b, MEH+g, MEH+m etc.
   ${NC}"
 fi
 
