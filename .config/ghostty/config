@@ -1,7 +1,4 @@
-#theme = Catppuccin Mocha
-#theme = builtin pastel dark
-#theme = ultradark
-theme = iterm2 tango dark
+theme = CustomTangoDark
 background = 000000
 foreground = b2f593
 
