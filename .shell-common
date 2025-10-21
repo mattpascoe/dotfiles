@@ -181,12 +181,14 @@ if command -v brew &> /dev/null; then
   if [[ ! "$PATH" == *${BREWPREFIX}/opt/fzf/bin* ]]; then
     PATH="${PATH:+${PATH}:}${BREWPREFIX}/opt/fzf/bin"
   fi
-fi
 
-# FZF Auto-completion and Key bindings
-if [[ $SHELLTYPE == zsh ]]; then
-  source <(fzf --"$SHELLTYPE")
+  # FZF Auto-completion
+  [[ $- == *i* ]] && source "${BREWPREFIX}/opt/fzf/shell/completion.${SHELLTYPE}" 2> /dev/null
+
+  # FZF Key bindings
+  [[ -f ${BREWPREFIX}/opt/fzf/shell/key-bindings.${SHELLTYPE} ]] && KEYBINDPATH="${BREWPREFIX}/opt/fzf/shell/key-bindings.${SHELLTYPE}"
 else
+  # Load built in FZF completion and keybinds based on shelltype
   eval "$(fzf --"$SHELLTYPE")"
 fi
 
