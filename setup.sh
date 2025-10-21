@@ -266,21 +266,23 @@ if [ "$MACHINE" == "Mac" ]; then
         fzf \
         highlight \
         tree \
-        homebrew/cask/syncthing \
-        michaelroosz/ssh/libsk-libfido2 \
         ykman \
         tmux \
         bash \
         jesseduffield/lazygit/lazygit \
         shellcheck \
-        eza
-      #homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font 
+        eza \
+        font-meslo-lg-nerd-font \
+        font-monaspace-nerd-font \
+        homebrew/cask/syncthing \
+
+        #michaelroosz/ssh/libsk-libfido2 \
     else
       echo -e "${BOLD}${RED}-!- ERROR: Unable to find Brew command. Please install Brew and try again.${NC}"
     fi
 
   else
-    echo ".. [DISABLED] Skipping Brew based config changes."
+    echo ".. Skipping Brew based config changes."
   fi
 
   # Setup lots of system settings using the "defaults" method
