@@ -243,28 +243,45 @@ if [ "$MACHINE" == "Mac" ]; then
   fi
 
   # Run brew if we want
-  #echo -en "${BOLD}${GRN}Install Homebrew based packages... Continue (N/y) ${NC}"
-  #read -r REPLY < /dev/tty
-  #if [ "$REPLY" == "yDISABLED" ]; then
-  #  if ! command -v "brew" &> /dev/null; then
-  #    msg "Installing Brew tools..."
-  #    #/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  #  fi
+  echo -en "${BOLD}${GRN}Install Homebrew based packages... Continue (N/y) ${NC}"
+  read -r REPLY < /dev/tty
+  if [ "$REPLY" == "y" ]; then
+    if ! command -v "brew" &> /dev/null; then
+      msg "Installing Brew tools..."
+      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
 
-  #  # Load up brew environment, should work on ARM intel systems.
-  #  if command -v "brew" &> /dev/null; then
-  #    eval "$(brew shellenv)"
+    BREWPATH=/opt/homebrew/bin
 
-  #    msg "Ensuring install of requested brew packages..."
-  #    brew install -q maccy 1password brave-browser homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font jq fzf highlight tree homebrew/cask/syncthing michaelroosz/ssh/libsk-libfido2 ykman tmux bash jesseduffield/lazygit/lazygit shellcheck eza
+    # Load up brew environment, should work on ARM intel systems.
+    if [ -f $BREWPATH/brew ] &> /dev/null; then
+      eval "$($BREWPATH/brew shellenv)"
 
-  #  else
-  #    echo -e "${BOLD}${RED}-!- ERROR: Unable to find Brew command. Please install Brew and try again.${NC}"
-  #  fi
+      msg "Ensuring install of requested brew packages..."
+      $BREWPATH/brew install -q \
+        maccy \
+        1password \
+        brave-browser \
+        jq \
+        fzf \
+        highlight \
+        tree \
+        homebrew/cask/syncthing \
+        michaelroosz/ssh/libsk-libfido2 \
+        ykman \
+        tmux \
+        bash \
+        jesseduffield/lazygit/lazygit \
+        shellcheck \
+        eza
+      #homebrew/cask-fonts/font-meslo-lg-nerd-font homebrew/cask-fonts/font-monaspace-nerd-font 
+    else
+      echo -e "${BOLD}${RED}-!- ERROR: Unable to find Brew command. Please install Brew and try again.${NC}"
+    fi
 
-  #else
-  #  echo ".. [DISABLED] Skipping Brew based config changes."
-  #fi
+  else
+    echo ".. [DISABLED] Skipping Brew based config changes."
+  fi
 
   # Setup lots of system settings using the "defaults" method
   echo -en "${BOLD}${GRN}Execute 'defaults' commands to set specific Mac settings... Continue (N/y) ${NC}"
@@ -342,6 +359,7 @@ if [ ! -d ~/.config/tmux/plugins/tpm ];then
   msg "Installing TMUX plugin manager."
   git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
   msg "Installing TMUX plugins. You may need to run <prefix> + I to install plugins if this doesn't work"
+  export PATH=/opt/homebrew/bin:$PATH
   ~/.config/tmux/plugins/tpm/bin/install_plugins
 fi
 
