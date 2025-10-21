@@ -128,16 +128,15 @@ else
 fi
 
 if [ -f $XDG_CONFIG_HOME/zsh/zsh-vi-mode/zsh-vi-mode.zsh ]; then
+  export ZVM_INIT_MODE=sourcing
   source $XDG_CONFIG_HOME/zsh/zsh-vi-mode/zsh-vi-mode.zsh
+  # Tell zsh-vi-mode to use insert mode by default
+  export ZVM_LINE_INIT_MODE=$ZVM_MODE_INSERT
+  # bind ^R to fzf-history-widget if we have fzf
+  if command -v fzf &> /dev/null; then
+    bindkey -M viins '^R' fzf-history-widget
+  fi
 else
   echo "Installing zsh-vi-mode plugin."
   git clone https://github.com/jeffreytse/zsh-vi-mode.git $XDG_CONFIG_HOME/zsh/zsh-vi-mode
 fi
-# Tell zsh-vi-mode to use insert mode by default
-export ZVM_LINE_INIT_MODE=$ZVM_MODE_INSERT
-
-
-# Debian fzf completions
-# if only the package was consistent in where it put its completions
-# TODO shouldnt need this since its in shell-common, test it on linux
-#[[ -f /usr/share/doc/fzf/examples/completion.zsh ]] && source /usr/share/doc/fzf/examples/completion.zsh

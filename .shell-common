@@ -181,16 +181,10 @@ if command -v brew &> /dev/null; then
   if [[ ! "$PATH" == *${BREWPREFIX}/opt/fzf/bin* ]]; then
     PATH="${PATH:+${PATH}:}${BREWPREFIX}/opt/fzf/bin"
   fi
-
-  # FZF Auto-completion
-  [[ $- == *i* ]] && source "${BREWPREFIX}/opt/fzf/shell/completion.${SHELLTYPE}" 2> /dev/null
-
-  # FZF Key bindings
-  [[ -f ${BREWPREFIX}/opt/fzf/shell/key-bindings.${SHELLTYPE} ]] && KEYBINDPATH="${BREWPREFIX}/opt/fzf/shell/key-bindings.${SHELLTYPE}"
-else
-  # Load built in FZF completion and keybinds based on shelltype
-  eval "$(fzf --"$SHELLTYPE")"
 fi
+
+# Load built in FZF completion and keybinds based on shelltype
+eval "$(fzf --"$SHELLTYPE")"
 
 export FZF_COMPLETION_TRIGGER=','
 export FZF_TMUX_HEIGHT=60% # not strictly TMUX only

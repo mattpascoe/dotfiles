@@ -60,4 +60,4 @@ SP=$(dirname "$SCRIPT")
 [ -f "$SP"/.shell-common ] && source "$SP"/.shell-common
 
 # Debian fzf completions
-[[ -f /usr/share/bash-completion/completions/fzf ]] && source /usr/share/bash-completion/completions/fzf
+#[[ -f /usr/share/bash-completion/completions/fzf ]] && source /usr/share/bash-completion/completions/fzf
