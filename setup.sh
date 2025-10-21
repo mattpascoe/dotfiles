@@ -303,6 +303,11 @@ if [ "$MACHINE" == "Mac" ]; then
     sudo mkdir -p /usr/local/bin
     sudo chown $(whoami):admin /usr/local/bin
   fi
+
+  cat <<EOF
+  The following items are not currently controllable and will need to be done manually:
+  - Reduce Motion: System Preferences -> Accessibility -> Display -> Reduce Motion
+EOF
 fi
 
 # Everyone gets starship!
