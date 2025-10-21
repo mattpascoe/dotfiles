@@ -248,7 +248,8 @@ if [ "$MACHINE" == "Mac" ]; then
   if [ "$REPLY" == "y" ]; then
     if ! command -v "brew" &> /dev/null; then
       msg "Installing Brew tools..."
-      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o /tmp/brewinstall.sh
+      bash /tmp/brewinstall.sh
     fi
 
     BREWPATH=/opt/homebrew/bin
@@ -258,7 +259,7 @@ if [ "$MACHINE" == "Mac" ]; then
       eval "$($BREWPATH/brew shellenv)"
 
       msg "Ensuring install of requested brew packages..."
-      script -q /dev/null $BREWPATH/brew install -q \
+      $BREWPATH/brew install -q \
         maccy \
         1password \
         brave-browser \
