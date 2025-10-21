@@ -262,6 +262,7 @@ if [ "$MACHINE" == "Mac" ]; then
         maccy \
         1password \
         brave-browser \
+        ghostty \
         jq \
         fzf \
         highlight \
@@ -269,6 +270,7 @@ if [ "$MACHINE" == "Mac" ]; then
         ykman \
         tmux \
         bash \
+        nvim \
         jesseduffield/lazygit/lazygit \
         shellcheck \
         eza \
@@ -289,6 +291,8 @@ if [ "$MACHINE" == "Mac" ]; then
   echo -en "${BOLD}${GRN}Execute 'defaults' commands to set specific Mac settings... Continue (N/y) ${NC}"
   read -r REPLY < /dev/tty
   if [[ $REPLY =~ ^[Yy]$ ]]; then
+    # Running with and without sudo as I seem to get different behaviors?
+    "$DIR/.macos"
     sudo "$DIR/.macos"
   else
     msg ".. Skipping defaults based config changes."
