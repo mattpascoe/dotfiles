@@ -25,7 +25,7 @@ if command -v "gsettings" &> /dev/null; then
   # Install some extensions
   tmpdir=$(mktemp -d)
   # List the UUIDs of the extensions you want to install
-  EXTENSIONS=( application-hotkeys@aaimio.github.com Vitals@CoreCoding.com )
+  EXTENSIONS=( application-hotkeys@aaimio.github.com Vitals@CoreCoding.com clipboard-indicator@tudmotu.com)
   for i in "${EXTENSIONS[@]}"
   do
       echo "Installing Gnome extension: $i"
@@ -141,6 +141,9 @@ if command -v "gsettings" &> /dev/null; then
     '[\"brave-browser.desktop\",         \"<Shift><Control><Alt>b\"]',
     '[\"com.mitchellh.ghostty.desktop\", \"<Shift><Control><Alt>g\"]',
     '[\"1password.desktop\",             \"<Shift><Control><Alt>p\"]'
+  ]"
+  dconf write /org/gnome/shell/extensions/clipboard-indicator/toggle-menu "@as [
+   '<Shift><Super>v'
   ]"
 fi
 else
