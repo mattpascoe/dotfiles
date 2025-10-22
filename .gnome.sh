@@ -88,7 +88,7 @@ if command -v "gsettings" &> /dev/null; then
   gsettings set org.gnome.settings-daemon.plugins.power ambient-enabled false
 
   # Disable bell
-  gsettings set org.gnome.wm.preferences audible-bell false
+  gsettings set org.gnome.desktop.wm.preferences audible-bell false
 
   # Adjust switching of windows in an app group to MEH-Tab
   gsettings set org.gnome.desktop.wm.keybindings switch-panels-backward "[]"
@@ -112,9 +112,10 @@ if command -v "gsettings" &> /dev/null; then
   ##dconf write /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/binding "'<Super>space'"
 
   # Keybind for ghostty that for now will set LIBGL_ALWAYS_SOFTWARE=1 because of horrible rendering issues on all my boxes. This is NON OPTIMAL
+  # This keybind is a lame way to just get ghostty started since it adds Super to the list.  Then once open use regular keybinds in app-hotkeys definition.
   gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ name "Ghostty terminal"
   gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ command "bash -c 'LIBGL_ALWAYS_SOFTWARE=1 ghostty'"
-  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ binding "<Shift><Control><Alt>g"
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ binding "<Super><Shift><Control><Alt>g"
 
   # AM/PM clock
   gsettings set org.gnome.desktop.interface clock-format '12h'
