@@ -129,6 +129,7 @@ if command -v "gsettings" &> /dev/null; then
 
   # Setup hotkeys for applications. Requires application-hotkeys extension to be installed
   dconf write /org/gnome/shell/extensions/application-hotkeys/configs "@as [
+    '[\"org.gnome.Terminal.desktop\",    \"<Shift><Control><Alt>t\"]',
     '[\"brave-browser.desktop\",         \"<Shift><Control><Alt>b\"]',
     '[\"com.mitchellh.ghostty.desktop\", \"<Shift><Control><Alt>g\"]',
     '[\"1password.desktop\",             \"<Shift><Control><Alt>p\"]'
