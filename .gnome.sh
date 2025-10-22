@@ -112,7 +112,7 @@ if command -v "gsettings" &> /dev/null; then
   #dconf write /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/binding "'<Super>space'"
   # Keybind for ghostty that for now will set LIBGL_ALWAYS_SOFTWARE=1 because of horrible rendering issues on all my boxes. This is NON OPTIMAL
   gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ name "Ghostty terminal"
-  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ command "bash-c 'LIBGL_ALWAYS_SOFTWARE=1 ghostty'"
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ command "bash -c 'LIBGL_ALWAYS_SOFTWARE=1 ghostty'"
   gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ binding "<Shift><Control><Alt>g"
 
   # AM/PM clock
