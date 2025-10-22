@@ -49,10 +49,10 @@ if command -v "gsettings" &> /dev/null; then
   gsettings set org.gnome.settings-daemon.plugins.media-keys screensaver "[]" # remove default binding to free for other things
   gsettings set org.gnome.shell.keybindings focus-active-notification "[]" # remove default binding to free for other things
   gsettings set org.gnome.shell.keybindings toggle-message-tray "['<Super>n']" # change to n for notifications
-  gsettings set org.gnome.desktop.wm.keybindings maximize "['<Super>k']"
+  gsettings set org.gnome.desktop.wm.keybindings toggle-maximized "['<Super>k']"
   gsettings set org.gnome.desktop.wm.keybindings minimize "['<Super>j']"
-  gsettings set org.gnome.shell.extensions.tiling-assistant tile-left-half "['<Super>Left', '<Super>KP_4', '<Super>h']"
-  gsettings set org.gnome.shell.extensions.tiling-assistant tile-right-half "['<Super>Right', '<Super>KP_6', '<Super>l']"
+  gsettings set org.gnome.shell.extensions.tiling-assistant tile-left-half-ignore-ta "['<Super>h']"
+  gsettings set org.gnome.shell.extensions.tiling-assistant tile-right-half-ignore-ta "['<Super>l']"
 
   # Careful here.. need to test this more
   # There is other info about adjusting all GTK apps using this
