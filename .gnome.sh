@@ -118,6 +118,7 @@ if command -v "gsettings" &> /dev/null; then
   # set default terminal?
   # Having issues and having to start it with LIBGL_ALLOW_SOFTWARE=1 ghostty
   #gsettings set org.gnome.desktop.default-applications.terminal exec "ghostty"
+  gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/ background-color '#000000'
 
   # set background
   gsettings set org.gnome.desktop.background picture-uri "file://${HOME}/.wallpaper.png"
