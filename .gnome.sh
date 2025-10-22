@@ -98,7 +98,7 @@ if command -v "gsettings" &> /dev/null; then
   gsettings set org.gnome.desktop.wm.keybindings switch-group "['<Super>Above_Tab', '<Alt>Above_Tab', '<Shift><Control><Alt>Tab']"
 
   # Reserve slots for custom keybindings
-  gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']"
+  gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/']"
 
   # Set ROFI custom keybind
   # First remove existing keybind
@@ -110,6 +110,10 @@ if command -v "gsettings" &> /dev/null; then
   #dconf write /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/name "'Rofi Launcher'"
   #dconf write /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/command "'rofi -show drun'"
   #dconf write /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/binding "'<Super>space'"
+  # Keybind for ghostty that for now will set LIBGL_ALWAYS_SOFTWARE=1 because of horrible rendering issues on all my boxes. This is NON OPTIMAL
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ name "Ghostty terminal"
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ command "bash-c 'LIBGL_ALWAYS_SOFTWARE=1 ghostty'"
+  gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ binding "<Shift><Control><Alt>g"
 
   # AM/PM clock
   gsettings set org.gnome.desktop.interface clock-format '12h'
@@ -129,10 +133,10 @@ if command -v "gsettings" &> /dev/null; then
   gsettings set org.gnome.desktop.interface enable-animations false
 
   # Setup hotkeys for applications. Requires application-hotkeys extension to be installed
+  # TODO: could these all just be custom-keybindings instaead?
   dconf write /org/gnome/shell/extensions/application-hotkeys/configs "@as [
     '[\"org.gnome.Terminal.desktop\",    \"<Shift><Control><Alt>t\"]',
     '[\"brave-browser.desktop\",         \"<Shift><Control><Alt>b\"]',
-    '[\"com.mitchellh.ghostty.desktop\", \"<Shift><Control><Alt>g\"]',
     '[\"1password.desktop\",             \"<Shift><Control><Alt>p\"]'
   ]"
 fi
