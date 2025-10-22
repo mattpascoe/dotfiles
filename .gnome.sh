@@ -57,7 +57,7 @@ if command -v "gsettings" &> /dev/null; then
   # Careful here.. need to test this more
   # There is other info about adjusting all GTK apps using this
   # https://unix.stackexchange.com/questions/342628/gnome-3-keybindings-in-source-where-are-ctrl-c-cut-copy-and-paste-defin/399632
-  if gnome-extensions list --enabled | grep -q "org.gnome.Ptyxis"; then
+  if gsettings list-recursively | grep -q "org.gnome.Ptyxis"; then
     gsettings set org.gnome.Ptyxis.Shortcuts paste-clipboard '<Super>v'
     gsettings set org.gnome.Ptyxis.Shortcuts copy-clipboard '<Super>c'
   fi
@@ -133,6 +133,11 @@ if command -v "gsettings" &> /dev/null; then
   # Turn off animations so things are snappy
   gsettings set org.gnome.desktop.interface enable-animations false
 
+  # Disable home icon on desktop
+  if gsettings list-recursively | grep -q "org.gnome.shell.extensions.ding"; then
+    gsettings set org.gnome.shell.extensions.ding show-home false
+  fi
+
   # Setup hotkeys for applications. Requires application-hotkeys extension to be installed
   # I'm using this instead of custom-keybinds because it knows to open vs focus.
   # TODO: could these all just be custom-keybindings instaead?
@@ -142,9 +147,7 @@ if command -v "gsettings" &> /dev/null; then
     '[\"com.mitchellh.ghostty.desktop\", \"<Shift><Control><Alt>g\"]',
     '[\"1password.desktop\",             \"<Shift><Control><Alt>p\"]'
   ]"
-  dconf write /org/gnome/shell/extensions/clipboard-indicator/toggle-menu "@as [
-   '<Shift><Super>v'
-  ]"
+  dconf write /org/gnome/shell/extensions/clipboard-indicator/toggle-menu "@as ['<Shift><Super>v']"
 fi
 else
   msg ".. Skipping Gnome installation and setup changes."
