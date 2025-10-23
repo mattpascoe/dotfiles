@@ -7,14 +7,11 @@
 # entrypoint in setup.sh that determines PLATFORM. It calls into setup/PLATFORM.sh
 # each platform.sh script will then determin a release type and call setup/PLATFORM/RELEASE-ID.sh
 
-# STEP 1: initialize some variables
+# STEP 1: Initialize some variables
 source setup/setup_lib.sh
 
 # Gather configuration for this process to use
 source setup/config.sh
-
-#SCRIPT=$(readlink -f "$0")
-#DIR=$(dirname "$SCRIPT")
 
 msg "${BLU}Dotfile repo location: $DOTREPO."
 msg "${BLU}Looks like we are a $PLATFORM system."

@@ -27,7 +27,9 @@ case "${unameOut}" in
     Linux*)     PLATFORM=Linux;;
     Darwin*)    PLATFORM=Mac;;
     CYGWIN*)    PLATFORM=Cygwin;;
-    MINGW*)     PLATFORM=MinGw;;
+    MINGW*)     PLATFORM=MinGw
+	        PRETTY_NAME=$(system_profiler SPSoftwareDataType | grep "System Version" | cut -d : -f 2 | xargs)
+		;;
     *)          PLATFORM="UNKNOWN:${unameOut}"
 esac
 

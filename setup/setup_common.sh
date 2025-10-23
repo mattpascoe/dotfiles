@@ -20,7 +20,7 @@ if ! command -v "starship" &> /dev/null; then
     curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force | sed '/Please follow the steps/,$d'
   fi
 else
-  msg "${UL}Starship is alredy installed. Running installer again to get updates..."
+  msg "${UL}Starship is already installed. Running installer again to get updates..."
   curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force | sed '/Please follow the steps/,$d'
 fi
 # Starship installer leaves a bunch of mktemp dirs all over. This will clean them up even ones that are not ours!
@@ -49,8 +49,6 @@ LINKFILES+=(
   ".zshrc"
 )
 msg "${UL}Checking dotfile config symlinks..."
-# Set get an absolute path for the repo
-DIR=$(dirname "$DOTREPO/setup.sh")
 if [ ! -d "$HOME/.config" ]; then
   mkdir -p "$HOME/.config"
 fi
@@ -61,8 +59,8 @@ do
       msg "${UL}Backing up current file to ${FILE}.bak"
       mv "$HOME/$FILE" "$HOME/$FILE.bak"
     fi
-    msg "${UL}Linking file $HOME/$FILE -> $DIR/$FILE"
-    ln -s "$DIR/$FILE" "$HOME/$FILE"
+    msg "${UL}Linking file $HOME/$FILE -> $DOTREPO/$FILE"
+    ln -s "$DOTREPO/$FILE" "$HOME/$FILE"
   else
     echo -n "Found link: "
     ls -o "$HOME/$FILE"
