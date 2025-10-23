@@ -17,7 +17,7 @@ msg "${BLU}Dotfile repo location: $DOTREPO."
 msg "${BLU}Looks like we are a $PLATFORM system."
 msg "${BLU}Looks like the OS is ${PRETTY_NAME}."
 
-# STEP 2: Check and install git if needed
+# STEP 2: Check for and install git if needed
 msg "${UL}Checking for Git"
 if ! command -v "git" &> /dev/null; then
   case "$ID" in

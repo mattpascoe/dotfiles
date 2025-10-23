@@ -13,21 +13,35 @@ then
 fi
 
 # Everyone gets starship!
+SHIP_INST="curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force | sed '/Please follow the steps/,$d'"
 if ! command -v "starship" &> /dev/null; then
   prompt "Do you want to install Starship.rs prompt? (N/y) "
   read -r REPLY < /dev/tty
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-    curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force | sed '/Please follow the steps/,$d'
+    eval "$SHIP_INST"
   fi
 else
   msg "${UL}Starship is already installed. Running installer again to get updates..."
-  curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force | sed '/Please follow the steps/,$d'
+  eval "$SHIP_INST"
 fi
 # Starship installer leaves a bunch of mktemp dirs all over. This will clean them up even ones that are not ours!
 sudo find /tmp/ -name "tmp.*.tar.gz" -print0 | while IFS= read -r -d '' file; do
   prefix="${file%.tar.gz}"
   sudo rm "${prefix}"*
 done
+
+# Everyone gets FZF!
+# This installs in ~/bin
+FZF_INST="curl -fsSL https://raw.githubusercontent.com/junegunn/fzf/master/install | bash -s -- --bin --xdg --no-update-rc --no-completion --no-key-bindings"
+pushd "$HOME" >/dev/null || exit
+if ! command -v "fzf" &> /dev/null; then
+  eval "$FZF_INST"
+else
+  msg "${UL}FZF is already installed. Running installer again to get updates..."
+  eval "$FZF_INST"
+fi
+export PATH="$HOME/bin:$PATH"
+popd >/dev/null || exit
 
 ###### Link dotfile configs, could I use stow or chezmoi.io? sure, but less dependancies here
 declare -a LINKFILES
@@ -40,7 +54,7 @@ LINKFILES+=(
   #".config/kitty"
   ".config/lazygit"
   ".config/nvim"
-  ".config/rofi"
+  #".config/rofi"
   ".config/starship.toml"
   ".config/tmux"
   ".config/zk"
@@ -72,7 +86,5 @@ if [ ! -d ~/.config/tmux/plugins/tpm ];then
   msg "${UL}Installing TMUX plugin manager."
   git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
   msg "${UL}Installing TMUX plugins. You may need to run <prefix> + I to install plugins if this doesn't work"
-  # I dont remember why I had this homebrew here? hopefully it can go away
-  #export PATH=/opt/homebrew/bin:$PATH
   ~/.config/tmux/plugins/tpm/bin/install_plugins
 fi

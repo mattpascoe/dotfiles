@@ -1,50 +1,22 @@
 #!/bin/bash
 
-# TODO: refactor and have more "configuration" instead of hardcoded things like package installs
-
-###### Linux specific stuff
-# These are base packages I hope to use on all systems
-PKGS+=(
-  "bat"
-  "btop"
-  "curl"
-  "eza"
-  #"fzf"
-  "git"
-  "highlight"
-  "jq"
-#  "neovim" # old version, installing via direct download instead
-  "tmux"
-  "tree"
-#  "yazi" # not on ubuntu but is on arch, installing via direct download
-  "zsh"
-)
-
-# Packages that Arch has
-ARCH_PKGS+=(
-  "lazygit"
-  "neovim"
-  "yazi"
-)
-
 msg "${UL}Running the Linux setup script..."
 msg "${BLU}Ensuring install of requested base packages..."
 case "$ID" in
   debian*|ubuntu*)
-    sudo apt install -y "${PKGS[@]}"
+    sudo apt install -y "${LINUX_PKGS[@]}"
     # Also set timezone
-    sudo timedatectl set-timezone "America/Boise"
+    sudo timedatectl set-timezone "$TIMEZONE"
     # Remove some useless crap
     sudo apt purge -y whoopsie
     ;;
   arch*)
     sudo dmesg -n 3 # Disable kernel messages since we are likely on a console
-    PKGS+=("${ARCH_PKGS[@]}")
-    sudo pacman --disable-sandbox --needed --noconfirm -Syu "${PKGS[@]}"
+    sudo pacman --disable-sandbox --needed --noconfirm -Syu "${LINUX_PKGS[@]}"
     ;;
   *)
     msg "${RED}-!- This system is not a supported type, You should check that the following packages are installed:"
-    echo "    ${PKGS[*]}"
+    echo "    ${LINUX_PKGS[*]}"
     ;;
 esac
 
@@ -55,14 +27,6 @@ if command -v "zsh" &> /dev/null; then
     sudo usermod -s /bin/zsh "$USER"
   fi
 fi
-
-# Install FZF directly
-# This installs in ~/bin
-pushd "$HOME" >/dev/null || exit
-if ! command -v "fzf" &> /dev/null; then
-  wget -qO- https://raw.githubusercontent.com/junegunn/fzf/master/install | bash -s -- --bin --xdg --no-update-rc --no-completion --no-key-bindings
-fi
-popd >/dev/null || exit
 
 # Get the desktop environment
 DESK=${XDG_CURRENT_DESKTOP:-UNKNOWN}
@@ -75,7 +39,7 @@ case "${DESK}" in
     case "$ID" in
       ubuntu*)
         if [[ $REPLY =~ ^[Yy]$ ]]; then
-          sudo apt install -y ubuntu-desktop-minimal rsyslog rofi
+          sudo apt install -y ubuntu-desktop-minimal rsyslog
           sudo systemctl set-default graphical.target
           export DESK="GNOME"
           source "$DOTREPO/setup/.gnome.sh"
