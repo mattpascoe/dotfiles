@@ -32,10 +32,9 @@ done
 
 # Everyone gets FZF!
 # This installs in ~/bin
+FZF_INST="curl -fsSL https://raw.githubusercontent.com/junegunn/fzf/master/install | BASH_SOURCE=$HOME/bin bash -s -- --bin --xdg --no-update-rc --no-completion --no-key-bindings
+"
 pushd "$HOME" >/dev/null || exit
-tmpdir=$(mktemp -d)
-FZF_INST="bash "$tmpdir/fzf-install" --bin --xdg --no-update-rc --no-completion --no-key-bindings"
-curl -fsSL https://raw.githubusercontent.com/junegunn/fzf/master/install -o "$tmpdir/fzf-install"
 if ! command -v "fzf" &> /dev/null; then
   eval "$FZF_INST"
 else
@@ -43,7 +42,6 @@ else
   eval "$FZF_INST"
 fi
 export PATH="$HOME/bin:$PATH"
-rm -rf "$tmpdir"
 popd >/dev/null || exit
 
 ###### Link dotfile configs, could I use stow or chezmoi.io? sure, but less dependancies here
