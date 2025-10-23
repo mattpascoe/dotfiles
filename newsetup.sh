@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# It is intended that this script can and should be run at any time
+# It will install a fresh system or will update an existing system with the latest packages and configurations
+#
 # flow to work toward:
 # entrypoint in setup.sh that determines PLATFORM. It calls into setup/PLATFORM.sh
 # each platform.sh script will then determin a release type and call setup/PLATFORM/RELEASE-ID.sh
@@ -36,11 +40,19 @@ if [ -f /etc/os-release ]; then
   . /etc/os-release
 fi
 
-
+# If DOTDIR variable is set, use it
+# TODO" this needs reworked.. may not need DOTDIR
+if [ -n "${DOTDIR:-}" ]; then
+  DIR=$DOTDIR
+else
+  SCRIPT=$(readlink -f "$0")
+  DIR=$(dirname "$SCRIPT")
+fi
+msg "${BLU}Running from $DIR."
 msg "${BLU}Looks like we are a $PLATFORM system."
 
 # STEP 2: Check and install git if needed
-msg "{$UL}Checking for Git"
+msg "${UL}Checking for Git"
 if ! command -v "git" &> /dev/null; then
   case "$ID" in
   debian*|ubuntu*)
@@ -70,15 +82,6 @@ fi
 msg "${GRN}Git is installed."
 
 # STEP 3: Clone dotfiles repo
-# If DOTDIR variable is set, use it (usually from install.sh)
-if [ -n "${DOTDIR:-}" ]; then
-  DIR=$DOTDIR
-else
-  SCRIPT=$(readlink -f "$0")
-  DIR=$(dirname "$SCRIPT")
-fi
-msg "${BLU}Running from $DIR."
-
 # set the location of our dotfiles install
 DOTREPO=~/dotfiles
 
