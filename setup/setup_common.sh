@@ -14,7 +14,7 @@ fi
 
 # Everyone gets starship!
 if ! command -v "starship" &> /dev/null; then
-  msg "${GRN}Do you want to install Starship.rs prompt? (N/y) \c"
+  prompt "Do you want to install Starship.rs prompt? (N/y) "
   read -r REPLY < /dev/tty
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force | sed '/Please follow the steps/,$d'
@@ -28,7 +28,6 @@ sudo find /tmp/ -name "tmp.*.tar.gz" -print0 | while IFS= read -r -d '' file; do
   prefix="${file%.tar.gz}"
   sudo rm "${prefix}"*
 done
-
 
 ###### Link dotfile configs, could I use stow or chezmoi.io? sure, but less dependancies here
 declare -a LINKFILES
@@ -50,6 +49,8 @@ LINKFILES+=(
   ".zshrc"
 )
 msg "${UL}Checking dotfile config symlinks..."
+# Set get an absolute path for the repo
+DIR=$(dirname "$DOTREPO/setup.sh")
 if [ ! -d "$HOME/.config" ]; then
   mkdir -p "$HOME/.config"
 fi
@@ -67,3 +68,13 @@ do
     ls -o "$HOME/$FILE"
   fi
 done
+
+# Run <prefix> + I to install plugins the first time
+if [ ! -d ~/.config/tmux/plugins/tpm ];then
+  msg "${UL}Installing TMUX plugin manager."
+  git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
+  msg "${UL}Installing TMUX plugins. You may need to run <prefix> + I to install plugins if this doesn't work"
+  # I dont remember why I had this homebrew here? hopefully it can go away
+  #export PATH=/opt/homebrew/bin:$PATH
+  ~/.config/tmux/plugins/tpm/bin/install_plugins
+fi

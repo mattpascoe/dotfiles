@@ -1,11 +1,6 @@
 #!/bin/bash
 
-# This does not need to run as root, it will sudo when needed
-# lots of install stuff.. you should be able to run this over and over without issue
 # TODO: refactor and have more "configuration" instead of hardcoded things like package installs
-# TODO: look into using stow for dotfile management
-# TODO: setup a 'bash_lib.sh' that contains this top seciton so that individual scripts can use it
-# TODO: restructure things for the installer.  MACHINE/OS/PROFILE will gather individual setup parts. likely an install and configuation separation too.
 
 ###### Linux specific stuff
 # These are base packages I hope to use on all systems
@@ -70,12 +65,12 @@ fi
 popd >/dev/null || exit
 
 # Get the desktop environment
-DESK=$(echo "${XDG_CURRENT_DESKTOP:-UNKNOWN}")
+DESK=${XDG_CURRENT_DESKTOP:-UNKNOWN}
 case "${DESK}" in
-  *GNOME) source "$DIR/.gnome.sh";;
+  *GNOME) source "$DOTREPO/setup/.gnome.sh";;
   UNKNOWN)
     # We'll assume one is not installed.
-    msg "${GRN}Do you want to install Gnome desktop? (N/y) \c"
+    prompt "Do you want to install Gnome desktop? (N/y) "
     read -r REPLY < /dev/tty
     case "$ID" in
       ubuntu*)
@@ -83,7 +78,7 @@ case "${DESK}" in
           sudo apt install -y ubuntu-desktop-minimal rsyslog rofi
           sudo systemctl set-default graphical.target
           export DESK="GNOME"
-          source "$DIR/.gnome.sh"
+          source "$DOTREPO/setup/.gnome.sh"
         fi
         ;;
       arch*)
@@ -91,7 +86,7 @@ case "${DESK}" in
           sudo pacman --disable-sandbox --needed --noconfirm -Sy gnome
           sudo systemctl enable --now gdm
           export DESK="GNOME"
-          source "$DIR/.gnome.sh"
+          source "$DOTREPO/setup/.gnome.sh"
         fi
         ;;
       *)

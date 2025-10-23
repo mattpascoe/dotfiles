@@ -7,48 +7,16 @@
 # entrypoint in setup.sh that determines PLATFORM. It calls into setup/PLATFORM.sh
 # each platform.sh script will then determin a release type and call setup/PLATFORM/RELEASE-ID.sh
 
-set -e
+# STEP 1: initialize some variables
+source setup/setup_lib.sh
 
-# STEP 1: initial setup, turn this into a library
-# Colors/formatting
-UL="\033[4m" # underline
-NC="\033[0m" # no color/format
-YEL="\033[33m"
-BLU="\033[34m"
-RED="\033[31m"
-GRN="\033[32m"
-BOLD="\033[1m"
+# Gather configuration for this process to use
+source setup/config.sh
 
-function msg() {
-  command echo -e "${BOLD}${YEL}$*${NC}"
-}
+#SCRIPT=$(readlink -f "$0")
+#DIR=$(dirname "$SCRIPT")
 
-# Check if USER is set and try a fallback
-USER="${USER:-$(whoami)}"
-
-# Determine what type of machine we are on
-unameOut="$(uname -s)"
-case "${unameOut}" in
-    Linux*)     PLATFORM=Linux;;
-    Darwin*)    PLATFORM=Mac;;
-    CYGWIN*)    PLATFORM=Cygwin;;
-    MINGW*)     PLATFORM=MinGw;;
-    *)          PLATFORM="UNKNOWN:${unameOut}"
-esac
-
-if [ -f /etc/os-release ]; then
-  . /etc/os-release
-fi
-
-# If DOTDIR variable is set, use it
-# TODO" this needs reworked.. may not need DOTDIR
-if [ -n "${DOTDIR:-}" ]; then
-  DIR=$DOTDIR
-else
-  SCRIPT=$(readlink -f "$0")
-  DIR=$(dirname "$SCRIPT")
-fi
-msg "${BLU}Running from $DIR."
+msg "${BLU}Dotfile repo location: $DOTREPO."
 msg "${BLU}Looks like we are a $PLATFORM system."
 msg "${BLU}Looks like the OS is ${PRETTY_NAME}."
 
@@ -83,9 +51,6 @@ fi
 msg "${GRN}Git is installed."
 
 # STEP 3: Clone dotfiles repo
-# set the location of our dotfiles install
-DOTREPO=~/dotfiles
-
 # Test if the dotfiles dir already exists.
 if [ ! -d "$DOTREPO" ]; then
   msg "${GRN}Cloning dotfiles to $DOTREPO..."
@@ -93,7 +58,7 @@ if [ ! -d "$DOTREPO" ]; then
 else
   msg "${BLU}Clone of git repo already exists in $DOTREPO."
 #  echo "Updating dotfiles..."
-#  cd "$DOTDIR" || exit
+#  cd "$DOTREPO" || exit
 #  git pull >/dev/null
 #  cd - > /dev/null || exit
 fi
@@ -116,29 +81,21 @@ fi
 # THOUGHT; does this invert the structure such that each one of these sourced files has a section per platform?
 # TODO: IDEA: I chould also have a profiles dir.  it would just list the extras we want to install without prompting for each
 #       Then if we dont select a profile, we can do this loop of all them individually?
-echo "--------------------------------------------"
-msg "${GRN}Do you want to install extra tools? You will be prompted for each one. (N/y) \c"
+echo
+prompt "Do you want to install extra tools? You will be prompted for each one. (N/y) "
 read -r REPLY < /dev/tty
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-  for FILE in $(find "$DIR/extra_installs" -type f -name "*.sh"); do
+  for FILE in $(find "$DOTREPO/setup/extra_installs" -type f -name "*.sh"); do
+    # Get the name of the file as the extra item we are installing
     EXTRA=$(basename "$FILE"|cut -d. -f1)
+    # Get the second line for a description to the user
     DESC=$(sed -n '2p' "$FILE")
-    msg "${GRN}Install ${EXTRA} -- ${DESC} (N/y) \c"
+    prompt "Install ${EXTRA} -- ${DESC} (N/y) "
     read -r REPLY < /dev/tty
     if [[ $REPLY =~ ^[Yy]$ ]]; then
       source "$FILE"
     fi
   done
-fi
-
-# TODO: This needs to go somewhere better
-# Run <prefix> + I to install plugins the first time
-if [ ! -d ~/.config/tmux/plugins/tpm ];then
-  msg "${UL}Installing TMUX plugin manager."
-  git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
-  msg "${UL}Installing TMUX plugins. You may need to run <prefix> + I to install plugins if this doesn't work"
-  export PATH=/opt/homebrew/bin:$PATH
-  ~/.config/tmux/plugins/tpm/bin/install_plugins
 fi
 
 echo
