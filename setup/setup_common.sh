@@ -31,8 +31,9 @@ sudo find /tmp/ -name "tmp.*.tar.gz" -print0 | while IFS= read -r -d '' file; do
 done
 
 # Everyone gets FZF!
+# NOTE: Their installer will throw an error about the BASH_SOURCE variable.
 # This installs in ~/bin
-FZF_INST="curl -fsSL https://raw.githubusercontent.com/junegunn/fzf/master/install | BASH_SOURCE=$HOME/bin bash -s -- --bin --xdg --no-update-rc --no-completion --no-key-bindings
+FZF_INST="curl -fsSL https://raw.githubusercontent.com/junegunn/fzf/master/install | bash -s -- --bin --xdg --no-update-rc --no-completion --no-key-bindings
 "
 pushd "$HOME" >/dev/null || exit
 if ! command -v "fzf" &> /dev/null; then
