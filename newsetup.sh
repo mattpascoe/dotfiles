@@ -50,6 +50,7 @@ else
 fi
 msg "${BLU}Running from $DIR."
 msg "${BLU}Looks like we are a $PLATFORM system."
+msg "${BLU}Looks like the OS is ${PRETTY_NAME}."
 
 # STEP 2: Check and install git if needed
 msg "${UL}Checking for Git"
@@ -100,6 +101,7 @@ fi
 # STEP 4: Run the setup_common.sh script that EVERYONE should run
 echo
 source "${DOTREPO}/setup/setup_common.sh"
+echo
 
 # STEP 5: Call the PLATFORM specific setup scripts
 # Unraid is special so just call it here

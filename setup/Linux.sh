@@ -8,8 +8,6 @@
 # TODO: restructure things for the installer.  MACHINE/OS/PROFILE will gather individual setup parts. likely an install and configuation separation too.
 
 ###### Linux specific stuff
-msg "${BLU}Looks like the OS is ${PRETTY_NAME}."
-
 # These are base packages I hope to use on all systems
 PKGS+=(
   "bat"
@@ -64,11 +62,11 @@ fi
 
 # Install FZF directly
 # This installs in ~/bin
-pushd "$HOME" || exit
+pushd "$HOME" >/dev/null || exit
 if ! command -v "fzf" &> /dev/null; then
   wget -qO- https://raw.githubusercontent.com/junegunn/fzf/master/install | bash -s -- --bin --xdg --no-update-rc --no-completion --no-key-bindings
 fi
-popd || exit
+popd >/dev/null || exit
 
 # Get the desktop environment
 DESK=$(echo "${XDG_CURRENT_DESKTOP:-UNKNOWN}")
