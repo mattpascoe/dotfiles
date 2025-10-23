@@ -37,8 +37,10 @@ if [ -f /etc/os-release ]; then
 fi
 
 
+msg "${BLU}Looks like we are a $PLATFORM system."
+
 # STEP 2: Check and install git if needed
-msg "Checking for Git"
+msg "{$UL}Checking for Git"
 if ! command -v "git" &> /dev/null; then
   case "$ID" in
   debian*|ubuntu*)
@@ -65,9 +67,9 @@ if ! command -v "git" &> /dev/null; then
     ;;
   esac
 fi
+msg "${GRN}Git is installed."
 
 # STEP 3: Clone dotfiles repo
-
 # If DOTDIR variable is set, use it (usually from install.sh)
 if [ -n "${DOTDIR:-}" ]; then
   DIR=$DOTDIR
@@ -101,7 +103,6 @@ if [ -f /etc/unraid-version ]; then
   msg "${UL}Setting up as an Unraid system."
   source "${DOTREPO}/setup/unraid.sh"
 else
-  msg "${BLU}Looks like we are a $PLATFORM system."
   source "${DOTREPO}/setup/${PLATFORM}.sh"
 fi
 
