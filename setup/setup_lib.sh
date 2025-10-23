@@ -25,11 +25,11 @@ USER="${USER:-$(whoami)}"
 unameOut="$(uname -s)"
 case "${unameOut}" in
     Linux*)     PLATFORM=Linux;;
-    Darwin*)    PLATFORM=Mac;;
-    CYGWIN*)    PLATFORM=Cygwin;;
-    MINGW*)     PLATFORM=MinGw
+    Darwin*)    PLATFORM=Mac
 	        PRETTY_NAME=$(system_profiler SPSoftwareDataType | grep "System Version" | cut -d : -f 2 | xargs)
-		;;
+	        ;;
+    CYGWIN*)    PLATFORM=Cygwin;;
+    MINGW*)     PLATFORM=MinGw;;
     *)          PLATFORM="UNKNOWN:${unameOut}"
 esac
 
