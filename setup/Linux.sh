@@ -32,7 +32,8 @@ ARCH_PKGS+=(
   "yazi"
 )
 
-msg "${UL}Ensuring install of requested base packages..."
+msg "${UL}Running the Linux setup script..."
+msg "${BLU}Ensuring install of requested base packages..."
 case "$ID" in
   debian*|ubuntu*)
     sudo apt install -y "${PKGS[@]}"
@@ -55,7 +56,7 @@ esac
 # Ensure zsh is default if its available
 if command -v "zsh" &> /dev/null; then
   if [ "$(grep "$USER" /etc/passwd|cut -d: -f7)" != "/bin/zsh" ]; then
-    msg "${UL}Switching default shell to ZSH..."
+    msg "${BLU}Switching default shell to ZSH..."
     sudo usermod -s /bin/zsh "$USER"
   fi
 fi
@@ -102,7 +103,7 @@ esac
 
 # Ensure Nerd Fonts are installed
 if [[ ! -f /usr/local/share/fonts/MesloLGMNerdFontMono-Regular.ttf || ! -f /usr/local/share/fonts/MesloLGMNerdFontPropo-Regular.ttf ]]; then
-  msg "${UL}Installing Nerd Fonts..."
+  msg "${BLU}Installing Nerd Fonts..."
   sudo mkdir -p /usr/local/share/fonts
   sudo curl -s -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Meslo/M/Regular/MesloLGMNerdFontMono-Regular.ttf --output-dir /usr/local/share/fonts
   sudo curl -s -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Meslo/M/Regular/MesloLGMNerdFontPropo-Regular.ttf --output-dir /usr/local/share/fonts

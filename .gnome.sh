@@ -1,6 +1,6 @@
 #!/bin/bash
 # Setup lots of system settings using the "defaults" method
-echo -en "${BOLD}${GRN}Execute Gnome installation and setup commands... Continue (N/y) ${NC}"
+msg "${GRN}Execute Gnome installation and setup commands... Continue (N/y) \c"
 read -r REPLY < /dev/tty
 if [[ $REPLY =~ ^[Yy]$ ]]; then
 
@@ -28,7 +28,7 @@ if command -v "gsettings" &> /dev/null; then
   EXTENSIONS=( application-hotkeys@aaimio.github.com Vitals@CoreCoding.com clipboard-indicator@tudmotu.com)
   for i in "${EXTENSIONS[@]}"
   do
-      echo "Installing Gnome extension: $i"
+      msg "${BLU}Installing Gnome extension: $i"
       VERSION_TAG=$(curl -Lfs "https://extensions.gnome.org/extension-query/?search=${i}" | jq '.extensions[0] | .shell_version_map | map(.pk) | max')
       wget -q -O "${tmpdir}/${i}.zip" "https://extensions.gnome.org/download-extension/${i}.shell-extension.zip?version_tag=$VERSION_TAG"
       gnome-extensions install --force "${tmpdir}/${i}.zip"
@@ -150,5 +150,5 @@ if command -v "gsettings" &> /dev/null; then
   dconf write /org/gnome/shell/extensions/clipboard-indicator/toggle-menu "@as ['<Shift><Super>v']"
 fi
 else
-  msg ".. Skipping Gnome installation and setup changes."
+  msg "${BLU}Skipping Gnome installation and setup changes."
 fi
