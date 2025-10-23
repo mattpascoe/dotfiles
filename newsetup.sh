@@ -87,10 +87,10 @@ DOTREPO=~/dotfiles
 
 # Test if the dotfiles dir already exists.
 if [ ! -d "$DOTREPO" ]; then
-  msg "  Cloning dotfiles to $DOTREPO..."
+  msg "${GRN}Cloning dotfiles to $DOTREPO..."
   git clone https://github.com/mattpascoe/dotfiles "$DOTREPO"
 else
-  msg "  Git repo already exists."
+  msg "${BLU}Clone of git repo already exists in $DOTREPO."
 #  echo "Updating dotfiles..."
 #  cd "$DOTDIR" || exit
 #  git pull >/dev/null
@@ -98,12 +98,12 @@ else
 fi
 
 # STEP 4: Run the setup_common.sh script that EVERYONE should run
+echo
 source "${DOTREPO}/setup/setup_common.sh"
 
 # STEP 5: Call the PLATFORM specific setup scripts
 # Unraid is special so just call it here
 if [ -f /etc/unraid-version ]; then
-  msg "${UL}Setting up as an Unraid system."
   source "${DOTREPO}/setup/unraid.sh"
 else
   source "${DOTREPO}/setup/${PLATFORM}.sh"

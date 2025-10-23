@@ -2,6 +2,8 @@
 #
 ###### Unraid specific stuff, barebones zsh setup
 
+msg "${UL}Setting up as an Unraid system."
+
 # Combine the zshrc and shell-common files into /boot/config
 cat .zshrc .shell-common > /boot/config/myzshrc
 # Copy the vimrc file to /boot/config
