@@ -46,11 +46,11 @@ else
   SCRIPT=$(readlink -f "$0")
   DIR=$(dirname "$SCRIPT")
 fi
-echo -e "${BOLD}${BLU}Running from $DIR.${NC}"
+msg "${BLU}Running from $DIR."
 
 declare -a LINKFILES
 
-echo -e "${BOLD}${BLU}Looks like we are a $MACHINE system.${NC}"
+msg "${BLU}Looks like we are a $MACHINE system."
 
 ###### Unraid specific stuff, barebones zsh setup
 if [ -f /etc/unraid-version ]; then
@@ -81,7 +81,7 @@ fi
 
 ###### Linux specific stuff
 if [ "$MACHINE" == "Linux" ]; then
-  echo -e "${BOLD}${BLU}Looks like the OS is ${PRETTY_NAME}.${NC}"
+  msg "${BLU}Looks like the OS is ${PRETTY_NAME}."
 
   # These are base packages I hope to use on all systems
   PKGS+=(
@@ -122,7 +122,7 @@ if [ "$MACHINE" == "Linux" ]; then
       sudo pacman --disable-sandbox --needed --noconfirm -Syu "${PKGS[@]}"
       ;;
     *)
-      echo -e "${BOLD}${RED}-!- This system is not a supported type, You should check that the following packages are installed:${NC}"
+      msg "${RED}-!- This system is not a supported type, You should check that the following packages are installed:"
       echo "    ${PKGS[*]}"
       ;;
   esac
@@ -149,7 +149,7 @@ if [ "$MACHINE" == "Linux" ]; then
     *GNOME) source "$DIR/.gnome.sh";;
     UNKNOWN)
       # We'll assume one is not installed.
-      echo -en "${BOLD}${GRN}Do you want to install Gnome desktop? (N/y) ${NC}"
+      msg "${GRN}Do you want to install Gnome desktop? (N/y) \c"
       read -r REPLY < /dev/tty
       case "$ID" in
         ubuntu*)
@@ -172,7 +172,7 @@ if [ "$MACHINE" == "Linux" ]; then
           ;;
       esac
       ;;
-    *) echo -e "${BOLD}${RED}-!- ${DESK} is not a managed desktop environment.${NC}";;
+    *) msg "${RED}-!- ${DESK} is not a managed desktop environment.";;
   esac
 
   # Ensure Nerd Fonts are installed
@@ -188,13 +188,13 @@ if [ "$MACHINE" == "Linux" ]; then
   # TODO: IDEA: I chould also have a profiles dir.  it would just list the extras we want to install without prompting for each
   #       Then if we dont select a profile, we can do this loop of all them individually?
   echo "--------------------------------------------"
-  echo -en "${BOLD}${GRN}Do you want to install extra tools? You will be prompted for each one. (N/y) ${NC}"
+  msg "${GRN}Do you want to install extra tools? You will be prompted for each one. (N/y) \c"
   read -r REPLY < /dev/tty
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     for FILE in $(find "$DIR/extra_installs" -type f -name "*.sh"); do
       EXTRA=$(basename "$FILE"|cut -d. -f1)
       DESC=$(sed -n '2p' "$FILE")
-      echo -en "${BOLD}${GRN}Install ${EXTRA} -- ${DESC} (N/y) ${NC}"
+      msg "${GRN}Install ${EXTRA} -- ${DESC} (N/y) \c"
       read -r REPLY < /dev/tty
       if [[ $REPLY =~ ^[Yy]$ ]]; then
         source "$FILE"
@@ -216,7 +216,7 @@ if [ "$MACHINE" == "Mac" ]; then
   fi
 
   # Run NIX if we want
-#  echo -en "${BOLD}${GRN}Install NIX based packages... Continue (N/y) ${NC}"
+#  msg "${GRN}Install NIX based packages... Continue (N/y) \c"
 #  read -r REPLY < /dev/tty
 #  # Think long and hard if you want another box using NIX
 #  if [[ $REPLY =~ ^[Yy]DISABLED$ ]]; then
@@ -238,14 +238,14 @@ if [ "$MACHINE" == "Mac" ]; then
 #      # NIXPKGS_ALLOW_BROKEN=1 nix run home-manager -- switch --impure --flake .config/home-manager
 #      # #NIXPKGS_ALLOW_BROKEN=1 home-manager --impure switch (this is how you can run it manually)
 #    else
-#      echo -e "${BOLD}${RED}-!- ERROR: Unable to find NIX command. Please install NIX and try again.${NC}"
+#      msg "${RED}-!- ERROR: Unable to find NIX command. Please install NIX and try again."
 #    fi
 #  else
 #    msg "${UL}.. Skipping NIX based config changes."
 #  fi
 
   # Run brew if we want
-  echo -en "${BOLD}${GRN}Install Homebrew based packages... Continue (N/y) ${NC}"
+  msg "${GRN}Install Homebrew based packages... Continue (N/y) \c"
   read -r REPLY < /dev/tty
   if [ "$REPLY" == "y" ]; then
     if ! command -v "brew" &> /dev/null; then
@@ -282,15 +282,15 @@ if [ "$MACHINE" == "Mac" ]; then
 
         #michaelroosz/ssh/libsk-libfido2 \
     else
-      echo -e "${BOLD}${RED}-!- ERROR: Unable to find Brew command. Please install Brew and try again.${NC}"
+      msg "${RED}-!- ERROR: Unable to find Brew command. Please install Brew and try again."
     fi
 
   else
-    echo ".. Skipping Brew based config changes."
+    msg ".. Skipping Brew based config changes."
   fi
 
   # Setup lots of system settings using the "defaults" method
-  echo -en "${BOLD}${GRN}Execute 'defaults' commands to set specific Mac settings... Continue (N/y) ${NC}"
+  msg "${GRN}Execute 'defaults' commands to set specific Mac settings... Continue (N/y) \c"
   read -r REPLY < /dev/tty
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     # Running with and without sudo as I seem to get different behaviors?
@@ -306,16 +306,16 @@ if [ "$MACHINE" == "Mac" ]; then
     sudo chown $(whoami):admin /usr/local/bin
   fi
 
-  echo -e "${BOLD}${BLU}
+  msg "${BOLD}${BLU}
 The following items are not currently controllable and will need to be done manually:
   - Reduce Motion: System Preferences -> Accessibility -> Display -> Reduce Motion
   - Install Raycast, then setup app keybinds for MEH+b, MEH+g, MEH+m etc.
-  ${NC}"
+  "
 fi
 
 # Everyone gets starship!
 if ! command -v "starship" &> /dev/null; then
-  echo -en "${BOLD}${GRN}Do you want to install Starship.rs prompt? (N/y) ${NC}"
+  msg "${GRN}Do you want to install Starship.rs prompt? (N/y) \c"
   read -r REPLY < /dev/tty
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force | sed '/Please follow the steps/,$d'
