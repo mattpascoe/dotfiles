@@ -13,7 +13,7 @@ then
 fi
 
 # Everyone gets starship!
-SHIP_INST="curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force | sed '/Please follow the steps/,$d'"
+SHIP_INST="curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force | sed '/Please follow the steps/,\$d'"
 if ! command -v "starship" &> /dev/null; then
   prompt "Do you want to install Starship.rs prompt? (N/y) "
   read -r REPLY < /dev/tty
@@ -32,8 +32,10 @@ done
 
 # Everyone gets FZF!
 # This installs in ~/bin
-FZF_INST="curl -fsSL https://raw.githubusercontent.com/junegunn/fzf/master/install | bash -s -- --bin --xdg --no-update-rc --no-completion --no-key-bindings"
 pushd "$HOME" >/dev/null || exit
+tmpdir=$(mktemp -d)
+FZF_INST="bash "$tmpdir/fzf-install" --bin --xdg --no-update-rc --no-completion --no-key-bindings"
+curl -fsSL https://raw.githubusercontent.com/junegunn/fzf/master/install -o "$tmpdir/fzf-install"
 if ! command -v "fzf" &> /dev/null; then
   eval "$FZF_INST"
 else
@@ -41,6 +43,7 @@ else
   eval "$FZF_INST"
 fi
 export PATH="$HOME/bin:$PATH"
+rm -rf "$tmpdir"
 popd >/dev/null || exit
 
 ###### Link dotfile configs, could I use stow or chezmoi.io? sure, but less dependancies here

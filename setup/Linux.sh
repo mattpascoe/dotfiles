@@ -62,6 +62,7 @@ esac
 
 # Ensure Nerd Fonts are installed
 if [[ ! -f /usr/local/share/fonts/MesloLGMNerdFontMono-Regular.ttf || ! -f /usr/local/share/fonts/MesloLGMNerdFontPropo-Regular.ttf ]]; then
+  # TODO: is it better to have fonts in ~/.local?
   msg "${BLU}Installing Nerd Fonts..."
   sudo mkdir -p /usr/local/share/fonts
   sudo curl -s -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Meslo/M/Regular/MesloLGMNerdFontMono-Regular.ttf --output-dir /usr/local/share/fonts
