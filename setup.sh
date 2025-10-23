@@ -4,6 +4,8 @@
 # lots of install stuff.. you should be able to run this over and over without issue
 # TODO: refactor and have more "configuration" instead of hardcoded things like package installs
 # TODO: look into using stow for dotfile management
+# TODO: setup a 'bash_lib.sh' that contains this top seciton so that individual scripts can use it
+# TODO: restructure things for the installer.  MACHINE/OS/PROFILE will gather individual setup parts. likely an install and configuation separation too.
 
 #set -eou pipefail
 
@@ -17,7 +19,7 @@ GRN="\033[32m"
 BOLD="\033[1m"
 
 function msg() {
-  command echo -e "${BOLD}${YEL}---> $*${NC}"
+  command echo -e "${BOLD}${YEL}$*${NC}"
 }
 
 # Check if USER is set and try a fallback
@@ -52,7 +54,7 @@ echo -e "${BOLD}${BLU}Looks like we are a $MACHINE system.${NC}"
 
 ###### Unraid specific stuff, barebones zsh setup
 if [ -f /etc/unraid-version ]; then
-  msg "Setting up as an Unraid system."
+  msg "${UL}Setting up as an Unraid system."
 
   # Combine the zshrc and shell-common files into /boot/config
   cat .zshrc .shell-common > /boot/config/myzshrc
@@ -65,7 +67,7 @@ if [ -f /etc/unraid-version ]; then
     ln -s /mnt/user/data-syncthing/matt-personal/wiki ~/data/SYNC/wiki
   fi
 
-  msg "Updates to /boot/config have been made."
+  msg "${UL}Updates to /boot/config have been made."
   # Stop here since unraid is its own beast
   exit
 fi
@@ -73,7 +75,7 @@ fi
 ###### Ensure ~/data exists. Also used in .macos script
 if [ ! -d ~/data ]
 then
-  msg "Creating ~/data directory. PUT YOUR DATA HERE!"
+  msg "${UL}Creating ~/data directory. PUT YOUR DATA HERE!"
   mkdir ~/data
 fi
 
@@ -105,7 +107,7 @@ if [ "$MACHINE" == "Linux" ]; then
     "yazi"
   )
 
-  msg "Ensuring install of requested base packages..."
+  msg "${UL}Ensuring install of requested base packages..."
   case "$ID" in
     debian*|ubuntu*)
       sudo apt install -y "${PKGS[@]}"
@@ -128,7 +130,7 @@ if [ "$MACHINE" == "Linux" ]; then
   # Ensure zsh is default if its available
   if command -v "zsh" &> /dev/null; then
     if [ "$(grep "$USER" /etc/passwd|cut -d: -f7)" != "/bin/zsh" ]; then
-      msg "Switching default shell to ZSH..."
+      msg "${UL}Switching default shell to ZSH..."
       sudo usermod -s /bin/zsh "$USER"
     fi
   fi
@@ -175,7 +177,7 @@ if [ "$MACHINE" == "Linux" ]; then
 
   # Ensure Nerd Fonts are installed
   if [[ ! -f /usr/local/share/fonts/MesloLGMNerdFontMono-Regular.ttf || ! -f /usr/local/share/fonts/MesloLGMNerdFontPropo-Regular.ttf ]]; then
-    msg "Installing Nerd Fonts..."
+    msg "${UL}Installing Nerd Fonts..."
     sudo mkdir -p /usr/local/share/fonts
     sudo curl -s -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Meslo/M/Regular/MesloLGMNerdFontMono-Regular.ttf --output-dir /usr/local/share/fonts
     sudo curl -s -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Meslo/M/Regular/MesloLGMNerdFontPropo-Regular.ttf --output-dir /usr/local/share/fonts
@@ -209,7 +211,7 @@ if [ "$MACHINE" == "Mac" ]; then
   # Install Git if it does not exist
   if ! command -v "git" &> /dev/null; then
     # run git command, it may ask to install developer tools, go ahead and do that to get the git command
-    msg "Checking git version. If missing it will prompt to install developer tools..."
+    msg "${UL}Checking git version. If missing it will prompt to install developer tools..."
     git --version
   fi
 
@@ -219,8 +221,8 @@ if [ "$MACHINE" == "Mac" ]; then
 #  # Think long and hard if you want another box using NIX
 #  if [[ $REPLY =~ ^[Yy]DISABLED$ ]]; then
 #    if ! command -v "nix" &> /dev/null; then
-#      msg "Installing NIX tools..."
-#      msg "Disabled for now"
+#      msg "${UL}Installing NIX tools..."
+#      msg "${UL}Disabled for now"
 #      #curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
 #    fi
 #
@@ -239,7 +241,7 @@ if [ "$MACHINE" == "Mac" ]; then
 #      echo -e "${BOLD}${RED}-!- ERROR: Unable to find NIX command. Please install NIX and try again.${NC}"
 #    fi
 #  else
-#    msg ".. Skipping NIX based config changes."
+#    msg "${UL}.. Skipping NIX based config changes."
 #  fi
 
   # Run brew if we want
@@ -247,7 +249,7 @@ if [ "$MACHINE" == "Mac" ]; then
   read -r REPLY < /dev/tty
   if [ "$REPLY" == "y" ]; then
     if ! command -v "brew" &> /dev/null; then
-      msg "Installing Brew tools..."
+      msg "${UL}Installing Brew tools..."
       NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
 
@@ -257,7 +259,7 @@ if [ "$MACHINE" == "Mac" ]; then
     if [ -f $BREWPATH/brew ] &> /dev/null; then
       eval "$($BREWPATH/brew shellenv)"
 
-      msg "Ensuring install of requested brew packages..."
+      msg "${UL}Ensuring install of requested brew packages..."
       $BREWPATH/brew install -q \
         maccy \
         1password \
@@ -295,7 +297,7 @@ if [ "$MACHINE" == "Mac" ]; then
     "$DIR/.macos"
     sudo "$DIR/.macos"
   else
-    msg ".. Skipping defaults based config changes."
+    msg "${UL}.. Skipping defaults based config changes."
   fi
 
   # For some reason /usr/local/bin is not on mac by default. Lets make it for starship
@@ -319,7 +321,7 @@ if ! command -v "starship" &> /dev/null; then
     curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force | sed '/Please follow the steps/,$d'
   fi
 else
-  msg "Starship is alredy installed. Running installer again to get updates..."
+  msg "${UL}Starship is alredy installed. Running installer again to get updates..."
   curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force | sed '/Please follow the steps/,$d'
 fi
 # Starship installer leaves a bunch of mktemp dirs all over. This will clean them up even ones that are not ours!
@@ -347,7 +349,7 @@ LINKFILES+=(
   ".vimrc"
   ".zshrc"
 )
-msg "Checking dotfile config symlinks..."
+msg "${UL}Checking dotfile config symlinks..."
 if [ ! -d "$HOME/.config" ]; then
   mkdir -p "$HOME/.config"
 fi
@@ -355,10 +357,10 @@ for FILE in "${LINKFILES[@]}"
 do
   if [ ! -L "$HOME/$FILE" ]; then
     if [ -e "$HOME/$FILE" ]; then
-      msg "Backing up current file to ${FILE}.bak"
+      msg "${UL}Backing up current file to ${FILE}.bak"
       mv "$HOME/$FILE" "$HOME/$FILE.bak"
     fi
-    msg "Linking file $HOME/$FILE -> $DIR/$FILE"
+    msg "${UL}Linking file $HOME/$FILE -> $DIR/$FILE"
     ln -s "$DIR/$FILE" "$HOME/$FILE"
   else
     echo -n "Found link: "
@@ -368,16 +370,17 @@ done
 
 # Run <prefix> + I to install plugins the first time
 if [ ! -d ~/.config/tmux/plugins/tpm ];then
-  msg "Installing TMUX plugin manager."
+  msg "${UL}Installing TMUX plugin manager."
   git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
-  msg "Installing TMUX plugins. You may need to run <prefix> + I to install plugins if this doesn't work"
+  msg "${UL}Installing TMUX plugins. You may need to run <prefix> + I to install plugins if this doesn't work"
   export PATH=/opt/homebrew/bin:$PATH
   ~/.config/tmux/plugins/tpm/bin/install_plugins
 fi
 
 echo
-msg "Setup complete."
-msg "Please log out or start a 'tmux' session to utilize new shell changes."
+msg "${UL}Setup complete."
+msg "You should probably reboot if this is your first run"
+msg "OR at least log out or start a 'tmux' session to utilize new shell changes."
 
 # Set the console log level to 6 on arch
 [[ "$ID" == arch* ]] && sudo dmesg -n 6
