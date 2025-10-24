@@ -2,6 +2,7 @@
 
 # It is intended that this script can and should be run at any time
 # It will install a fresh system or will update an existing system with the latest packages and configurations
+# Some manual desktop configuration aspects may be changed to something defined here so try and do it here where possible
 #
 # flow to work toward:
 # entrypoint in setup.sh that determines PLATFORM. It calls into setup/PLATFORM.sh
@@ -33,15 +34,14 @@ if ! command -v "git" &> /dev/null; then
     # Update the system and ensure git is installed, grab some others just for good measure
     sudo pacman --disable-sandbox --needed --noconfirm -Syu git curl wget sudo fontconfig
     ;;
+  macos*)
+    # Run git command, it may ask to install developer tools, go ahead and do that to get the git command
+    msg "Checking git version. If missing it will prompt to install developer tools..."
+    git --version
+    ;;
   *)
-    if [ "$PLATFORM" == "Mac" ]; then
-      # run git command, it may ask to install developer tools, go ahead and do that to get the git command
-      msg "Checking git version. If missing it will prompt to install developer tools..."
-      git --version
-    else
-      msg "${RED}-!- This system is not a supported type. Aborting."
-      exit 1
-    fi
+    msg "${RED}-!- This system is not a supported type. Aborting."
+    exit 1
     ;;
   esac
 fi
@@ -60,35 +60,37 @@ else
 #  cd - > /dev/null || exit
 fi
 
-# STEP 4: Run the setup_common.sh script that EVERYONE should run
+# STEP 4: Run the common.sh script that EVERYONE should run
 echo
-source "${DOTREPO}/setup/setup_common.sh"
+source "${DOTREPO}/setup/profiles/COMMON.sh"
 echo
 
 # STEP 5: Call the PLATFORM specific setup scripts
 # Unraid is special so just call it here
 if [ -f /etc/unraid-version ]; then
-  source "${DOTREPO}/setup/unraid.sh"
+  source "${DOTREPO}/setup/platforms/unraid.sh"
 else
   msg "${UL}Running the ${PLATFORM} platform setup script..."
-  source "${DOTREPO}/setup/${PLATFORM}.sh"
+  source "${DOTREPO}/setup/platforms/${PLATFORM}.sh"
 fi
 
 
 # Install extra tools. These should have a prompt for each one.
 # THOUGHT; does this invert the structure such that each one of these sourced files has a section per platform?
-# TODO: IDEA: I chould also have a profiles dir.  it would just list the extras we want to install without prompting for each
-#       Then if we dont select a profile, we can do this loop of all them individually?
+# TODO: IDEA: I chould also have a roles dir.  it would just list the extras we want to install without prompting for each
+#       Then if we dont select a roles, we can do this loop of all them individually?
 echo
 prompt "Do you want to install extra tools? You will be prompted for each one. (N/y) "
 read -r REPLY < /dev/tty
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-  for FILE in $(find "$DOTREPO/setup/extra_installs" -type f -name "*.sh"); do
+  for FILE in $(find "$DOTREPO/setup/profiles" -type f -name "*.sh"); do
     # Get the name of the file as the extra item we are installing
-    EXTRA=$(basename "$FILE"|cut -d. -f1)
+    PROFILE=$(basename "$FILE"|cut -d. -f1)
+    # Skip the common profile since we already included it
+    [[ $PROFILE == "COMMON" ]] && continue
     # Get the second line for a description to the user
     DESC=$(sed -n '2p' "$FILE")
-    prompt "Install ${EXTRA} -- ${DESC} (N/y) "
+    prompt "Install ${PROFILE} -- ${DESC} (N/y) "
     read -r REPLY < /dev/tty
     if [[ $REPLY =~ ^[Yy]$ ]]; then
       source "$FILE"
