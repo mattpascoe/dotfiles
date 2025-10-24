@@ -35,6 +35,4 @@ case "${unameOut}" in
     *)          PLATFORM="UNKNOWN:${unameOut}"
 esac
 
-if [ -f /etc/os-release ]; then
-  . /etc/os-release
-fi
+[[ -f /etc/os-release ]] && source /etc/os-release

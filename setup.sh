@@ -8,17 +8,55 @@
 # entrypoint in setup.sh that determines PLATFORM. It calls into setup/PLATFORM.sh
 # each platform.sh script will then determin a release type and call setup/PLATFORM/RELEASE-ID.sh
 
-# STEP 1: Initialize some variables
-source setup/setup_lib.sh
+# ---- Set some defaults for initial direct curl/wget based installs
+# I dont like that I have to set all the same library stuff here but its required
+# to not have to have a separate install script. Maybe I dont actually need a
+# separate library anyway??
+# Some of these things are also in config
+DOTREPO="$HOME/.dotfiles"
+DOTREPO_URL=https://github.com/mattpascoe/dotfiles
 
-# Gather configuration for this process to use
-source setup/config.sh
+# Colors/formatting
+UL="\033[4m" # underline
+NC="\033[0m" # no color/format
+YEL="\033[33m"
+BLU="\033[34m"
+RED="\033[31m"
+GRN="\033[32m"
+BOLD="\033[1m"
+
+function msg() {
+  command echo -e "${BOLD}${YEL}$*${NC}"
+}
+function prompt() {
+  command echo -e "${BOLD}${GRN}$*${NC}\c"
+}
+
+# Check if USER is set and try a fallback
+USER="${USER:-$(whoami)}"
+
+# Determine what type of machine we are on
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     PLATFORM=Linux;;
+    Darwin*)    PLATFORM=Mac
+                # In leu of /etc/os-release we will provide our own
+                PRETTY_NAME=$(system_profiler SPSoftwareDataType | grep "System Version" | cut -d : -f 2 | xargs)
+                ID=macos
+                ;;
+    CYGWIN*)    PLATFORM=Cygwin;;
+    MINGW*)     PLATFORM=MinGw;;
+    *)          PLATFORM="UNKNOWN:${unameOut}"
+esac
+
+[[ -f /etc/os-release ]] && source /etc/os-release
+# END inital library setup
 
 msg "${BLU}Dotfile repo location: $DOTREPO."
 msg "${BLU}Looks like we are a $PLATFORM system."
 msg "${BLU}Looks like the OS is ${PRETTY_NAME}."
 
-# STEP 2: Check for and install git if needed
+# Check for and install git if needed
 msg "${UL}Checking for Git"
 if ! command -v "git" &> /dev/null; then
   case "$ID" in
@@ -47,7 +85,7 @@ if ! command -v "git" &> /dev/null; then
 fi
 msg "${GRN}Git is installed."
 
-# STEP 3: Clone dotfiles repo
+# Ensure we have a clone of dotfiles repo
 # Test if the dotfiles dir already exists.
 if [ ! -d "$DOTREPO" ]; then
   msg "${GRN}Cloning dotfiles to $DOTREPO..."
@@ -59,12 +97,19 @@ else
 #  git pull >/dev/null
 #  cd - > /dev/null || exit
 fi
+# ---- This ends the section for first time curl/wget based installs. The rest runs from the repo.
 
-# STEP 4: Prompt user for Role
+# Lets pull in our local repo based config and library to possibly
+# override and add to defaults above
+# Initialize some variables
+[[ -f setup/setup_lib.sh ]] && source setup/setup_lib.sh
+# Gather configuration for this process to use
+[[ -f setup/config.sh ]] && source setup/config.sh
+
+# Prompt user for a Role
 # I'm going with a similar Role/Profile setup to Puppet.
 # Profiles are just a targeted script that performs a block of actions.
 # Roles are a collection of profiles that are related and are executed together.
-# THOUGHT; does this invert the structure such that each one of these sourced files has a section per platform?
 
 # You can define a ROLE in the Environment. If we dont have an ENV
 # Look for a file called .dotfile_role in your home directory
@@ -93,12 +138,12 @@ fi
 # If our role does not match what is in the local file, update it
 [[ $ROLE != "" ]] && [[ $ROLE != $FILE_ROLE ]] && echo "$ROLE" > "$DOTFILE_ROLE_PATH"
 
-# STEP 5: Run the common.sh script that EVERYONE should run
+# Run the COMMON.sh script that EVERYONE should run
 echo
 source "${DOTREPO}/setup/profiles/COMMON.sh"
 echo
 
-# STEP 5: Call the PLATFORM specific setup scripts
+# Call the PLATFORM specific setup scripts
 # Unraid is special so just call it here
 if [ -f /etc/unraid-version ]; then
   source "${DOTREPO}/setup/platforms/unraid.sh"
