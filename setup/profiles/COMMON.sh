@@ -4,16 +4,20 @@
 # This is the common setup for ALL platform types.
 # It will run BEFORE any other packages are installed so it should not have any dependancies on them.
 # Anything done here should operate of its own accord.
+# A goal on this common setup is to only install as the local user. No sudo and all in $HOME.
 
-# Ensure ~/data exists. Also used in .macos script
-if [ ! -d ~/data ]
+# Ensure $HOME/data exists. Also used in _macos.sh script
+if [ ! -d "$HOME"/data ]
 then
-  msg "${UL}Creating ~/data directory. PUT YOUR DATA HERE!"
-  mkdir ~/data
+  msg "${UL}Creating $HOME/data directory. PUT YOUR DATA HERE!"
+  mkdir -p "$HOME"/data
 fi
 
+# Add $HOME/bin to PATH so we can install and use binaries during this install
+export PATH="$HOME/bin:$PATH"
 # Everyone gets starship!
-SHIP_INST="curl -fsSL https://starship.rs/install.sh | sudo sh -s -- --force | sed '/Please follow the steps/,\$d'"
+# This installs in $HOME/bin
+SHIP_INST="curl -fsSL https://starship.rs/install.sh | sh -s -- --force --bin-dir $HOME/bin | sed '/Please follow the steps/,\$d'"
 if ! command -v "starship" &> /dev/null; then
   prompt "Do you want to install Starship.rs prompt? (N/y) "
   read -r REPLY < /dev/tty
@@ -25,14 +29,14 @@ else
   eval "$SHIP_INST"
 fi
 # Starship installer leaves a bunch of mktemp dirs all over. This will clean them up even ones that are not ours!
-sudo find /tmp/ -name "tmp.*.tar.gz" -print0 | while IFS= read -r -d '' file; do
+find /tmp/ -name "tmp.*.tar.gz" -print0 | while IFS= read -r -d '' file; do
   prefix="${file%.tar.gz}"
-  sudo rm "${prefix}"*
+  rm "${prefix}"*
 done
 
 # Everyone gets FZF!
 # NOTE: Their installer will throw an error about the BASH_SOURCE variable.
-# This installs in ~/bin
+# This installs in $HOME/bin
 FZF_INST="curl -fsSL https://raw.githubusercontent.com/junegunn/fzf/master/install | bash -s -- --bin --xdg --no-update-rc --no-completion --no-key-bindings
 "
 pushd "$HOME" >/dev/null || exit
@@ -42,7 +46,6 @@ else
   msg "${UL}FZF is already installed. Running installer again to get updates..."
   eval "$FZF_INST"
 fi
-export PATH="$HOME/bin:$PATH"
 popd >/dev/null || exit
 
 ###### Link dotfile configs, could I use stow or chezmoi.io? sure, but less dependancies here
@@ -84,9 +87,9 @@ do
 done
 
 # Run <prefix> + I to install plugins the first time
-if [ ! -d ~/.config/tmux/plugins/tpm ];then
+if [ ! -d "$HOME/.config/tmux/plugins/tpm" ];then
   msg "${UL}Installing TMUX plugin manager."
-  git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
+  git clone https://github.com/tmux-plugins/tpm "$HOME/.config/tmux/plugins/tpm"
   msg "${UL}Installing TMUX plugins. You may need to run <prefix> + I to install plugins if this doesn't work"
-  ~/.config/tmux/plugins/tpm/bin/install_plugins
+  eval "$HOME/.config/tmux/plugins/tpm/bin/install_plugins"
 fi
