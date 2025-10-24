@@ -1,14 +1,14 @@
 #!/usr/bin/env zsh
-
 # This script is for Keri and her settings. It will first run setup.sh then apply these changes
+
 # Basically, on Keris system, just run this.
 
-~/dotfiles/setup.sh
+#~/dotfiles/setup.sh
 
 echo
-echo "---- Applying Keri's settings -----"
+msg "---- Applying Keri's settings -----"
 
-echo "- Ensuring install of Keri's brew packages..."
+msg "- Ensuring install of Keri's brew packages..."
 brew install -q zoom spotify quicken google-chrome
 
 # Enable DarkMode
@@ -35,13 +35,14 @@ defaults write com.apple.dock static-only -bool false
 killall Dock
 killall Finder
 
+msg "${BLU}
 # Notes on conversion process
 # BRAVE BROWSER
 # -- on new machine
 # cd ~
 # OR BETTER
-# rsync -avhn "keri@10.1.1.240:Library/Application\ Support/BraveSoftware/" ~/Library/Application\ Support/BraveSoftware
-# rsync -avhn "keri@10.1.1.240:Library/Application\ Support/Google/" ~/Library/Application\ Support/Google
+# rsync -avhn 'keri@10.1.1.240:Library/Application\ Support/BraveSoftware/' ~/Library/Application\ Support/BraveSoftware
+# rsync -avhn 'keri@10.1.1.240:Library/Application\ Support/Google/' ~/Library/Application\ Support/Google
 # chown -R keripascoe:staff Library/Application\ Support/BraveSoftware
 # chown -R keripascoe:staff Library/Application\ Support/Google
 #
@@ -60,5 +61,6 @@ killall Finder
 # Real sync of files before syncthing, the issue is not data but file times
 # rsync -avhn keri@10.1.1.240:Data/ ~/Data
 # after you have files.. set up syncthing by pausing the old server and adding the new one as a recieve just to make sure things are all in sync still.. then you can switch to send.
+"
 
-echo "---- DONE Applying Keri's settings -----"
+msg "---- DONE Applying Keri's settings -----"

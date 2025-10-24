@@ -76,15 +76,23 @@ DOTFILE_ROLE_PATH="$HOME/.dotfile_role"
 [[ $ROLE == "" ]] && [[ -f "$DOTFILE_ROLE_PATH" ]] && ROLE=$(cat "$DOTFILE_ROLE_PATH")
 # If we dont find a role then prompt the user if they want to pick one.
 if [[ $ROLE == "" ]]; then
-  AVAILABLE_ROLES=$(ls -1 "$DOTREPO/setup/roles/"|cut -d. -f1)
   msg "${UL}No Role defined."
-  prompt "Y = Select a role. N = Choose profiles to run. (Y/n) "
+  prompt "Y = Select a role. N = Use the default role. (Y/n) "
   read -r REPLY < /dev/tty
   if [[ $REPLY =~ ^[Nn]$ ]]; then
     ROLE=""
   else
-    msg "${UL}${BOLD}${GRN}Available roles:${NC}
-$AVAILABLE_ROLES"
+    msg "${UL}${BOLD}${GRN}Available roles:${NC}"
+    # List the available roles and description
+    for FILE in $(find "$DOTREPO/setup/roles" -type f -name "*.sh"); do
+      # Get the name of the file as the extra item we are installing
+      ROLE=$(basename "$FILE"|cut -d. -f1)
+      # Skip the common profile since we already included it
+      [[ $ROLE == "DEFAULT" ]] && continue
+      # Get the second line for a description to the user
+      DESC=$(sed -n '2p' "$FILE")
+      echo "$ROLE -- $DESC"
+    done
     prompt "Enter role name: "
     read -r ROLE < /dev/tty
   fi

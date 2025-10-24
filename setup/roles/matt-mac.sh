@@ -1,6 +1,4 @@
 #!/bin/bash
-
-# matt-mac role
 # This role is for Matts standard Mac desktop setup
 
 PROFILES=(
