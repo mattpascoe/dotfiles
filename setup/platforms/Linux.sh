@@ -30,7 +30,7 @@ fi
 # Get the desktop environment
 DESK=${XDG_CURRENT_DESKTOP:-UNKNOWN}
 case "${DESK}" in
-  *GNOME) source "$DOTREPO/setup/.gnome.sh";;
+  *GNOME) source "$DOTREPO/setup/profiles/gnome.sh";;
   UNKNOWN)
     # We'll assume one is not installed.
     prompt "Do you want to install Gnome desktop? (N/y) "
@@ -41,7 +41,7 @@ case "${DESK}" in
           sudo apt install -y ubuntu-desktop-minimal rsyslog
           sudo systemctl set-default graphical.target
           export DESK="GNOME"
-          source "$DOTREPO/setup/.gnome.sh"
+          source "$DOTREPO/setup/profiles/gnome.sh"
         fi
         ;;
       arch*)
@@ -49,7 +49,7 @@ case "${DESK}" in
           sudo pacman --disable-sandbox --needed --noconfirm -Sy gnome
           sudo systemctl enable --now gdm
           export DESK="GNOME"
-          source "$DOTREPO/setup/.gnome.sh"
+          source "$DOTREPO/setup/profiles/gnome.sh"
         fi
         ;;
       *)
