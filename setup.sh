@@ -82,9 +82,9 @@ if [[ $ROLE == "" ]]; then
   if [[ $REPLY =~ ^[Nn]$ ]]; then
     ROLE=""
   else
-    msg "${UL}${BOLD}${GRN}Available roles:
-    $AVAILABLE_ROLES"
-    prompt "Enter role name:"
+    msg "${UL}${BOLD}${GRN}Available roles:${NC}
+$AVAILABLE_ROLES"
+    prompt "Enter role name: "
     read -r ROLE < /dev/tty
   fi
 fi
