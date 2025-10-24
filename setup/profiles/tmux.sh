@@ -3,7 +3,6 @@
 
 # This profile will be installed by the COMMON profile so you
 # dont need to add it to other roles
-source setup/setup_lib.sh
 
 PKG_NAME=tmux
 case "$ID" in
@@ -25,11 +24,13 @@ case "$ID" in
 esac
 
 # Run <prefix> + I to install plugins the first time
-if [ ! -d "$HOME/.config/tmux/plugins/tpm" ];then
+TMUXDIR="$HOME/.config/tmux/plugins/tpm"
+if [ ! -d "$TMUXDIR" ];then
   msg "${UL}Installing TMUX plugin manager."
-  git clone https://github.com/tmux-plugins/tpm "$HOME/.config/tmux/plugins/tpm"
+  mkdir -p "$TMUXDIR"
+  git clone https://github.com/tmux-plugins/tpm "$TMUXDIR"
   msg "${UL}Installing TMUX plugins. You may need to run <prefix> + I to install plugins if this doesn't work"
-  eval "$HOME/.config/tmux/plugins/tpm/bin/install_plugins"
+  eval "$TMUXDIR/bin/install_plugins"
 fi
 
 msg "${BLU}Install complete."
