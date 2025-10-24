@@ -88,4 +88,4 @@ do
 done
 
 # Ensure Tmux is installed
-source "$PROFILE_DIR/tmux.sh"
+source "$DOTREPO/setup/profiles/tmux.sh"
