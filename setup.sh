@@ -96,8 +96,7 @@ if [[ $ROLE == "" ]]; then
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     prompt "Available roles: $AVAILABLE_ROLES"
     read -r ROLE < /dev/tty
-  fi
-  if [[ $ROLE != "" ]]; then
+  else
     prompt "Do you want to install extra tools? You will be prompted for each one. (N/y) "
     read -r REPLY < /dev/tty
     if [[ $REPLY =~ ^[Yy]$ ]]; then
