@@ -26,8 +26,10 @@ unameOut="$(uname -s)"
 case "${unameOut}" in
     Linux*)     PLATFORM=Linux;;
     Darwin*)    PLATFORM=Mac
-	        PRETTY_NAME=$(system_profiler SPSoftwareDataType | grep "System Version" | cut -d : -f 2 | xargs)
-	        ;;
+                # In leu of /etc/os-release we will provide our own
+                PRETTY_NAME=$(system_profiler SPSoftwareDataType | grep "System Version" | cut -d : -f 2 | xargs)
+                ID=macos
+                ;;
     CYGWIN*)    PLATFORM=Cygwin;;
     MINGW*)     PLATFORM=MinGw;;
     *)          PLATFORM="UNKNOWN:${unameOut}"

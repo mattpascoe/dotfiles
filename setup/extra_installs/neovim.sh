@@ -3,20 +3,9 @@
 
 source setup/setup_lib.sh
 
-# Mac platform
-if [ "$PLATFORM" == "Mac" ]; then
-  PKG_NAME=nvim
-  if brew info "$PKG_NAME" >/dev/null 2>&1; then
-    msg "${BLU}Already installed via brew on Mac."
-  else
-    msg "${GRN}Installing..."
-    brew install "$PKG_NAME"
-fi
-
-# Posix platforms
-# Get linux os type
-[ -f /etc/os-release ] && . /etc/os-release
 case "$ID" in
+  arch*)
+    sudo pacman --needed --noconfirm -Sy neovim ;;
   debian*|ubuntu*)
     tmpdir=$(mktemp -d)
     ARCH=${ARCH:-$(uname -m)}; ARCH=${ARCH/aarch64/arm64}
@@ -35,8 +24,15 @@ case "$ID" in
     #sudo apt install -y luarocks tree-sitter-cli
     rm -rf "$tmpdir"
     ;;
-  arch*)
-    sudo pacman --needed --noconfirm -Sy neovim ;;
+  macos*)
+    PKG_NAME=nvim
+    if brew info "$PKG_NAME" >/dev/null 2>&1; then
+      msg "${BLU}Already installed via brew on Mac."
+    else
+      msg "${GRN}Installing..."
+      brew install "$PKG_NAME"
+    fi
+    ;;
   *)
     echo "-!- Install not supported."
     ;;
