@@ -86,7 +86,7 @@ if [[ $ROLE == "" ]]; then
     DESC=$(sed -n '2p' "$FILE")
     echo "$ROLE -- $DESC"
   done
-  prompt "Enter role name: "
+  prompt "Enter role name (enter for DEFAULT): "
   read -r ROLE < /dev/tty
 fi
 [[ $ROLE != "" ]] && msg "${UL}The Role for this system is: $ROLE"
