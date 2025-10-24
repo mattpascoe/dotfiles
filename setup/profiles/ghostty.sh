@@ -10,7 +10,8 @@ case "$ID" in
   #   sudo pacman --needed --noconfirm -Sy "$PKG_NAME" ;;
   debian*|ubuntu*)
     # Install using the community managed ubuntu install script
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)" >& /dev/null
+    msg "${BLU}Install complete."
     ;;
   macos*)
     if brew list "$PKG_NAME" >/dev/null 2>&1; then
