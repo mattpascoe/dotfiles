@@ -53,7 +53,7 @@ if [ ! -d "$DOTREPO" ]; then
   msg "${GRN}Cloning dotfiles to $DOTREPO..."
   git clone "$DOTREPO_URL" "$DOTREPO"
 else
-  msg "${BLU}Clone of git repo already exists in $DOTREPO."
+  msg "${BLU}A clone of dotfiles git repo already exists in $DOTREPO."
 #  echo "Updating dotfiles..."
 #  cd "$DOTREPO" || exit
 #  git pull >/dev/null
@@ -80,12 +80,12 @@ if [[ $ROLE == "" ]]; then
   prompt "Y = Select a role. N = Choose profiles to run. (Y/n) "
   read -r REPLY < /dev/tty
   if [[ $REPLY =~ ^[Nn]$ ]]; then
+    ROLE=""
+  else
     msg "${UL}${BOLD}${GRN}Available roles:
     $AVAILABLE_ROLES"
     prompt "Enter role name:"
     read -r ROLE < /dev/tty
-  else
-    ROLE=""
   fi
 fi
 [[ $ROLE != "" ]] && msg "${UL}The Role for this system is: $ROLE"
