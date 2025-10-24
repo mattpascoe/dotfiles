@@ -12,8 +12,9 @@ case "$ID" in
   #   #curl -fsS https://dl.brave.com/install.sh | sh
   debian*|ubuntu*)
     # Install using brave official repo script
-    curl -fsS https://dl.brave.com/install.sh | sh
+    curl -fsS https://dl.brave.com/install.sh | sh >& /dev/null
     xdg-settings set default-web-browser brave-browser.desktop
+    msg "${BLU}Install complete."
     ;;
   macos*)
     if brew list "$PKG_NAME" >/dev/null 2>&1; then

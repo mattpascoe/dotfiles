@@ -13,10 +13,11 @@ case "$ID" in
     VERSION=$(curl -s https://api.github.com/repos/sigoden/aichat/releases/latest | grep -Po '"tag_name": "v\K[0-9.]+')
     # Download and extract
     #wget https://github.com/sigoden/aichat/releases/latest/download/aichat-v${AICHAT_VERSION}-$(dpkg --print-architecture)-unknown-linux-musl.tar.gz
-    wget -P "$tmpdir" https://github.com/sigoden/aichat/releases/latest/download/aichat-v"${VERSION}"-arm-unknown-linux-musleabihf.tar.gz
+    wget -q -P "$tmpdir" https://github.com/sigoden/aichat/releases/latest/download/aichat-v"${VERSION}"-arm-unknown-linux-musleabihf.tar.gz
     tar xf "$tmpdir/aichat"*.tar.gz -C "$tmpdir" aichat
     sudo install -b "$tmpdir"/aichat /usr/local/bin
     rm -rf "$tmpdir"
+    msg "${BLU}Install complete."
     ;;
   macos*)
     if brew list "$PKG_NAME" >/dev/null 2>&1; then
