@@ -16,7 +16,7 @@ case "$ID" in
     wget -q -P "$tmpdir" https://downloads.1password.com/linux/tar/stable/$(uname -m)/1password-latest.tar.gz && \
     tar xf "$tmpdir"/1password-latest.tar.gz -C "$tmpdir" && \
     sudo mkdir -p /opt/1Password && \
-    sudo mv "$tmpdir"/1password-*/* /opt/1Password && \
+    sudo cp -a "$tmpdir"/1password-*/* /opt/1Password && \
     sudo /opt/1Password/after-install.sh
     sudo chown root:root /opt/1Password/1password
     # I saw somewhere they wanted 4755 permissions but I saw issues with that.
