@@ -1,8 +1,6 @@
 #!/bin/bash
 # Slack messaging app
 
-source setup/setup_lib.sh
-
 PKG_NAME=slack
 case "$ID" in
   #arch*)
@@ -32,7 +30,6 @@ case "$ID" in
     if brew list "$PKG_NAME" >/dev/null 2>&1; then
       msg "${BLU}Already installed via brew on Mac."
     else
-      msg "${GRN}Installing..."
       brew install "$PKG_NAME"
     fi
     ;;
@@ -41,3 +38,4 @@ case "$ID" in
     ;;
 esac
 
+msg "${BLU}Install complete."

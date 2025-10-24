@@ -1,7 +1,6 @@
 #!/bin/bash
 # 1password password manager and tools
 
-source setup/setup_lib.sh
 
 PKG_NAME=1password
 case "$ID" in
@@ -33,13 +32,11 @@ case "$ID" in
     # reset ARCH
     ARCH=${ARCH:-$(uname -m)}; ARCH=${ARCH/aarch64/arm64}
     rm -rf "$tmpdir"
-    msg "${BLU}Install complete."
     ;;
   macos*)
     if brew list "$PKG_NAME" >/dev/null 2>&1; then
       msg "${BLU}Already installed via brew on Mac."
     else
-      msg "${GRN}Installing..."
       brew install "$PKG_NAME"
     fi
     ;;
@@ -48,3 +45,4 @@ case "$ID" in
     ;;
 esac
 
+msg "${BLU}Install complete."

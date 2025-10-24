@@ -1,8 +1,6 @@
 #!/bin/bash
 # Git TUI interface
 
-source setup/setup_lib.sh
-
 PKG_NAME=lazygit
 case "$ID" in
   arch*)
@@ -17,13 +15,11 @@ case "$ID" in
     # Move to a system-wide location
     sudo install -b "$tmpdir"/lazygit /usr/local/bin
     rm -rf "$tmpdir"
-    msg "${BLU}Install complete."
     ;;
   macos*)
     if brew list "$PKG_NAME" >/dev/null 2>&1; then
       msg "${BLU}Already installed via brew on Mac."
     else
-      msg "${GRN}Installing..."
       brew install "$PKG_NAME"
     fi
     ;;
@@ -32,3 +28,4 @@ case "$ID" in
     ;;
 esac
 
+msg "${BLU}Install complete."

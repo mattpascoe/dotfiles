@@ -3,8 +3,6 @@
 
 # This does not install the cmd_allowed version of kanata
 
-source setup/setup_lib.sh
-
 PKG_NAME=kanata
 case "$ID" in
   macos*)
@@ -12,7 +10,6 @@ case "$ID" in
     if brew list "$PKG_NAME" >/dev/null 2>&1; then
       msg "${BLU}Already installed via brew on Mac."
     else
-      msg "${GRN}Installing..."
       brew install "$PKG_NAME"
     fi
     ;;
@@ -50,3 +47,4 @@ EOF
     ;;
 esac
 
+msg "${BLU}Install complete."

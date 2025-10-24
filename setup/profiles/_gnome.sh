@@ -1,8 +1,6 @@
 #!/bin/bash
 # Configure Gnome desktop
 
-source setup/setup_lib.sh
-
 case "$ID" in
   macos*)
     msg "${BLU}Gnome setup is not for MacOS"

@@ -1,7 +1,5 @@
 #!/usr/bin/env zsh
 
-source setup/config.sh
-
 # A way to find what these items are:
 # defaults read > before
 # - make your change

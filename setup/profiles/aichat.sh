@@ -1,8 +1,6 @@
 #!/bin/bash
 # AI chat cli for local LLMs
 
-source setup/setup_lib.sh
-
 PKG_NAME=aichat
 case "$ID" in
   #arch*)
@@ -17,13 +15,11 @@ case "$ID" in
     tar xf "$tmpdir/aichat"*.tar.gz -C "$tmpdir" aichat
     sudo install -b "$tmpdir"/aichat /usr/local/bin
     rm -rf "$tmpdir"
-    msg "${BLU}Install complete."
     ;;
   macos*)
     if brew list "$PKG_NAME" >/dev/null 2>&1; then
       msg "${BLU}Already installed via brew on Mac."
     else
-      msg "${GRN}Installing..."
       brew install "$PKG_NAME"
     fi
     ;;
@@ -31,3 +27,5 @@ case "$ID" in
     echo "-!- Install not supported."
     ;;
 esac
+
+msg "${BLU}Install complete."
