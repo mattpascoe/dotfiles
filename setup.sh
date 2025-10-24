@@ -12,6 +12,7 @@
 # Some of these things are also in config and the setup library.
 DOTREPO="$HOME/.dotfiles"
 DOTREPO_URL=https://github.com/mattpascoe/dotfiles
+[[ -f /etc/os-release ]] && source /etc/os-release
 # Colors/formatting
 UL="\033[4m" # underline
 NC="\033[0m" # no color/format
