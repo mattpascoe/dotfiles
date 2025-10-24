@@ -60,21 +60,7 @@ else
 #  cd - > /dev/null || exit
 fi
 
-# STEP 4: Run the common.sh script that EVERYONE should run
-echo
-source "${DOTREPO}/setup/profiles/COMMON.sh"
-echo
-
-# STEP 5: Call the PLATFORM specific setup scripts
-# Unraid is special so just call it here
-if [ -f /etc/unraid-version ]; then
-  source "${DOTREPO}/setup/platforms/unraid.sh"
-else
-  msg "${UL}Running the ${PLATFORM} platform setup script..."
-  source "${DOTREPO}/setup/platforms/${PLATFORM}.sh"
-fi
-
-# STEP 6: Process other profiles
+# STEP 4: Prompt user for Role
 # I'm going with a similar Role/Profile setup to Puppet.
 # Profiles are just a targeted script that performs a block of actions.
 # Roles are a collection of profiles that are related and are executed together.
@@ -99,26 +85,45 @@ if [[ $ROLE == "" ]]; then
     prompt "Enter role name:"
     read -r ROLE < /dev/tty
   else
-    prompt "Do you want to install extra tools? You will be prompted for each one. (N/y) "
-    read -r REPLY < /dev/tty
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-      for FILE in $(find "$DOTREPO/setup/profiles" -type f -name "*.sh"); do
-        # Get the name of the file as the extra item we are installing
-        PROFILE=$(basename "$FILE"|cut -d. -f1)
-        # Skip the common profile since we already included it
-        [[ $PROFILE == "COMMON" ]] && continue
-        # Get the second line for a description to the user
-        DESC=$(sed -n '2p' "$FILE")
-        prompt "Install ${PROFILE} -- ${DESC} (N/y) "
-        read -r REPLY < /dev/tty
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-          source "$FILE"
-        fi
-      done
-    fi
+    ROLE=""
+  fi
+fi
+[[ $ROLE != "" ]] && msg "${UL}The Role for this system is: $ROLE"
+
+# STEP 5: Run the common.sh script that EVERYONE should run
+echo
+source "${DOTREPO}/setup/profiles/COMMON.sh"
+echo
+
+# STEP 5: Call the PLATFORM specific setup scripts
+# Unraid is special so just call it here
+if [ -f /etc/unraid-version ]; then
+  source "${DOTREPO}/setup/platforms/unraid.sh"
+else
+  msg "${UL}Running the ${PLATFORM} platform setup script..."
+  source "${DOTREPO}/setup/platforms/${PLATFORM}.sh"
+fi
+
+# Actually process the role or prompt for individual profiles
+if [[ $ROLE == "" ]]; then
+  prompt "Do you want to install extra tools? You will be prompted for each one. (N/y) "
+  read -r REPLY < /dev/tty
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    for FILE in $(find "$DOTREPO/setup/profiles" -type f -name "*.sh"); do
+      # Get the name of the file as the extra item we are installing
+      PROFILE=$(basename "$FILE"|cut -d. -f1)
+      # Skip the common profile since we already included it
+      [[ $PROFILE == "COMMON" ]] && continue
+      # Get the second line for a description to the user
+      DESC=$(sed -n '2p' "$FILE")
+      prompt "Install ${PROFILE} -- ${DESC} (N/y) "
+      read -r REPLY < /dev/tty
+      if [[ $REPLY =~ ^[Yy]$ ]]; then
+        source "$FILE"
+      fi
+    done
   fi
 else
-  msg "${UL}The Role for this system is: $ROLE"
   source "$DOTREPO/setup/roles/$ROLE.sh"
 fi
 
