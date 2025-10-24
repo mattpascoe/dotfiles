@@ -1,6 +1,8 @@
 #!/bin/bash
 # TODO: look into using stow or chezmoi.io for dotfile management? For now I'm keeping it simple
 
+source setup/config.sh
+
 # This is the common setup for ALL platform types.
 # It will run BEFORE any other packages are installed so it should not have any dependancies on them.
 # Anything done here should operate of its own accord.
@@ -30,9 +32,9 @@ else
   eval "$SHIP_INST"
 fi
 # Starship installer leaves a bunch of mktemp dirs all over. This will clean them up even ones that are not ours!
-find /tmp/ -name "tmp.*.tar.gz" -print0 | while IFS= read -r -d '' file; do
+find /tmp/ -name "tmp.*.tar.gz" -print0 2>/dev/null | while IFS= read -r -d '' file; do
   prefix="${file%.tar.gz}"
-  rm "${prefix}"*
+  rm "${prefix}"* 2>/dev/null
 done
 
 # Everyone gets FZF!
