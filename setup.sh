@@ -109,25 +109,14 @@ fi
 
 # Actually process the role or prompt for individual profiles
 if [[ $ROLE == "" ]]; then
-  prompt "Do you want to install extra tools? You will be prompted for each one. (N/y) "
-  read -r REPLY < /dev/tty
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    for FILE in $(find "$DOTREPO/setup/profiles" -type f -name "*.sh"); do
-      # Get the name of the file as the extra item we are installing
-      PROFILE=$(basename "$FILE"|cut -d. -f1)
-      # Skip the common profile since we already included it
-      [[ $PROFILE == "COMMON" ]] && continue
-      # Get the second line for a description to the user
-      DESC=$(sed -n '2p' "$FILE")
-      prompt "Install ${PROFILE} -- ${DESC} (N/y) "
-      read -r REPLY < /dev/tty
-      if [[ $REPLY =~ ^[Yy]$ ]]; then
-        source "$FILE"
-      fi
-    done
-  fi
+  source "${DOTREPO}/setup/roles/DEFAULT.sh"
 else
-  source "$DOTREPO/setup/roles/$ROLE.sh"
+  msg "${UL}Running the ${ROLE} role setup script..."
+  if [ ! -f "$DOTREPO/setup/roles/$ROLE.sh" ]; then
+    msg "${RED}-!- Role $ROLE does not exist."
+  else
+    source "$DOTREPO/setup/roles/$ROLE.sh"
+  fi
 fi
 
 echo
