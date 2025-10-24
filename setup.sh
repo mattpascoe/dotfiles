@@ -82,8 +82,6 @@ if [[ $ROLE == "" ]]; then
   for FILE in $(find "$DOTREPO/setup/roles" -type f -name "*.sh"); do
     # Get the name of the file as the extra item we are installing
     ROLE=$(basename "$FILE"|cut -d. -f1)
-    # Skip the common profile since we already included it
-    [[ $ROLE == "DEFAULT" ]] && continue
     # Get the second line for a description to the user
     DESC=$(sed -n '2p' "$FILE")
     echo "$ROLE -- $DESC"
