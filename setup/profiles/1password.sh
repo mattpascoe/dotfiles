@@ -27,7 +27,7 @@ case "$ID" in
     [[ $ARCH == "x86_64" ]] && ARCH="amd64"
     OP_VERSION=$(curl -fsS https://app-updates.agilebits.com/ | awk '/<section id="onepassword-cli2"/,/<\/section>/' | egrep -o 'Latest release: [0-9]+\.[0-9]+\.[0-9]+' | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')
     wget -q -O "$tmpdir/op.zip" "https://cache.agilebits.com/dist/1P/op2/pkg/v${OP_VERSION}/op_linux_${ARCH}_v${OP_VERSION}.zip" && \
-    unzip -d "$tmpdir/op" "$tmpdir/op.zip" && \
+    unzip -d "$tmpdir/op" "$tmpdir/op.zip" > /dev/null && \
     sudo groupadd -f onepassword-cli && \
     sudo install -m 2755 -o root -g onepassword-cli -b "$tmpdir/op/op" /usr/local/bin
     # reset ARCH
