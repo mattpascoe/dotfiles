@@ -9,9 +9,26 @@
 # each platform.sh script will then determin a release type and call setup/PLATFORM/RELEASE-ID.sh
 
 # ---- Set some defaults for initial direct curl/wget based installs
+# I dont like that I have to set most the same library stuff here but its required
+# to not have to have a separate install script. Maybe I dont actually need a 
+# separate library anyway??
 # Some of these things are also in config and the setup library.
 DOTREPO="$HOME/.dotfiles"
 DOTREPO_URL=https://github.com/mattpascoe/dotfiles
+
+# Determine what type of machine we are on
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     PLATFORM=Linux;;
+    Darwin*)    PLATFORM=Mac
+                # In leu of /etc/os-release we will provide our own
+                PRETTY_NAME=$(system_profiler SPSoftwareDataType | grep "System Version" | cut -d : -f 2 | xargs)
+                ID=macos
+                ;;
+    CYGWIN*)    PLATFORM=Cygwin;;
+    MINGW*)     PLATFORM=MinGw;;
+    *)          PLATFORM="UNKNOWN:${unameOut}"
+esac
 [[ -f /etc/os-release ]] && source /etc/os-release
 # Colors/formatting
 UL="\033[4m" # underline
@@ -25,7 +42,7 @@ BOLD="\033[1m"
 function msg() {
   command echo -e "${BOLD}${YEL}$*${NC}"
 }
-# END inital hard setup for direct installs
+# END inital library setup
 msg "${BLU}Dotfile repo location: $DOTREPO."
 msg "${BLU}Looks like we are a $PLATFORM system."
 msg "${BLU}Looks like the OS is ${PRETTY_NAME}."
