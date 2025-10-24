@@ -102,9 +102,9 @@ fi
 # Lets pull in our local repo based config and library to possibly
 # override and add to defaults above
 # Initialize some variables
-[[ -f setup/setup_lib.sh ]] && source setup/setup_lib.sh
+[[ -f "$DOTREPO/setup/setup_lib.sh" ]] && source "$DOTREPO/setup/setup_lib.sh"
 # Gather configuration for this process to use
-[[ -f setup/config.sh ]] && source setup/config.sh
+[[ -f "$DOTREPO/setup/config.sh" ]] && source "$DOTREPO/setup/config.sh"
 
 # Prompt user for a Role
 # I'm going with a similar Role/Profile setup to Puppet.

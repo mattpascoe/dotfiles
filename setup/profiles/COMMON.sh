@@ -1,8 +1,6 @@
 #!/bin/bash
 # TODO: look into using stow or chezmoi.io for dotfile management? For now I'm keeping it simple
 
-source setup/config.sh
-
 # This is the common setup for ALL platform types.
 # It will run BEFORE any other packages are installed so it should not have any dependancies on them.
 # Anything done here should operate of its own accord.
