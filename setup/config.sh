@@ -5,6 +5,9 @@
 # Other scripts may be relative to this
 DOTREPO=~/dotfiles
 
+# Set the URL of the dotfiles repo
+DOTREPO_URL=https://github.com/mattpascoe/dotfiles
+
 # Set the default timezone (linux)
 TIMEZONE=America/Boise
 

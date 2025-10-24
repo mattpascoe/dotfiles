@@ -29,7 +29,7 @@ if ! command -v "git" &> /dev/null; then
   arch*)
     # Disable kernel messages since we are likely on a console
     # We'll turn it back on later, this just gets rid of some noise in output
-    # TODO; move this dmesg to the arch install script too
+    # TODO: move this dmesg to the arch install script too
     sudo dmesg -n 3
     # Update the system and ensure git is installed, grab some others just for good measure
     sudo pacman --disable-sandbox --needed --noconfirm -Syu git curl wget sudo fontconfig
@@ -51,7 +51,7 @@ msg "${GRN}Git is installed."
 # Test if the dotfiles dir already exists.
 if [ ! -d "$DOTREPO" ]; then
   msg "${GRN}Cloning dotfiles to $DOTREPO..."
-  git clone https://github.com/mattpascoe/dotfiles "$DOTREPO"
+  git clone "$DOTREPO_URL" "$DOTREPO"
 else
   msg "${BLU}Clone of git repo already exists in $DOTREPO."
 #  echo "Updating dotfiles..."
@@ -74,28 +74,51 @@ else
   source "${DOTREPO}/setup/platforms/${PLATFORM}.sh"
 fi
 
-
-# Install extra tools. These should have a prompt for each one.
+# STEP 6: Process other profiles
+# I'm going with a similar Role/Profile setup to Puppet.
+# Profiles are just a targeted script that performs a block of actions.
+# Roles are a collection of profiles that are related and are executed together.
 # THOUGHT; does this invert the structure such that each one of these sourced files has a section per platform?
-# TODO: IDEA: I chould also have a roles dir.  it would just list the extras we want to install without prompting for each
-#       Then if we dont select a roles, we can do this loop of all them individually?
-echo
-prompt "Do you want to install extra tools? You will be prompted for each one. (N/y) "
-read -r REPLY < /dev/tty
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-  for FILE in $(find "$DOTREPO/setup/profiles" -type f -name "*.sh"); do
-    # Get the name of the file as the extra item we are installing
-    PROFILE=$(basename "$FILE"|cut -d. -f1)
-    # Skip the common profile since we already included it
-    [[ $PROFILE == "COMMON" ]] && continue
-    # Get the second line for a description to the user
-    DESC=$(sed -n '2p' "$FILE")
-    prompt "Install ${PROFILE} -- ${DESC} (N/y) "
+
+# You can define a ROLE in the Environment. If we dont have an ENV
+# Look for a file called .dotfile_role in your home directory
+DOTFILE_ROLE_PATH="$HOME/.dotfile_role"
+[[ -f "$DOTFILE_ROLE_PATH" ]] && FILE_ROLE=$(cat "$DOTFILE_ROLE_PATH")
+[[ $ROLE == "" ]] && [[ -f "$DOTFILE_ROLE_PATH" ]] && ROLE=$(cat "$DOTFILE_ROLE_PATH")
+# If we dont have a .dotfile_role in your home directory lets create one
+[[ $ROLE != $FILE_ROLE ]] && echo "$ROLE" > "$DOTFILE_ROLE_PATH"
+# If we dont find a role then prompt the user for ALL of them.
+if [[ $ROLE == "" ]]; then
+  AVAILABLE_ROLES=$(ls -1 "$DOTREPO/setup/roles/"|cut -d. -f1|tr '\n' ' ')
+  msg "${UL}No Role defined."
+  prompt "Y = Select a role. N = Choose profiles to run. (Y/n) "
+  read -r REPLY < /dev/tty
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    prompt "Available roles: $AVAILABLE_ROLES"
+    read -r ROLE < /dev/tty
+  fi
+  if [[ $ROLE != "" ]]; then
+    prompt "Do you want to install extra tools? You will be prompted for each one. (N/y) "
     read -r REPLY < /dev/tty
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-      source "$FILE"
+      for FILE in $(find "$DOTREPO/setup/profiles" -type f -name "*.sh"); do
+        # Get the name of the file as the extra item we are installing
+        PROFILE=$(basename "$FILE"|cut -d. -f1)
+        # Skip the common profile since we already included it
+        [[ $PROFILE == "COMMON" ]] && continue
+        # Get the second line for a description to the user
+        DESC=$(sed -n '2p' "$FILE")
+        prompt "Install ${PROFILE} -- ${DESC} (N/y) "
+        read -r REPLY < /dev/tty
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+          source "$FILE"
+        fi
+      done
     fi
-  done
+  fi
+else
+  msg "${UL}The Role for this system is: $ROLE"
+  source "$DOTREPO/setup/roles/$ROLE.sh"
 fi
 
 echo
