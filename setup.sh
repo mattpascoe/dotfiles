@@ -89,12 +89,14 @@ DOTFILE_ROLE_PATH="$HOME/.dotfile_role"
 [[ $ROLE != $FILE_ROLE ]] && echo "$ROLE" > "$DOTFILE_ROLE_PATH"
 # If we dont find a role then prompt the user for ALL of them.
 if [[ $ROLE == "" ]]; then
-  AVAILABLE_ROLES=$(ls -1 "$DOTREPO/setup/roles/"|cut -d. -f1|tr '\n' ' ')
+  AVAILABLE_ROLES=$(ls -1 "$DOTREPO/setup/roles/"|cut -d. -f1)
   msg "${UL}No Role defined."
   prompt "Y = Select a role. N = Choose profiles to run. (Y/n) "
   read -r REPLY < /dev/tty
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    prompt "Available roles: $AVAILABLE_ROLES"
+  if [[ $REPLY =~ ^[Nn]$ ]]; then
+    msg "${UL}${BOLD}${GRN}Available roles:
+    $AVAILABLE_ROLES"
+    prompt "Enter role name:"
     read -r ROLE < /dev/tty
   else
     prompt "Do you want to install extra tools? You will be prompted for each one. (N/y) "
