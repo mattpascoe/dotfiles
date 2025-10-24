@@ -79,7 +79,7 @@ if [[ $ROLE == "" ]]; then
   msg "${UL}No Role defined."
   msg "${UL}${BOLD}${GRN}Available roles:${NC}"
   # List the available roles and description
-  for FILE in $(find "$DOTREPO/setup/roles" -type f -name "*.sh"); do
+  for FILE in $(find "$DOTREPO/setup/roles" -type f -name "[0-9a-zA-Z]*.sh"); do
     # Get the name of the file as the extra item we are installing
     ROLE=$(basename "$FILE"|cut -d. -f1)
     # Get the second line for a description to the user

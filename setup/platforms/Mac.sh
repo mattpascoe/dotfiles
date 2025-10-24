@@ -79,8 +79,10 @@ prompt "Execute 'defaults' commands to set specific Mac settings... Continue (N/
 read -r REPLY < /dev/tty
 if [[ $REPLY =~ ^[Yy]$ ]]; then
   # Running with and without sudo as I seem to get different behaviors?
-  "$DOTREPO/setup/.macos.sh"
-  sudo "$DOTREPO/setup/.macos.sh"
+  msg "${BLU}Running as normal user."
+  "$DOTREPO/setup/profiles/_macos.sh"
+  msg "${BLU}Running again with sudo."
+  sudo "$DOTREPO/setup/profiles/_macos.sh"
 else
   msg "${BLU}Skipping defaults based config changes."
 fi
