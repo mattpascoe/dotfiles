@@ -68,12 +68,13 @@ fi
 
 # You can define a ROLE in the Environment. If we dont have an ENV
 # Look for a file called .dotfile_role in your home directory
+FILE_ROLE=""
 DOTFILE_ROLE_PATH="$HOME/.dotfile_role"
+# Get the current role from the file if it exists
 [[ -f "$DOTFILE_ROLE_PATH" ]] && FILE_ROLE=$(cat "$DOTFILE_ROLE_PATH")
+# If we have no role in the ENV but we do have a file, use the file
 [[ $ROLE == "" ]] && [[ -f "$DOTFILE_ROLE_PATH" ]] && ROLE=$(cat "$DOTFILE_ROLE_PATH")
-# If we dont have a .dotfile_role in your home directory lets create one
-[[ $ROLE != $FILE_ROLE ]] && echo "$ROLE" > "$DOTFILE_ROLE_PATH"
-# If we dont find a role then prompt the user for ALL of them.
+# If we dont find a role then prompt the user if they want to pick one.
 if [[ $ROLE == "" ]]; then
   AVAILABLE_ROLES=$(ls -1 "$DOTREPO/setup/roles/"|cut -d. -f1)
   msg "${UL}No Role defined."
@@ -89,6 +90,8 @@ $AVAILABLE_ROLES"
   fi
 fi
 [[ $ROLE != "" ]] && msg "${UL}The Role for this system is: $ROLE"
+# If our role does not match what is in the local file, update it
+[[ $ROLE != "" ]] && [[ $ROLE != $FILE_ROLE ]] && echo "$ROLE" > "$DOTFILE_ROLE_PATH"
 
 # STEP 5: Run the common.sh script that EVERYONE should run
 echo
