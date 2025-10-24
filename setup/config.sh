@@ -29,7 +29,6 @@ BREW_PKGS+=(
   # Some common packages
   "bat"
   "eza"
-  "fzf"
   "highlight"
   "jq"
   "tree"

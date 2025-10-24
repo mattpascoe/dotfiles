@@ -1,9 +1,12 @@
 #!/bin/bash
 # Slack messaging app
 
-# Get linux os type
-[ -f /etc/os-release ] && . /etc/os-release
+source setup/setup_lib.sh
+
+PKG_NAME=slack
 case "$ID" in
+  #arch*)
+  #  sudo pacman --needed --noconfirm -Sy "$PKG_NAME" ;;
   debian*|ubuntu*)
     ARCH=${ARCH:-$(uname -m)}; ARCH=${ARCH/aarch64/arm64}
     if [[ $ARCH == "arm64" ]]; then
@@ -25,8 +28,14 @@ case "$ID" in
       sudo rm /tmp/slack.deb
     fi
     ;;
-  #arch*)
-  #  sudo pacman --needed --noconfirm -Sy slack ;;
+  macos*)
+    if brew list "$PKG_NAME" >/dev/null 2>&1; then
+      msg "${BLU}Already installed via brew on Mac."
+    else
+      msg "${GRN}Installing..."
+      brew install "$PKG_NAME"
+    fi
+    ;;
   *)
     echo "-!- Install not supported."
     ;;

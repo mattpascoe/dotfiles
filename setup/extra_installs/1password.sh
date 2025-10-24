@@ -1,9 +1,12 @@
 #!/bin/bash
 # 1password password manager and tools
 
-# Get linux os type
-[ -f /etc/os-release ] && . /etc/os-release
+source setup/setup_lib.sh
+
+PKG_NAME=1password
 case "$ID" in
+  #arch*)
+  #  sudo pacman --needed --noconfirm -Sy "$PKG_NAME" ;;
   debian*|ubuntu*)
     tmpdir=$(mktemp -d)
     ARCH=${ARCH:-$(uname -m)}; ARCH=${ARCH/aarch64/arm64}
@@ -32,8 +35,14 @@ case "$ID" in
     ARCH=${ARCH:-$(uname -m)}; ARCH=${ARCH/aarch64/arm64}
     rm -rf "$tmpdir"
     ;;
-  #arch*)
-  #  sudo pacman --needed --noconfirm -Sy 1password ;;
+  macos*)
+    if brew list "$PKG_NAME" >/dev/null 2>&1; then
+      msg "${BLU}Already installed via brew on Mac."
+    else
+      msg "${GRN}Installing..."
+      brew install "$PKG_NAME"
+    fi
+    ;;
   *)
     echo "-!- Install not supported."
     ;;

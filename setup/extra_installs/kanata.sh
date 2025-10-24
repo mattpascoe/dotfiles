@@ -2,12 +2,21 @@
 # Kanata keyboard mapper and layers
 
 # This does not install the cmd_allowed version of kanata
-#
-# Get linux os type
-[ -f /etc/os-release ] && . /etc/os-release
+
+source setup/setup_lib.sh
+
+PKG_NAME=kanata
 case "$ID" in
-  #debian*|ubuntu*)
-  # Should work on anyone as long as it is x86 based
+  macos*)
+    # This may still need some karabiner-hiddriver stuff and whatever comes with that
+    if brew list "$PKG_NAME" >/dev/null 2>&1; then
+      msg "${BLU}Already installed via brew on Mac."
+    else
+      msg "${GRN}Installing..."
+      brew install "$PKG_NAME"
+    fi
+    ;;
+  # Should work on any linux system as long as it is x86 based
   *)
     tmpdir=$(mktemp -d)
     ARCH=${ARCH:-$(uname -m)}; ARCH=${ARCH/aarch64/arm64}
@@ -39,8 +48,5 @@ EOF
       echo "-!- Install not supported on ARM."
     fi
     ;;
-  #*)
-  #  echo "-!- Install not supported."
-  #  ;;
 esac
 
