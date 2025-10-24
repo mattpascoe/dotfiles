@@ -9,12 +9,31 @@
 # each platform.sh script will then determin a release type and call setup/PLATFORM/RELEASE-ID.sh
 
 # ---- Set some defaults for initial direct curl/wget based installs
-# I dont like that I have to set most the same library stuff here but its required
-# to not have to have a separate install script. Maybe I dont actually need a 
+# I dont like that I have to set all the same library stuff here but its required
+# to not have to have a separate install script. Maybe I dont actually need a
 # separate library anyway??
-# Some of these things are also in config and the setup library.
+# Some of these things are also in config
 DOTREPO="$HOME/.dotfiles"
 DOTREPO_URL=https://github.com/mattpascoe/dotfiles
+
+# Colors/formatting
+UL="\033[4m" # underline
+NC="\033[0m" # no color/format
+YEL="\033[33m"
+BLU="\033[34m"
+RED="\033[31m"
+GRN="\033[32m"
+BOLD="\033[1m"
+
+function msg() {
+  command echo -e "${BOLD}${YEL}$*${NC}"
+}
+function prompt() {
+  command echo -e "${BOLD}${GRN}$*${NC}\c"
+}
+
+# Check if USER is set and try a fallback
+USER="${USER:-$(whoami)}"
 
 # Determine what type of machine we are on
 unameOut="$(uname -s)"
@@ -29,20 +48,10 @@ case "${unameOut}" in
     MINGW*)     PLATFORM=MinGw;;
     *)          PLATFORM="UNKNOWN:${unameOut}"
 esac
-[[ -f /etc/os-release ]] && source /etc/os-release
-# Colors/formatting
-UL="\033[4m" # underline
-NC="\033[0m" # no color/format
-YEL="\033[33m"
-BLU="\033[34m"
-RED="\033[31m"
-GRN="\033[32m"
-BOLD="\033[1m"
 
-function msg() {
-  command echo -e "${BOLD}${YEL}$*${NC}"
-}
+[[ -f /etc/os-release ]] && source /etc/os-release
 # END inital library setup
+
 msg "${BLU}Dotfile repo location: $DOTREPO."
 msg "${BLU}Looks like we are a $PLATFORM system."
 msg "${BLU}Looks like the OS is ${PRETTY_NAME}."
