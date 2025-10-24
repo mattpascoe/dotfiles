@@ -1,6 +1,19 @@
 #!/bin/bash
 # Nvim editor
 
+source setup/setup_lib.sh
+
+# Mac platform
+if [ "$PLATFORM" == "Mac" ]; then
+  PKG_NAME=nvim
+  if brew info "$PKG_NAME" >/dev/null 2>&1; then
+    msg "${BLU}Already installed via brew on Mac."
+  else
+    msg "${GRN}Installing..."
+    brew install "$PKG_NAME"
+fi
+
+# Posix platforms
 # Get linux os type
 [ -f /etc/os-release ] && . /etc/os-release
 case "$ID" in
@@ -28,4 +41,3 @@ case "$ID" in
     echo "-!- Install not supported."
     ;;
 esac
-
