@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source setup/config.sh
+
 msg "${BLU}Ensuring install of requested base packages..."
 case "$ID" in
   debian*|ubuntu*)

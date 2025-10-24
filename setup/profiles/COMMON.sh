@@ -87,10 +87,5 @@ do
   fi
 done
 
-# Run <prefix> + I to install plugins the first time
-if [ ! -d "$HOME/.config/tmux/plugins/tpm" ];then
-  msg "${UL}Installing TMUX plugin manager."
-  git clone https://github.com/tmux-plugins/tpm "$HOME/.config/tmux/plugins/tpm"
-  msg "${UL}Installing TMUX plugins. You may need to run <prefix> + I to install plugins if this doesn't work"
-  eval "$HOME/.config/tmux/plugins/tpm/bin/install_plugins"
-fi
+# Ensure Tmux is installed
+source "$PROFILE_DIR/tmux.sh"
