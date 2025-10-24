@@ -14,6 +14,7 @@ then
 fi
 
 # Add $HOME/bin to PATH so we can install and use binaries during this install
+mkdir -p "$HOME/bin"
 export PATH="$HOME/bin:$PATH"
 # Everyone gets starship!
 # This installs in $HOME/bin
