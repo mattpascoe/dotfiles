@@ -1,22 +1,36 @@
-#!/usr/bin/env zsh
-# This script is for Keri and her settings. It will first run setup.sh then apply these changes
+#!/bin/bash
+# Keri's mac environment setup
 
-# Basically, on Keris system, just run this.
+PROFILES=(
+  1password
+  brave-browser
+  ghostty
+  neovim
+  zoom
+)
 
-#~/dotfiles/setup.sh
+PROFILE_DIR="$DOTREPO"/setup/profiles
+for PROFILE in "${PROFILES[@]}"; do
+  # Check that it actually exists
+  if [ ! -f "$PROFILE_DIR/$PROFILE.sh" ]; then
+    msg "${RED}-!- Profile $PROFILE does not exist. Skipping."
+    continue
+  fi
+  # Get the second line for a description to the user
+  DESC=$(sed -n '2p' "$PROFILE_DIR/$PROFILE.sh")
+  msg "Installing ${PROFILE} -- ${DESC}"
+  source "$PROFILE_DIR/$PROFILE.sh"
+done
 
-echo
-msg "---- Applying Keri's settings -----"
+# TODO: Turn these into profiles
+brew install -q \
+  spotify \
+  quicken \
+  google-chrome
 
-msg "- Ensuring install of Keri's brew packages..."
-brew install -q zoom spotify quicken google-chrome
-
+# MAC OS settings that differ from the ones I set globally
 # Enable DarkMode
 osascript -e 'tell application "System Events" to tell appearance preferences to set dark mode to 0'
-
-# Ask for the administrator password upfront
-# Shouldnt need this as it was done in the other startup.sh
-#sudo -v
 
 # Show icons for hard drives, servers, and removable media on the desktop
 defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool false
@@ -48,7 +62,6 @@ msg "${BLU}
 #
 # Still need to install extensions,  manually just re-install those.
 #  1password - password manager
-#  Grammarly
 #  Pintrest save button
 #  Rakuten
 #  RetailMeNot deal finder
@@ -57,10 +70,7 @@ msg "${BLU}
 #  setexifdata
 #  silhouette
 
-
 # Real sync of files before syncthing, the issue is not data but file times
 # rsync -avhn keri@10.1.1.240:Data/ ~/Data
 # after you have files.. set up syncthing by pausing the old server and adding the new one as a recieve just to make sure things are all in sync still.. then you can switch to send.
 "
-
-msg "---- DONE Applying Keri's settings -----"
