@@ -29,8 +29,8 @@ brew install -q \
   google-chrome
 
 # MAC OS settings that differ from the ones I set globally
-# Enable DarkMode
-osascript -e 'tell application "System Events" to tell appearance preferences to set dark mode to 0'
+# Disable DarkMode
+#osascript -e 'tell application "System Events" to tell appearance preferences to set dark mode to 0'
 
 # Show icons for hard drives, servers, and removable media on the desktop
 defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool false
