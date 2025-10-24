@@ -70,6 +70,7 @@ echo
 if [ -f /etc/unraid-version ]; then
   source "${DOTREPO}/setup/unraid.sh"
 else
+  msg "${UL}Running the ${PLATFORM} platform setup script..."
   source "${DOTREPO}/setup/${PLATFORM}.sh"
 fi
 

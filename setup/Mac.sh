@@ -1,7 +1,5 @@
 #!/bin/bash
 
-msg "${UL}Running the Mac setup script..."
-
 # Run NIX if we want
 #  msg "${GRN}Install NIX based packages... Continue (N/y) \c"
 #  read -r REPLY < /dev/tty

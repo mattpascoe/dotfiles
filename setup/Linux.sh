@@ -1,6 +1,5 @@
 #!/bin/bash
 
-msg "${UL}Running the Linux setup script..."
 msg "${BLU}Ensuring install of requested base packages..."
 case "$ID" in
   debian*|ubuntu*)
