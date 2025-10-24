@@ -13,7 +13,7 @@
 # to not have to have a separate install script. Maybe I dont actually need a
 # separate library anyway??
 # Some of these things are also in config
-DOTREPO="$HOME/.dotfiles"
+DOTREPO="$HOME/dotfiles"
 DOTREPO_URL=https://github.com/mattpascoe/dotfiles
 
 # Colors/formatting
