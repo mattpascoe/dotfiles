@@ -66,7 +66,6 @@ case "$ID" in
     sudo pacman --disable-sandbox --needed --noconfirm -Syu "${LINUX_PKGS[@]}"
     ;;
   macos*)
-    BREWPATH=/opt/homebrew/bin
     "$BREWPATH/brew" install -q "${BREW_PKGS[@]}"
     ;;
   *)

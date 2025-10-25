@@ -2,6 +2,7 @@
 # This role is for Matts standard Mac desktop setup
 
 PROFILES=(
+  desktop
   1password
   aichat
   brave-browser

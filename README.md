@@ -30,14 +30,15 @@ pacman -Syu wget sudo
 
 When `setup.sh` is run, it will determine the Platform and Role of the system through
 various means. It will then apply configuration in the following order:
+* The `Platform` definition. Basically the basic OS specific configuration
 * The `COMMON.sh` profile
-* The `Platform` definition
-* Then anything defined by the selected `Role`. Default role is `basic`
-
+* Then anything defined by the selected `Role`.
 
 # Platform
 A Platform is simply just the high level OS environment type.  Linux or Mac or Windows for example.
 This is determined by uname -s and other attributes within /etc/os-release for example.
+
+Not much is done here usually. It just makes sure certain low level things are done like pacakge management setup.
 
 # Roles and Profiles
 In a similar way to the puppet roles and profiles pattern I have structured things similarly.

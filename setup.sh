@@ -142,9 +142,6 @@ fi
 # If our role does not match what is in the local file, update it
 [[ $ROLE != "" ]] && [[ $ROLE != $FILE_ROLE ]] && echo "$ROLE" > "$DOTFILE_ROLE_PATH"
 
-# Run the COMMON.sh script that EVERYONE should run
-source "${DOTREPO}/setup/profiles/COMMON.sh"
-
 # Call the PLATFORM specific setup scripts
 # Unraid is special so just call it here
 if [ -f /etc/unraid-version ]; then
@@ -153,6 +150,9 @@ else
   msg "\n${UL}Running the ${PLATFORM} platform setup script"
   source "${DOTREPO}/setup/platforms/${PLATFORM}.sh"
 fi
+
+# Run the COMMON.sh script that EVERYONE should run
+source "${DOTREPO}/setup/profiles/COMMON.sh"
 
 # Actually process the role or prompt for individual profiles
 if [[ $ROLE == "" ]]; then
