@@ -121,7 +121,9 @@ do
 done
 
 # Ensure Tmux is installed
+msg "Installing tmux -- tmux terminal multiplexer"
 source "$DOTREPO/setup/profiles/tmux.sh"
 
 # Everyone should have a good nerdfont
+msg "Installing nerdfots -- fancy icons for your terminal"
 source "$DOTREPO/setup/profiles/nerdfonts.sh"

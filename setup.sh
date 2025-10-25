@@ -133,7 +133,7 @@ if [[ $ROLE == "" ]]; then
   prompt "Enter role name (enter for DEFAULT): "
   read -r ROLE < /dev/tty
 fi
-[[ $ROLE != "" ]] && msg "\n${UL}The Role for this system is: $ROLE"
+[[ $ROLE != "" ]] && msg "${BLU}The Role for this system is: $ROLE"
 # If our role does not match what is in the local file, update it
 [[ $ROLE != "" ]] && [[ $ROLE != $FILE_ROLE ]] && echo "$ROLE" > "$DOTFILE_ROLE_PATH"
 
@@ -161,7 +161,6 @@ else
   fi
 fi
 
-echo
 msg "\n${UL}Setup complete."
 msg "You should probably reboot if this is your first run"
 msg "OR at least log out or start a 'tmux' session to utilize new shell changes."
