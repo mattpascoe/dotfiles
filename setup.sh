@@ -57,11 +57,10 @@ msg "${BLU}Looks like we are a $PLATFORM system."
 msg "${BLU}Looks like the OS is ${PRETTY_NAME}."
 
 # Check for and install git if needed
-msg "${UL}Checking for Git"
 if ! command -v "git" &> /dev/null; then
+  msg "\n${UL}Installing Git"
   case "$ID" in
   debian*|ubuntu*)
-#??    sudo apt update -y
     sudo apt install -y git
     ;;
   arch*)
@@ -82,8 +81,8 @@ if ! command -v "git" &> /dev/null; then
     exit 1
     ;;
   esac
+  msg "${BLU}Git is installed."
 fi
-msg "${GRN}Git is installed."
 
 # Ensure we have a clone of dotfiles repo
 # Test if the dotfiles dir already exists.
@@ -121,8 +120,8 @@ DOTFILE_ROLE_PATH="$HOME/.dotfile_role"
 [[ $ROLE == "" ]] && [[ -f "$DOTFILE_ROLE_PATH" ]] && ROLE=$(cat "$DOTFILE_ROLE_PATH")
 # If we dont find a role then prompt the user if they want to pick one.
 if [[ $ROLE == "" ]]; then
-  msg "${UL}No Role defined."
-  msg "${UL}${BOLD}${GRN}Available roles:${NC}"
+  msg "\n${UL}No Role defined, please select one."
+  msg "${GRN}Available roles:${NC}"
   # List the available roles and description
   for FILE in $(find "$DOTREPO/setup/roles" -type f -name "[0-9a-zA-Z]*.sh"); do
     # Get the name of the file as the extra item we are installing
@@ -134,14 +133,12 @@ if [[ $ROLE == "" ]]; then
   prompt "Enter role name (enter for DEFAULT): "
   read -r ROLE < /dev/tty
 fi
-[[ $ROLE != "" ]] && msg "${UL}The Role for this system is: $ROLE"
+[[ $ROLE != "" ]] && msg "\n${UL}The Role for this system is: $ROLE"
 # If our role does not match what is in the local file, update it
 [[ $ROLE != "" ]] && [[ $ROLE != $FILE_ROLE ]] && echo "$ROLE" > "$DOTFILE_ROLE_PATH"
 
 # Run the COMMON.sh script that EVERYONE should run
-echo
 source "${DOTREPO}/setup/profiles/COMMON.sh"
-echo
 
 # Call the PLATFORM specific setup scripts
 # Unraid is special so just call it here
@@ -156,7 +153,7 @@ fi
 if [[ $ROLE == "" ]]; then
   source "${DOTREPO}/setup/roles/DEFAULT.sh"
 else
-  msg "${UL}Running the ${ROLE} role setup script..."
+  msg "\n${UL}Running the ${ROLE} role setup script..."
   if [ ! -f "$DOTREPO/setup/roles/$ROLE.sh" ]; then
     msg "${RED}-!- Role $ROLE does not exist."
   else
@@ -165,6 +162,6 @@ else
 fi
 
 echo
-msg "${UL}Setup complete."
+msg "\n${UL}Setup complete."
 msg "You should probably reboot if this is your first run"
 msg "OR at least log out or start a 'tmux' session to utilize new shell changes."

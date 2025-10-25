@@ -9,14 +9,14 @@
 # Ensure $HOME/data exists. Also used in _macos.sh script
 if [ ! -d "$HOME"/data ]
 then
-  msg "${UL}Creating $HOME/data directory. PUT YOUR DATA HERE!"
+  msg "${BLU}Creating $HOME/data directory. PUT YOUR DATA HERE!"
   mkdir -p "$HOME"/data
 fi
 
 # Ensure zsh is default if its available
 if command -v "zsh" &> /dev/null; then
   if [ "$(grep "$USER" /etc/passwd|cut -d: -f7)" != "/bin/zsh" ]; then
-    msg "${BLU}Switching default shell to ZSH..."
+    msg "${BLU}Switching default shell to ZSH"
     sudo usermod -s /bin/zsh "$USER"
   fi
 fi
@@ -31,10 +31,11 @@ if ! command -v "starship" &> /dev/null; then
   prompt "Do you want to install Starship.rs prompt? (N/y) "
   read -r REPLY < /dev/tty
   if [[ $REPLY =~ ^[Yy]$ ]]; then
+    msg "\n${UL}Installing Starship prompt"
     eval "$SHIP_INST"
   fi
 else
-  msg "${UL}Starship is already installed. Running installer again to get updates..."
+  msg "\n${UL}Starship is already installed. Running installer again to get updates"
   eval "$SHIP_INST"
 fi
 # Starship installer leaves a bunch of mktemp dirs all over. This will clean them up even ones that are not ours!
@@ -50,17 +51,18 @@ FZF_INST="curl -fsSL https://raw.githubusercontent.com/junegunn/fzf/master/insta
 "
 pushd "$HOME" >/dev/null || exit
 if ! command -v "fzf" &> /dev/null; then
+  msg "\n${UL}Installing FZF tools"
   eval "$FZF_INST"
 else
-  msg "${UL}FZF is already installed. Running installer again to get updates..."
+  msg "\n${UL}FZF is already installed. Running installer again to get updates"
   eval "$FZF_INST"
 fi
 popd >/dev/null || exit
 
-echo
-msg "${UL}Ensuring install of requested base packages..."
+msg "\n${UL}Ensuring install of requested base packages"
 case "$ID" in
   debian*|ubuntu*)
+    sudo apt update -y
     sudo apt install -y "${LINUX_PKGS[@]}"
     # Also set timezone
     sudo timedatectl set-timezone "$TIMEZONE"
@@ -99,8 +101,7 @@ LINKFILES+=(
   ".vimrc"
   ".zshrc"
 )
-echo
-msg "${UL}Checking dotfile config symlinks..."
+msg "\n${UL}Checking dotfile config symlinks"
 if [ ! -d "$HOME/.config" ]; then
   mkdir -p "$HOME/.config"
 fi
@@ -108,10 +109,10 @@ for FILE in "${LINKFILES[@]}"
 do
   if [ ! -L "$HOME/$FILE" ]; then
     if [ -e "$HOME/$FILE" ]; then
-      msg "${UL}Backing up current file to ${FILE}.bak"
+      msg "${BLU}Backing up current file to ${FILE}.bak"
       mv "$HOME/$FILE" "$HOME/$FILE.bak"
     fi
-    msg "${UL}Linking file $HOME/$FILE -> $DOTREPO/$FILE"
+    msg "${BLU}Linking file $HOME/$FILE -> $DOTREPO/$FILE"
     ln -s "$DOTREPO/$FILE" "$HOME/$FILE"
   else
     echo -n "Found link: "
