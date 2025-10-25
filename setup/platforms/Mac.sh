@@ -35,11 +35,10 @@ if ! command -v "brew" &> /dev/null; then
   NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
-BREWPATH=/opt/homebrew/bin
 
 # Load up brew environment, should work on ARM intel systems.
-if [ -f $BREWPATH/brew ] &> /dev/null; then
-  eval "$($BREWPATH/brew shellenv)"
+if [ -f "$BREWPATH"/brew ] &> /dev/null; then
+  eval "$("$BREWPATH"/brew shellenv)"
 else
   msg "${RED}-!- ERROR: Unable to find Brew command. Please install Brew and try again."
 fi
@@ -49,10 +48,10 @@ prompt "Execute 'defaults' commands to set specific Mac settings... Continue (N/
 read -r REPLY < /dev/tty
 if [[ $REPLY =~ ^[Yy]$ ]]; then
   # Running with and without sudo as I seem to get different behaviors?
-  msg "${BLU}Running as normal user."
+#  msg "${BLU}Running as normal user."
   "$DOTREPO/setup/profiles/_macos.sh"
-  msg "${BLU}Running again with sudo."
-  sudo "$DOTREPO/setup/profiles/_macos.sh"
+#  msg "${BLU}Running again with sudo."
+#  sudo "$DOTREPO/setup/profiles/_macos.sh"
 else
   msg "${BLU}Skipping defaults based config changes."
 fi
