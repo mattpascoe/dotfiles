@@ -27,52 +27,5 @@ if command -v "zsh" &> /dev/null; then
   fi
 fi
 
-# NOTE: When installing the first time, some of the settings and gnome extensions wont work until you reboot.
-#       You will just have to re-run setup.sh one more time to make it complete. The complexity is not worth the effort.
-# Get the desktop environment
-DESK=${XDG_CURRENT_DESKTOP:-UNKNOWN}
-case "${DESK}" in
-  *GNOME) source "$DOTREPO/setup/profiles/_gnome.sh";;
-  UNKNOWN)
-    # We'll assume one is not installed.
-    prompt "Do you want to install Gnome desktop? (N/y) "
-    read -r REPLY < /dev/tty
-    case "$ID" in
-      ubuntu*)
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-          sudo apt install -y ubuntu-desktop-minimal rsyslog
-          sudo systemctl set-default graphical.target
-          export DESK="GNOME"
-          source "$DOTREPO/setup/profiles/_gnome.sh"
-          msg "${BLU}You will need to reboot and run setup.sh again to complete the install."
-        fi
-        ;;
-      arch*)
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-          sudo pacman --disable-sandbox --needed --noconfirm -Sy gnome
-          sudo systemctl set-default graphical.target
-          #sudo systemctl enable --now gdm
-          export DESK="GNOME"
-          source "$DOTREPO/setup/profiles/_gnome.sh"
-          msg "${BLU}You will need to reboot and run setup.sh again to complete the install."
-        fi
-        ;;
-      *)
-        ;;
-    esac
-    ;;
-  *) msg "${RED}-!- ${DESK} is not a managed desktop environment.";;
-esac
-
-# Ensure Nerd Fonts are installed
-if [[ ! -f /usr/local/share/fonts/MesloLGMNerdFontMono-Regular.ttf || ! -f /usr/local/share/fonts/MesloLGMNerdFontPropo-Regular.ttf ]]; then
-  # TODO: is it better to have fonts in ~/.local?
-  msg "${BLU}Installing Nerd Fonts..."
-  sudo mkdir -p /usr/local/share/fonts
-  sudo curl -s -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Meslo/M/Regular/MesloLGMNerdFontMono-Regular.ttf --output-dir /usr/local/share/fonts
-  sudo curl -s -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Meslo/M/Regular/MesloLGMNerdFontPropo-Regular.ttf --output-dir /usr/local/share/fonts
-  fc-cache -fv /usr/local/share/fonts
-fi
-
 # Set the console log level to 6 on arch
 [[ "$ID" == arch* ]] && sudo dmesg -n 6

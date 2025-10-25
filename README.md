@@ -28,6 +28,17 @@ On a basic Arch install you first need to run:
 pacman -Syu wget sudo
 ```
 
+When `setup.sh` is run, it will determine the Platform and Role of the system through
+various means. It will then apply configuration in the following order:
+* The `COMMON.sh` profile
+* The `Platform` definition
+* Then anything defined by the selected `Role`. Default role is `basic`
+
+
+# Platform
+A Platform is simply just the high level OS environment type.  Linux or Mac or Windows for example.
+This is determined by uname -s and other attributes within /etc/os-release for example.
+
 # Roles and Profiles
 In a similar way to the puppet roles and profiles pattern I have structured things similarly.
 

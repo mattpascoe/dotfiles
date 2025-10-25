@@ -36,18 +36,11 @@ BREW_PKGS+=(
   "jq"
   "tree"
   "tmux"
-  # Below are more Mac specific
-  "maccy"
-  "1password"
-  "brave-browser"
-  "ghostty"
+  # Below are more Mac specific, and dont require a full profile
   "bash"
-  "nvim"
   "ykman"
-  "jesseduffield/lazygit/lazygit"
   "shellcheck"
-  "font-meslo-lg-nerd-font"
-  "font-monaspace-nerd-font"
+  "maccy"
   "homebrew/cask/syncthing"
   #"michaelroosz/ssh/libsk-libfido2"
 )

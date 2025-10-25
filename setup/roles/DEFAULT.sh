@@ -1,17 +1,20 @@
 #!/bin/bash
-# DEFAULT will prompt you for each profile you want to install
+# A basic install with no desktop settings
 
-msg "${UL}Using Default role. You will be prompted for each profile individually."
-for FILE in $(find "$DOTREPO/setup/profiles" -type f -name "[0-9a-zA-Z]*.sh"); do
-  # Get the name of the file as the extra item we are installing
-  PROFILE=$(basename "$FILE"|cut -d. -f1)
-  # Skip the common profile since we already included it
-  [[ $PROFILE == "COMMON" ]] && continue
-  # Get the second line for a description to the user
-  DESC=$(sed -n '2p' "$FILE")
-  prompt "Install ${PROFILE} -- ${DESC} (N/y) "
-  read -r REPLY < /dev/tty
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    source "$FILE"
+PROFILES=(
+  lazygit
+  neovim
+)
+
+PROFILE_DIR="$DOTREPO"/setup/profiles
+for PROFILE in "${PROFILES[@]}"; do
+  # Check that it actually exists
+  if [ ! -f "$PROFILE_DIR/$PROFILE.sh" ]; then
+    msg "${RED}-!- Profile $PROFILE does not exist. Skipping."
+    continue
   fi
+  # Get the second line for a description to the user
+  DESC=$(sed -n '2p' "$PROFILE_DIR/$PROFILE.sh")
+  msg "Installing ${PROFILE} -- ${DESC}"
+  source "$PROFILE_DIR/$PROFILE.sh"
 done

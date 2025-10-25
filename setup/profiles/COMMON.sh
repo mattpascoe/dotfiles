@@ -49,6 +49,28 @@ else
 fi
 popd >/dev/null || exit
 
+msg "${BLU}Ensuring install of requested base packages..."
+case "$ID" in
+  debian*|ubuntu*)
+    sudo apt install -y "${LINUX_PKGS[@]}"
+    # Also set timezone
+    sudo timedatectl set-timezone "$TIMEZONE"
+    # Remove some useless crap
+    sudo apt purge -y whoopsie
+    ;;
+  arch*)
+    sudo dmesg -n 3 # Disable kernel messages since we are likely on a console
+    sudo pacman --disable-sandbox --needed --noconfirm -Syu "${LINUX_PKGS[@]}"
+    ;;
+  macos*)
+    "$BREWPATH"/brew install -q "${BREW_PKGS[@]}"
+    ;;
+  *)
+    msg "${RED}-!- This system is not a supported type, You should check that the following packages are installed:"
+    echo "    ${LINUX_PKGS[*]}"
+    ;;
+esac
+
 ###### Link dotfile configs, could I use stow or chezmoi.io? sure, but less dependancies here
 declare -a LINKFILES
 LINKFILES+=(
@@ -89,3 +111,6 @@ done
 
 # Ensure Tmux is installed
 source "$DOTREPO/setup/profiles/tmux.sh"
+
+# Everyone should have a good nerdfont
+source "$DOTREPO/setup/profiles/nerdfonts.sh"

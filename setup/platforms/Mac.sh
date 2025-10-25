@@ -29,49 +29,19 @@
 #    msg "${UL}.. Skipping NIX based config changes."
 #  fi
 
-# Run brew if we want
-prompt "Install Homebrew based packages... Continue (N/y) "
-read -r REPLY < /dev/tty
-if [ "$REPLY" == "y" ]; then
-  if ! command -v "brew" &> /dev/null; then
-    msg "${BLU}Installing Brew tools..."
-    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  fi
+# Install and setup Brew for package management
+if ! command -v "brew" &> /dev/null; then
+  msg "${BLU}Installing Brew tools..."
+  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
 
-  BREWPATH=/opt/homebrew/bin
+BREWPATH=/opt/homebrew/bin
 
-  # Load up brew environment, should work on ARM intel systems.
-  if [ -f $BREWPATH/brew ] &> /dev/null; then
-    eval "$($BREWPATH/brew shellenv)"
-
-    msg "${BLU}Ensuring install of requested brew packages..."
-    $BREWPATH/brew install -q \
-      maccy \
-      1password \
-      brave-browser \
-      ghostty \
-      jq \
-      fzf \
-      highlight \
-      tree \
-      ykman \
-      tmux \
-      bash \
-      nvim \
-      jesseduffield/lazygit/lazygit \
-      shellcheck \
-      eza \
-      font-meslo-lg-nerd-font \
-      font-monaspace-nerd-font \
-      homebrew/cask/syncthing \
-
-      #michaelroosz/ssh/libsk-libfido2 \
-  else
-    msg "${RED}-!- ERROR: Unable to find Brew command. Please install Brew and try again."
-  fi
-
+# Load up brew environment, should work on ARM intel systems.
+if [ -f $BREWPATH/brew ] &> /dev/null; then
+  eval "$($BREWPATH/brew shellenv)"
 else
-  msg "${BLU}Skipping Brew based config changes."
+  msg "${RED}-!- ERROR: Unable to find Brew command. Please install Brew and try again."
 fi
 
 # Setup lots of system settings using the "defaults" method
@@ -85,12 +55,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
   sudo "$DOTREPO/setup/profiles/_macos.sh"
 else
   msg "${BLU}Skipping defaults based config changes."
-fi
-
-# For some reason /usr/local/bin is not on mac by default. Lets make it for starship
-if [ ! -d /usr/local/bin ]; then
-  sudo mkdir -p /usr/local/bin
-  sudo chown $(whoami):admin /usr/local/bin
 fi
 
 msg "${BLU}
