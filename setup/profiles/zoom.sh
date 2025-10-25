@@ -8,7 +8,7 @@ case "$ID" in
   debian*|ubuntu*)
     ARCH=${ARCH:-$(uname -m)}; ARCH=${ARCH/aarch64/arm64}
     if [[ $ARCH == "arm64" ]]; then
-      echo "-!- Slack debian not supported on arm64."
+      echo "-!- Not supported on arm64."
     else
       curl -L -o /tmp/zoom.deb "https://zoom.us/client/latest/zoom_${ARCH}.deb"
       sudo apt install /tmp/zoom.deb -y

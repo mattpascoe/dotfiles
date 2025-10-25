@@ -37,7 +37,7 @@ EOF
       sudo systemctl enable kanata.service
       sudo systemctl start kanata.service
     else
-      echo "-!- Install not supported on ARM."
+      echo "-!- Not supported on arm64."
     fi
     ;;
 esac
