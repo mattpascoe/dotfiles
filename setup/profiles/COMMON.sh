@@ -66,7 +66,8 @@ case "$ID" in
     sudo pacman --disable-sandbox --needed --noconfirm -Syu "${LINUX_PKGS[@]}"
     ;;
   macos*)
-    "$BREWPATH"/brew install -q "${BREW_PKGS[@]}"
+    BREWPATH=/opt/homebrew/bin
+    "$BREWPATH/brew" install -q "${BREW_PKGS[@]}"
     ;;
   *)
     msg "${RED}-!- This system is not a supported type, You should check that the following packages are installed:"
