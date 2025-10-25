@@ -57,7 +57,8 @@ else
 fi
 popd >/dev/null || exit
 
-msg "${BLU}Ensuring install of requested base packages..."
+echo
+msg "${UL}Ensuring install of requested base packages..."
 case "$ID" in
   debian*|ubuntu*)
     sudo apt install -y "${LINUX_PKGS[@]}"
@@ -98,6 +99,7 @@ LINKFILES+=(
   ".vimrc"
   ".zshrc"
 )
+echo
 msg "${UL}Checking dotfile config symlinks..."
 if [ ! -d "$HOME/.config" ]; then
   mkdir -p "$HOME/.config"
