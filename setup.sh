@@ -91,10 +91,16 @@ if [ ! -d "$DOTREPO" ]; then
   git clone "$DOTREPO_URL" "$DOTREPO"
 else
   msg "${BLU}A clone of dotfiles git repo already exists in $DOTREPO."
-#  echo "Updating dotfiles..."
-#  cd "$DOTREPO" || exit
-#  git pull >/dev/null
-#  cd - > /dev/null || exit
+  pushd "$DOTREPO" >/dev/null || exit
+  git fetch --all --tags
+  CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+  BEHIND_COUNT=$(git rev-list --count HEAD..origin/"$CURRENT_BRANCH" || echo "unknown")
+  if [ "$BEHIND_COUNT" -gt 0 ]; then
+    msg "!! Dotfile repo is NOT up to date on branch $CURRENT_BRANCH."
+  else
+    msg "${BLU}Dotfile repo is up to date on branch $CURRENT_BRANCH."
+  fi
+  popd >/dev/null || exit
 fi
 # ---- This ends the section for first time curl/wget based installs. The rest runs from the repo.
 
