@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+source setup/config.sh
+
 # A way to find what these items are:
 # defaults read > before
 # - make your change
@@ -8,15 +10,15 @@
 
 # ~/.macos — https://mths.be/macos
 
+# Ask for the administrator password upfront
+sudo -v
+
 # Close any open System Preferences panes, to prevent them from overriding
 # settings we’re about to change
 osascript -e 'tell application "System Preferences" to quit'
 
 # Enable DarkMode
 osascript -e 'tell application "System Events" to tell appearance preferences to set dark mode to 1'
-
-# Ask for the administrator password upfront
-sudo -v
 
 # Keep-alive: update existing `sudo` time stamp until `.macos` has finished
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
@@ -71,7 +73,7 @@ echo "General UI/UX settings.."
 #	"/System/Library/CoreServices/Menu Extras/Battery.menu"
 
 # Reduce motion (does not seem to actually work?)
-defaults write com.apple.universalaccess reduceMotion -bool true
+#defaults write com.apple.universalaccess reduceMotion -bool true
 
 # Hide spotlight menubar icon
 defaults write com.apple.Spotlight MenuItemHidden -int 1
@@ -810,8 +812,8 @@ defaults write com.apple.ActivityMonitor SortDirection -int 0
 # Address Book, Dashboard, iCal, TextEdit, and Disk Utility                   #
 ###############################################################################
 
-# Enable the debug menu in Address Book
-defaults write com.apple.addressbook ABShowDebugMenu -bool true
+# Enable the debug menu in Address Book, nolonger works?
+#defaults write com.apple.addressbook ABShowDebugMenu -bool true
 
 # Enable Dashboard dev mode (allows keeping widgets on the desktop)
 defaults write com.apple.dashboard devmode -bool true
@@ -907,9 +909,9 @@ defaults write com.google.Chrome.canary PMPrintingExpandedStateForPrint2 -bool t
 # GPGMail 2                                                                   #
 ###############################################################################
 
-# Disable signing emails by default
-defaults write ~/Library/Preferences/org.gpgtools.gpgmail SignNewEmailsByDefault -bool false
-defaults write ~/Library/Preferences/org.gpgtools.gpgmail OptionallyEncryptDrafts -bool false
+# Disable signing emails by default, no longer works? comment out for now since I dont use it
+#defaults write ~/Library/Preferences/org.gpgtools.gpgmail SignNewEmailsByDefault -bool false
+#defaults write ~/Library/Preferences/org.gpgtools.gpgmail OptionallyEncryptDrafts -bool false
 
 ###############################################################################
 # Maccy.app                                                                #
