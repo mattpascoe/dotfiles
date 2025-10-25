@@ -82,6 +82,14 @@ case "$ID" in
     ;;
 esac
 
+# Ensure Tmux is installed
+msg "Installing tmux -- # TMUX terminal multiplexer"
+source "$DOTREPO/setup/profiles/tmux.sh"
+
+# Everyone should have a good nerdfont
+msg "Installing nerdfots -- # Fancy icons for your terminal"
+source "$DOTREPO/setup/profiles/nerdfonts.sh"
+
 ###### Link dotfile configs, could I use stow or chezmoi.io? sure, but less dependancies here
 declare -a LINKFILES
 LINKFILES+=(
@@ -93,7 +101,6 @@ LINKFILES+=(
   #".config/kitty"
   ".config/lazygit"
   ".config/nvim"
-  #".config/rofi"
   ".config/starship.toml"
   ".config/tmux"
   ".config/zk"
@@ -119,11 +126,3 @@ do
     ls -o "$HOME/$FILE"
   fi
 done
-
-# Ensure Tmux is installed
-msg "Installing tmux -- tmux terminal multiplexer"
-source "$DOTREPO/setup/profiles/tmux.sh"
-
-# Everyone should have a good nerdfont
-msg "Installing nerdfots -- fancy icons for your terminal"
-source "$DOTREPO/setup/profiles/nerdfonts.sh"

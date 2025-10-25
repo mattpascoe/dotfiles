@@ -145,7 +145,7 @@ source "${DOTREPO}/setup/profiles/COMMON.sh"
 if [ -f /etc/unraid-version ]; then
   source "${DOTREPO}/setup/platforms/unraid.sh"
 else
-  msg "${UL}Running the ${PLATFORM} platform setup script..."
+  msg "\n${UL}Running the ${PLATFORM} platform setup script"
   source "${DOTREPO}/setup/platforms/${PLATFORM}.sh"
 fi
 
@@ -153,7 +153,7 @@ fi
 if [[ $ROLE == "" ]]; then
   source "${DOTREPO}/setup/roles/DEFAULT.sh"
 else
-  msg "\n${UL}Running the ${ROLE} role setup script..."
+  msg "\n${UL}Running the ${ROLE} role setup script"
   if [ ! -f "$DOTREPO/setup/roles/$ROLE.sh" ]; then
     msg "${RED}-!- Role $ROLE does not exist."
   else

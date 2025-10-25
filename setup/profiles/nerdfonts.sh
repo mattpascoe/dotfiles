@@ -1,4 +1,5 @@
 #!/bin/bash
+# Fancy icons for your terminal
 
 if [[ "$ID" == "macos" ]]; then
     if brew list "font-monaspace-nerd-font" >/dev/null 2>&1; then
