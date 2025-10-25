@@ -13,6 +13,14 @@ then
   mkdir -p "$HOME"/data
 fi
 
+# Ensure zsh is default if its available
+if command -v "zsh" &> /dev/null; then
+  if [ "$(grep "$USER" /etc/passwd|cut -d: -f7)" != "/bin/zsh" ]; then
+    msg "${BLU}Switching default shell to ZSH..."
+    sudo usermod -s /bin/zsh "$USER"
+  fi
+fi
+
 # Add $HOME/bin to PATH so we can install and use binaries during this install
 mkdir -p "$HOME/bin"
 export PATH="$HOME/bin:$PATH"
