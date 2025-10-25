@@ -23,6 +23,8 @@ LINUX_PKGS+=(
   "jq"
   "tmux"
   "tree"
+  "ripgrep"
+  "shellcheck"
 #  "yazi" # not on ubuntu but is on arch so far I dont use it much anyway. TBD
   "zsh"
 )

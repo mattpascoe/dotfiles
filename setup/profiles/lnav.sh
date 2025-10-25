@@ -1,7 +1,7 @@
 #!/bin/bash
-# TUI network testing tool
+# TUI for searching log files
 
-PKG_NAME=trippy
+PKG_NAME=lnav
 case "$ID" in
   arch*)
     sudo pacman --needed --noconfirm -Sy "$PKG_NAME" ;;

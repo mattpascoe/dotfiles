@@ -1,7 +1,7 @@
 #!/bin/bash
-# TUI network testing tool
+# Zettelkasten note taking cli tool
 
-PKG_NAME=trippy
+PKG_NAME=zk
 case "$ID" in
   arch*)
     sudo pacman --needed --noconfirm -Sy "$PKG_NAME" ;;
