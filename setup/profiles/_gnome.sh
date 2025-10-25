@@ -1,6 +1,8 @@
 #!/bin/bash
 # Configure Gnome desktop
 
+# NOTE: When installing the first time, some of the settings and gnome extensions wont work until you reboot.
+#       You will just have to re-run setup.sh one more time to make it complete. The complexity is not worth the effort.
 case "$ID" in
   macos*)
     msg "${BLU}Gnome setup is not for MacOS"
