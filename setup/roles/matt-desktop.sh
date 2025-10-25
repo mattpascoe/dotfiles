@@ -1,6 +1,8 @@
 #!/bin/bash
 # This role is for Matts standard Mac desktop setup
 
+source "$DOTREPO/setup/setup_lib.sh"
+
 PROFILES=(
   desktop
   1password

@@ -17,6 +17,7 @@ echo "Configuring as a $SHELLTYPE shell."
 
 # Set up some command aliases
 alias sr='sudo -E $SHELL'
+alias dot='~/dotfiles/setup.sh'
 alias cdd='cd $HOME/data'
 alias ls='ls -F --color=auto'
 alias la='ls -a'
@@ -69,6 +70,9 @@ alias tmt='dmt +"%r"'
 alias tct='dct +"%r"'
 alias tet='det +"%r"'
 alias tut='dut +"%r"'
+
+# So I can use the dotfiles script can reference other sourced files
+export DOTREPO=$HOME/dotfiles
 
 # Turn on vi mode and set our default editor
 set -o vi

@@ -35,6 +35,7 @@ if [ ! -f "$BREWPATH"/brew ] &> /dev/null; then
   msg "${BLU}Installing Brew tools..."
   sudo -v
   NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  $BREWPATH/brew analytics off
 fi
 
 # Load up brew environment, so we can actually install things

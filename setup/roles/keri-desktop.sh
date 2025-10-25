@@ -1,6 +1,8 @@
 #!/bin/bash
 # Keri's mac environment setup
 
+source "$DOTREPO/setup/setup_lib.sh"
+
 PROFILES=(
   1password
   brave-browser
