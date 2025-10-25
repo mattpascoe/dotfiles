@@ -11,12 +11,7 @@ case "$ID" in
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)" >& /dev/null
     ;;
   macos*)
-    if brew list "$PKG_NAME" >/dev/null 2>&1; then
-      msg "${BLU}Already installed via brew on Mac."
-    else
-      brew install "$PKG_NAME"
-    fi
-    ;;
+    brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
   *)
     echo "-!- Install not supported."
     ;;
