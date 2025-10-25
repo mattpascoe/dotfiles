@@ -90,7 +90,6 @@ if [ ! -d "$DOTREPO" ]; then
   msg "${GRN}Cloning dotfiles to $DOTREPO..."
   git clone "$DOTREPO_URL" "$DOTREPO"
 else
-  msg "${BLU}A clone of dotfiles git repo already exists in $DOTREPO."
   pushd "$DOTREPO" >/dev/null || exit
   git fetch --all --tags
   CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
