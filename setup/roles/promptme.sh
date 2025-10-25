@@ -1,5 +1,5 @@
 #!/bin/bash
-# DEFAULT will prompt you for each profile you want to install
+# Prompt for each profile you want to install
 
 msg "${UL}Using Default role. You will be prompted for each profile individually."
 for FILE in $(find "$DOTREPO/setup/profiles" -type f -name "[0-9a-zA-Z]*.sh"); do

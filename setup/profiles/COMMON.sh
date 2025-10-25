@@ -13,14 +13,6 @@ then
   mkdir -p "$HOME"/data
 fi
 
-# Ensure zsh is default if its available
-if command -v "zsh" &> /dev/null; then
-  if [ "$(grep "$USER" /etc/passwd|cut -d: -f7)" != "/bin/zsh" ]; then
-    msg "${BLU}Switching default shell to ZSH"
-    sudo usermod -s /bin/zsh "$USER"
-  fi
-fi
-
 # Add $HOME/bin to PATH so we can install and use binaries during this install
 mkdir -p "$HOME/bin"
 export PATH="$HOME/bin:$PATH"
@@ -87,7 +79,7 @@ msg "Installing tmux -- # TMUX terminal multiplexer"
 source "$DOTREPO/setup/profiles/tmux.sh"
 
 # Everyone should have a good nerdfont
-msg "Installing nerdfots -- # Fancy icons for your terminal"
+msg "Installing nerdfonts -- # Fancy icons for your terminal"
 source "$DOTREPO/setup/profiles/nerdfonts.sh"
 
 ###### Link dotfile configs, could I use stow or chezmoi.io? sure, but less dependancies here
