@@ -156,7 +156,9 @@ source "${DOTREPO}/setup/profiles/COMMON.sh"
 
 # Actually process the role or prompt for individual profiles
 if [[ $ROLE == "" ]]; then
+  msg "\n${UL}Running the DEFAULT role setup script"
   source "${DOTREPO}/setup/roles/DEFAULT.sh"
+  echo "DEFAULT" > "$DOTFILE_ROLE_PATH"
 else
   msg "\n${UL}Running the ${ROLE} role setup script"
   if [ ! -f "$DOTREPO/setup/roles/$ROLE.sh" ]; then

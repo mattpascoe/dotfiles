@@ -37,6 +37,7 @@ if ! command -v "brew" &> /dev/null; then
 fi
 
 BREWPATH=/opt/homebrew/bin
+export PATH="$BREWPATH:$PATH"
 
 # Load up brew environment, so we can actually install things
 if [ -f "$BREWPATH"/brew ] &> /dev/null; then
