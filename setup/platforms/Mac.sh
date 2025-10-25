@@ -32,6 +32,7 @@
 # Install and setup Brew for package management
 if ! command -v "brew" &> /dev/null; then
   msg "${BLU}Installing Brew tools..."
+  sudo -v
   NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
