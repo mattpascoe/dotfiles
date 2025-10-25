@@ -11,8 +11,13 @@ PROFILES=(
   ghostty
   kanata
   lazygit
+  lnav
   neovim
   slack
+  spotify
+  trippy
+  zoom
+  zk
 )
 
 PROFILE_DIR="$DOTREPO"/setup/profiles
