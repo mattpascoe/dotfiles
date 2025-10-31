@@ -17,7 +17,6 @@ echo "Configuring as a $SHELLTYPE shell."
 
 # Set up some command aliases
 alias sr='sudo -E $SHELL'
-alias dot='~/dotfiles/setup.sh'
 alias cdd='cd $HOME/data'
 alias ls='ls -F --color=auto'
 alias la='ls -a'
@@ -76,8 +75,11 @@ alias wf='curl --max-time 5 --connect-timeout 3 "wttr.in/Boise?Fud"'
 alias ws='curl --max-time 5 --connect-timeout 3 "wttr.in/Boise?Fu&format=%c+%t(+%f)+%p+%h+󰖞%w+%m";echo'
 alias wg='curl --max-time 5 --connect-timeout 3 "v2n.wttr.in/Boise?Fu"'
 
-# So I can use the dotfiles script can reference other sourced files
+# Set some dotfile repo settings
+# Export the path, so I can use the dotfiles script can reference other sourced files
 export DOTREPO=$HOME/dotfiles
+alias cdot='cd $DOTREPO'
+alias dot='$DOTREPO/setup.sh'
 
 # Turn on vi mode and set our default editor
 set -o vi
