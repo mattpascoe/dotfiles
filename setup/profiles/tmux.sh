@@ -5,11 +5,26 @@
 # dont need to add it to other roles
 
 PKG_NAME=tmux
+
+function linux_install_tmux() {
+  if ! command -v "$PKG_NAME" &> /dev/null; then
+    # Prompt for install since we may be running this on a shared server
+    prompt "Install tmux system wide? (N/y) "
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      sudo "$1" "$PKG_NAME"
+    fi
+  else
+    VERSION=$(tmux -V | cut -d ' ' -f 2)
+    msg "${BLU}Tmux is already installed: $VERSION"
+  fi
+}
+
 case "$ID" in
   arch*)
-    sudo pacman --needed --noconfirm -Sy "$PKG_NAME" ;;
+    linux_install_tmux 'sudo pacman --needed --noconfirm -Sy'
+    ;;
   debian*|ubuntu*)
-    sudo apt install -y "$PKG_NAME"
+    linux_install_tmux 'apt install -y'
     ;;
   macos*)
     brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
