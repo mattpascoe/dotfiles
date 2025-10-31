@@ -91,7 +91,7 @@ if [ ! -d "$DOTREPO" ]; then
   git clone "$DOTREPO_URL" "$DOTREPO"
 else
   pushd "$DOTREPO" >/dev/null || exit
-  git fetch --all --tags
+  git fetch --all --tags > /dev/null
   CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
   BEHIND_COUNT=$(git rev-list --count HEAD..origin/"$CURRENT_BRANCH" || echo "unknown")
   if [ "$BEHIND_COUNT" -gt 0 ]; then
