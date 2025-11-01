@@ -8,37 +8,32 @@ DOTREPO=~/dotfiles
 # Set the URL of the dotfiles repo
 DOTREPO_URL=https://github.com/mattpascoe/dotfiles
 
-# Set the default timezone (linux)
+# Set the default timezone (mac)
 TIMEZONE=America/Boise
+
+# Some common packages for all platforms
+COMMON_PKGS+=(
+  "bat"
+  "eza"
+  "highlight"
+  "jq"
+  "tree"
+)
 
 # These are base packages I hope to use on all systems
 # This will use the native package manager to install
 LINUX_PKGS+=(
-  "bat"
-  "btop"
+  "${COMMON_PKGS[@]}"
   "curl"
-  "eza"
-  "git"
-  "highlight"
-  "jq"
-  "tmux"
-  "tree"
+  "btop"
   "ripgrep"
   "shellcheck"
-#  "yazi" # not on ubuntu but is on arch so far I dont use it much anyway. TBD
   "zsh"
 )
 
 # Homebrew packages
 BREW_PKGS+=(
-  # Some common packages
-  "bat"
-  "eza"
-  "highlight"
-  "jq"
-  "tree"
-  "tmux"
-  # Below are more Mac specific, and dont require a full profile
+  "${COMMON_PKGS[@]}"
   "bash"
   "ykman"
   "shellcheck"
