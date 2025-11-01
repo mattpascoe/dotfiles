@@ -8,6 +8,10 @@
 # entrypoint in setup.sh that determines PLATFORM. It calls into setup/PLATFORM.sh
 # each platform.sh script will then determin a release type and call setup/PLATFORM/RELEASE-ID.sh
 
+# IDEA: have a prompt or flag to skip the install/update of packages. This allows just the base config stuff to happen quickly
+# TODO: try and reduce the use of sudo as much as possible.  also explore just a single sudo -v.
+# TODO: test arch more
+
 # ---- Set some defaults for initial direct curl/wget based installs
 # I dont like that I have to set all the same library stuff here but its required
 # to not have to have a separate install script. Maybe I dont actually need a
@@ -66,7 +70,6 @@ if ! command -v "git" &> /dev/null; then
   arch*)
     # Disable kernel messages since we are likely on a console
     # We'll turn it back on later, this just gets rid of some noise in output
-    # TODO: move this dmesg to the arch install script too
     sudo dmesg -n 3
     # Update the system and ensure git is installed, grab some others just for good measure
     sudo pacman --disable-sandbox --needed --noconfirm -Syu git curl wget sudo fontconfig
@@ -156,11 +159,11 @@ source "${DOTREPO}/setup/profiles/COMMON.sh"
 
 # Actually process the role or prompt for individual profiles
 if [[ $ROLE == "" ]]; then
-  msg "\n${UL}Running the DEFAULT role setup script"
+  msg "\n${UL}Running role setup script: ${BLU}DEFAULT"
   source "${DOTREPO}/setup/roles/DEFAULT.sh"
   echo "DEFAULT" > "$DOTFILE_ROLE_PATH"
 else
-  msg "\n${UL}Running the ${ROLE} role setup script"
+  msg "\n${UL}Running role setup script: ${BLU}$ROLE"
   if [ ! -f "$DOTREPO/setup/roles/$ROLE.sh" ]; then
     msg "${RED}-!- Role $ROLE does not exist."
   else

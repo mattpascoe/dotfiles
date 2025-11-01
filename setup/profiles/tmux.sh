@@ -6,9 +6,10 @@
 
 PKG_NAME=tmux
 
+# On linux lets prompt to install since we may be running this on a shared server
+# NOTE: This means in this case we will not upgrade the current package.
 function linux_install_tmux() {
   if ! command -v "$PKG_NAME" &> /dev/null; then
-    # Prompt for install since we may be running this on a shared server
     prompt "Install tmux system wide? (N/y) "
     if [[ $REPLY =~ ^[Yy]$ ]]; then
       sudo "$1" "$PKG_NAME"
@@ -21,7 +22,7 @@ function linux_install_tmux() {
 
 case "$ID" in
   arch*)
-    linux_install_tmux 'sudo pacman --needed --noconfirm -Sy'
+    linux_install_tmux 'pacman --needed --noconfirm -Sy'
     ;;
   debian*|ubuntu*)
     linux_install_tmux 'apt install -y'

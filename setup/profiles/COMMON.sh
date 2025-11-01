@@ -56,8 +56,6 @@ case "$ID" in
   debian*|ubuntu*)
     sudo apt update -y
     sudo apt install -y "${LINUX_PKGS[@]}"
-    # Also set timezone
-    sudo timedatectl set-timezone "$TIMEZONE"
     # Remove some useless crap
     sudo apt purge -y whoopsie
     ;;
