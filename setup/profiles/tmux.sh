@@ -11,6 +11,7 @@ PKG_NAME=tmux
 function linux_install_tmux() {
   if ! command -v "$PKG_NAME" &> /dev/null; then
     prompt "Install tmux system wide? (N/y) "
+    read -r REPLY < /dev/tty
     if [[ $REPLY =~ ^[Yy]$ ]]; then
       sudo "$1" "$PKG_NAME"
     fi
