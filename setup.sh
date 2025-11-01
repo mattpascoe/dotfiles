@@ -158,15 +158,15 @@ fi
 source "${DOTREPO}/setup/profiles/COMMON.sh"
 
 # Actually process the role or prompt for individual profiles
-prompt "Run role setup script? (N/y) "
+prompt "\nRun role setup script? (N/y) "
 read -r REPLY < /dev/tty
 if [[ $REPLY =~ ^[Yy]$ ]]; then
   if [[ $ROLE == "" ]]; then
-    msg "\n${UL}Running role setup script:${NC} ${BLU}DEFAULT"
+    msg "${UL}Running role setup script:${NC} ${BLU}DEFAULT"
     source "${DOTREPO}/setup/roles/DEFAULT.sh"
     echo "DEFAULT" > "$DOTFILE_ROLE_PATH"
   else
-    msg "\n${UL}Running role setup script:${NC} ${BLU}$ROLE"
+    msg "${UL}Running role setup script:${NC} ${BLU}$ROLE"
     if [ ! -f "$DOTREPO/setup/roles/$ROLE.sh" ]; then
       msg "${RED}-!- Role $ROLE does not exist."
     else
