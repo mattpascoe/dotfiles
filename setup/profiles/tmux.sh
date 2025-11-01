@@ -24,10 +24,10 @@ function linux_install_tmux() {
 
 case "$ID" in
   arch*)
-    linux_install_tmux 'pacman --needed --noconfirm -Sy'
+    linux_install_tmux pacman --needed --noconfirm -Sy
     ;;
   debian*|ubuntu*)
-    linux_install_tmux 'apt install -y'
+    linux_install_tmux apt install -y
     ;;
   macos*)
     brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
