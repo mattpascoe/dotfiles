@@ -9,11 +9,12 @@ PKG_NAME=tmux
 # On linux lets prompt to install since we may be running this on a shared server
 # NOTE: This means in this case we will not upgrade the current package.
 function linux_install_tmux() {
+  local -a install_cmd=("${@}")
   if ! command -v "$PKG_NAME" &> /dev/null; then
     prompt "Install tmux system wide? (N/y) "
     read -r REPLY < /dev/tty
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-      sudo "$1" "$PKG_NAME"
+      sudo "${install_cmd[@]}" "$PKG_NAME"
     fi
   else
     VERSION=$(tmux -V | cut -d ' ' -f 2)
