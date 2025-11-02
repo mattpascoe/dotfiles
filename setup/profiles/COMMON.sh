@@ -64,8 +64,9 @@ case "$ID" in
     sudo pacman --disable-sandbox --needed --noconfirm -Syu "${LINUX_PKGS[@]}"
     # Also make sure yay is installed for AUR support
     if ! command -v "yay" &> /dev/null; then
-      git clone https://aur.archlinux.org/yay.git
-      cd yay || exit
+      tmpdir=$(mktemp -d)
+      git clone https://aur.archlinux.org/yay.git "$tmpdir/yay"
+      cd "$tmpdir/yay" || exit
       makepkg -si --noconfirm
       cd - > /dev/null || exit
     fi
