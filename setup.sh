@@ -60,6 +60,9 @@ msg "${BLU}Dotfile repo location: $DOTREPO."
 msg "${BLU}Looks like we are a $PLATFORM system."
 msg "${BLU}Looks like the OS is ${PRETTY_NAME}."
 
+# Unraid is special so just call it here, this will exit in that script
+[[ -f /etc/unraid-version ]] && source "${DOTREPO}/setup/platforms/unraid.sh"
+  
 # Check for and install git if needed
 if ! command -v "git" &> /dev/null; then
   msg "\n${UL}Installing Git"
@@ -70,9 +73,11 @@ if ! command -v "git" &> /dev/null; then
   arch*)
     # Disable kernel messages since we are likely on a console
     # We'll turn it back on later, this just gets rid of some noise in output
-    sudo dmesg -n 3
+    # This assumes you are performing the initial install as root
+    # TODO: dmesg here does not seem to be best and I dont ahve a good way of turning it off currently. tbd
+    #dmesg -n 3
     # Update the system and ensure git is installed, grab some others just for good measure
-    sudo pacman --disable-sandbox --needed --noconfirm -Syu git curl wget sudo fontconfig
+    pacman --needed --noconfirm -Syu git curl wget sudo fontconfig jq zsh base-devel
     ;;
   macos*)
     # Run git command, it may ask to install developer tools, go ahead and do that to get the git command
@@ -146,13 +151,8 @@ fi
 [[ $ROLE != "" ]] && [[ $ROLE != $FILE_ROLE ]] && echo "$ROLE" > "$DOTFILE_ROLE_PATH"
 
 # Call the PLATFORM specific setup scripts
-# Unraid is special so just call it here
-if [ -f /etc/unraid-version ]; then
-  source "${DOTREPO}/setup/platforms/unraid.sh"
-else
-  msg "\n${UL}Running the ${PLATFORM} platform setup script"
-  source "${DOTREPO}/setup/platforms/${PLATFORM}.sh"
-fi
+msg "\n${UL}Running platform setup script:${NC} ${BLU}${PLATFORM}"
+source "${DOTREPO}/setup/platforms/${PLATFORM}.sh"
 
 # Run the COMMON.sh script that EVERYONE should run
 source "${DOTREPO}/setup/profiles/COMMON.sh"

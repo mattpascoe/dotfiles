@@ -4,7 +4,7 @@
 PKG_NAME=spotify
 case "$ID" in
   arch*)
-    sudo pacman --needed --noconfirm -Sy "$PKG_NAME" ;;
+    sudo pacman --needed --noconfirm -S "$PKG_NAME" ;;
   debian*|ubuntu*)
     ARCH=${ARCH:-$(uname -m)}; ARCH=${ARCH/aarch64/arm64}
     if [[ $ARCH == "arm64" ]]; then

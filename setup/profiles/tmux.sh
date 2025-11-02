@@ -24,7 +24,7 @@ function linux_install_tmux() {
 
 case "$ID" in
   arch*)
-    linux_install_tmux pacman --needed --noconfirm -Sy
+    linux_install_tmux pacman --needed --noconfirm -S
     ;;
   debian*|ubuntu*)
     linux_install_tmux apt install -y

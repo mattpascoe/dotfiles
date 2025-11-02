@@ -4,7 +4,7 @@
 PKG_NAME=trippy
 case "$ID" in
   arch*)
-    sudo pacman --needed --noconfirm -Sy "$PKG_NAME" ;;
+    sudo pacman --needed --noconfirm -S "$PKG_NAME" ;;
   debian*|ubuntu*)
     sudo apt install -y "$PKG_NAME" ;;
   macos*)

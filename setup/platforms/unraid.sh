@@ -16,5 +16,6 @@ if [ ! -L ~/data/SYNC/wiki ]; then
 fi
 
 msg "${UL}Updates to /boot/config have been made."
+
 # Stop here since unraid is its own beast
-exit
+exit 0

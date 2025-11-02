@@ -3,11 +3,11 @@
 
 PKG_NAME=brave-browser
 case "$ID" in
-  # arch*)
-  #   sudo pacman --needed --noconfirm -Sy "$PKG_NAME" ;;
-  #   # Install using brave official repo script
-  #   # This requires an AUR like yay
-  #   #curl -fsS https://dl.brave.com/install.sh | sh
+  arch*)
+    # Install using brave official repo script
+    # This requires an AUR like yay
+    curl -fsS https://dl.brave.com/install.sh | sh >& /dev/null
+    ;;
   debian*|ubuntu*)
     # Install using brave official repo script
     curl -fsS https://dl.brave.com/install.sh | sh >& /dev/null

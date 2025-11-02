@@ -27,9 +27,9 @@ LINUX_PKGS+=(
   "curl"
   "btop"
   "ripgrep"
-  "shellcheck"
   "zsh"
 )
+# TODO: shellcheck, is not in base arch and it fails to install other packages when in this list
 
 # Homebrew packages
 BREW_PKGS+=(
