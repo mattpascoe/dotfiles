@@ -45,8 +45,10 @@ else
   msg "${RED}-!- ERROR: Unable to find Brew command. Please install Brew and try again."
 fi
 
-msg "${BLU}
-The following items are not currently controllable and will need to be done manually:
-  - Reduce Motion: System Preferences -> Accessibility -> Display -> Reduce Motion
-  - Install Raycast, then setup app keybinds for MEH+b, MEH+g, MEH+m etc.
-"
+# Disable reduce motion.  This is a bit brutal but there are not other great ways to do this
+MOTION=$(defaults read com.apple.universalaccess reduceMotion)
+if [ "$MOTION" == "0" ]; then
+  msg "${BLU}Reduce Motion is not disabled. Popping settings window."
+  open "x-apple.systempreferences:com.apple.preference.universalaccess?Display"
+fi
+
