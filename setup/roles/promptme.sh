@@ -3,7 +3,7 @@
 
 source "$DOTREPO/setup/setup_lib.sh"
 
-msg "${UL}Using Default role. You will be prompted for each profile individually."
+msg "\n${UL}You will now be prompted for each available profile individually."
 for FILE in $(find "$DOTREPO/setup/profiles" -type f -name "[0-9a-zA-Z]*.sh"); do
   # Get the name of the file as the extra item we are installing
   PROFILE=$(basename "$FILE"|cut -d. -f1)

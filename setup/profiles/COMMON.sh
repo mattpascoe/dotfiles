@@ -23,11 +23,11 @@ if ! command -v "starship" &> /dev/null; then
   prompt "Do you want to install Starship.rs prompt? (N/y) "
   read -r REPLY < /dev/tty
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-    msg "\n${UL}Installing Starship prompt"
+    msg "Installing Starship prompt"
     eval "$SHIP_INST"
   fi
 else
-  msg "\n${UL}Starship is already installed. Running installer again to get updates"
+  msg "Starship is already installed. Running installer again to get updates"
   eval "$SHIP_INST"
 fi
 # Starship installer leaves a bunch of mktemp dirs all over. This will clean them up even ones that are not ours!
@@ -43,10 +43,10 @@ FZF_INST="curl -fsSL https://raw.githubusercontent.com/junegunn/fzf/master/insta
 "
 pushd "$HOME" >/dev/null || exit
 if ! command -v "fzf" &> /dev/null; then
-  msg "\n${UL}Installing FZF tools"
+  msg "Installing FZF tools"
   eval "$FZF_INST"
 else
-  msg "\n${UL}FZF is already installed. Running installer again to get updates"
+  msg "FZF is already installed. Running installer again to get updates"
   eval "$FZF_INST"
 fi
 popd >/dev/null || exit
@@ -79,6 +79,7 @@ case "$ID" in
     echo "    ${LINUX_PKGS[*]}"
     ;;
 esac
+msg "${BLU}Base packages installed."
 
 ###### Link dotfile configs, could I use stow or chezmoi.io? sure, but less dependancies here
 declare -a LINKFILES
@@ -119,6 +120,7 @@ done
 
 # These are best run after .config is setup
 # Ensure Tmux is installed
+echo
 msg "Installing tmux -- # TMUX terminal multiplexer"
 source "$DOTREPO/setup/profiles/tmux.sh"
 

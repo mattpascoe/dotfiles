@@ -2,17 +2,8 @@
 # Fancy icons for your terminal
 
 if [[ "$ID" == "macos" ]]; then
-    if brew list "font-monaspace-nerd-font" >/dev/null 2>&1; then
-      msg "${BLU}font-monaspace-nerd-font Already installed via brew on Mac."
-    else
-      "$BREWPATH"/brew install -q font-monaspace-nerd-font
-    fi
-
-    if brew list "font-meslo-lg-nerd-font" >/dev/null 2>&1; then
-      msg "${BLU}font-meslo-lg-nerd-font Already installed via brew on Mac."
-    else
-      "$BREWPATH"/brew install -q font-meslo-lg-nerd-font
-    fi
+  "$BREWPATH"/brew install font-monaspace-nerd-font 2>&1|sed '/^To reinstall/,$d'
+  "$BREWPATH"/brew install font-meslo-lg-nerd-font 2>&1|sed '/^To reinstall/,$d'
 else
   FONTDIR=$HOME/.local/share/fonts
   mkdir -p "$FONTDIR"

@@ -30,7 +30,7 @@ case "$ID" in
     linux_install_tmux apt install -y
     ;;
   macos*)
-    brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
+    "$BREWPATH"/brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
   *)
     echo "-!- Install not supported."
     ;;

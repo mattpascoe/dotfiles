@@ -10,6 +10,3 @@ if command -v "zsh" &> /dev/null; then
     sudo usermod -s /bin/zsh "$USER"
   fi
 fi
-
-# Set the console log level to 6 on arch
-[[ "$ID" == arch* ]] && sudo dmesg -n 6
