@@ -1,8 +1,6 @@
 #!/bin/bash
 # A basic install with no desktop settings
 
-source "$DOTREPO/setup/setup_lib.sh"
-
 PROFILES=(
   lazygit
   neovim

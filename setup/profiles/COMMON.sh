@@ -1,4 +1,6 @@
 #!/bin/bash
+# The COMMON profile will always be run first, by the setup script
+
 # TODO: look into using stow or chezmoi.io for dotfile management? For now I'm keeping it simple
 
 # This is the common setup for ALL platform types.

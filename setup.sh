@@ -1,18 +1,17 @@
 #!/bin/bash
 
 # shellcheck disable=SC1090,SC1091
-#
+
+
 # It is intended that this script can and should be run at any time
 # It will install a fresh system or will update an existing system with the latest packages and configurations
 # Some manual desktop configuration aspects may be changed to something defined here so try and do it here where possible
 #
-# flow to work toward:
-# entrypoint in setup.sh that determines PLATFORM. It calls into setup/PLATFORM.sh
-# each platform.sh script will then determin a release type and call setup/PLATFORM/RELEASE-ID.sh
+# I'm going with a similar Role/Profile setup to Puppet.
+# Profiles are just a targeted script that performs a block of actions.
+# Roles are a collection of profiles that are related and are executed together.
 
-# IDEA: have a prompt or flag to skip the install/update of packages. This allows just the base config stuff to happen quickly
-# TODO: try and reduce the use of sudo as much as possible.  also explore just a single sudo -v.
-# TODO: test arch more
+
 
 # ---- Set some defaults for initial direct curl/wget based installs
 # I dont like that I have to set all the same library stuff here but its required
@@ -23,7 +22,7 @@ DOTREPO="$HOME/dotfiles"
 DOTREPO_URL=https://github.com/mattpascoe/dotfiles
 DOTFILE_ROLE_PATH="$HOME/.dotfile_role"
 
-# Get the current role from the file if it exists and we didnt set one in the ENV
+# Get the current role from the cache file if it exists and we didnt set one in the ENV
 [[ -f "$DOTFILE_ROLE_PATH" ]] && [[ $ROLE == "" ]] && ROLE=$(cat "$DOTFILE_ROLE_PATH")
 
 # Colors/formatting
@@ -34,13 +33,6 @@ BLU="\033[34m"
 RED="\033[31m"
 GRN="\033[32m"
 BOLD="\033[1m"
-
-function msg() {
-  command echo -e "${BOLD}${YEL}$*${NC}"
-}
-function prompt() {
-  command echo -e "${BOLD}${GRN}$*${NC}\c"
-}
 
 # Check if USER is set and try a fallback
 USER="${USER:-$(whoami)}"
@@ -60,10 +52,15 @@ case "${unameOut}" in
 esac
 
 [[ -f /etc/os-release ]] && source /etc/os-release
-# END inital library setup for direct curl/wget installs
-
 
 # --------- Define standard functions --------
+function msg() {
+  command echo -e "${BOLD}${YEL}$*${NC}"
+}
+function prompt() {
+  command echo -e "${BOLD}${GRN}$*${NC}\c"
+}
+
 # Check for and install git if needed
 # This is a base requirement to establish the dotfiles repo
 function check_git() {
@@ -117,17 +114,36 @@ function check_dotrepo() {
   fi
 }
 
+# List the available profiles
+function list_profiles() {
+  msg "${GRN}Available profiles:${NC}"
+  # List the available profiles and description
+  local LIST DESC PROFILE
+  for FILE in $(find "$DOTREPO/setup/profiles" -type f -name "[0-9a-zA-Z]*.sh"|LC_ALL=C sort -h); do
+    PROFILE=$(basename "$FILE" | cut -d. -f1)
+    DESC=$(sed -n '2p' "$FILE")
+    LIST="$LIST\n$PROFILE:$DESC"
+  done
+  echo -e "$LIST"|column -t -s ':'
+}
+
+# List the available roles
+function list_roles() {
+  msg "${GRN}Available roles:${NC}"
+  # List the available roles and description
+  local LIST DESC ROLE
+  for FILE in $(find "$DOTREPO/setup/roles" -type f -name "[0-9a-zA-Z]*.sh"|LC_ALL=C sort -h); do
+    ROLE=$(basename "$FILE" | cut -d. -f1)
+    DESC=$(sed -n '2p' "$FILE")
+    LIST="$LIST\n$ROLE:$DESC"
+  done
+  echo -e "$LIST"|column -t -s ':'
+}
 
 # This will prompt the user for a role
 function prompt_for_role() {
   msg "\n${UL}Please select a role."
-  msg "${GRN}Available roles:${NC}"
-  # List the available roles and description
-  for FILE in $(find "$DOTREPO/setup/roles" -type f -name "[0-9a-zA-Z]*.sh"); do
-    ROLE=$(basename "$FILE" | cut -d. -f1)
-    DESC=$(sed -n '2p' "$FILE")
-    echo "$ROLE -- $DESC"
-  done
+  list_roles
 
   while true; do
     prompt "Enter role name (enter for DEFAULT): "
@@ -173,10 +189,6 @@ EOF
 }
 # ---------- END standard functions
 
-# Lets pull in our local repo based config and library if they exist when local repo is available
-# After initial install this can override and add to defaults above
-# Initialize some variables
-[[ -f "$DOTREPO/setup/setup_lib.sh" ]] && source "$DOTREPO/setup/setup_lib.sh"
 # Gather configuration for this process to use
 [[ -f "$DOTREPO/setup/config.sh" ]] && source "$DOTREPO/setup/config.sh"
 
@@ -187,13 +199,11 @@ EOF
 while [[ "$#" -gt 0 ]]; do
     case "$1" in
         --list-roles|-L)
-            msg "${UL}Available roles:"
-            find "$DOTREPO/setup/roles" -type f -name "[0-9a-zA-Z]*.sh" -print0 | xargs -0 -n1 basename | cut -d. -f1|LC_ALL=C sort -h
+            list_roles
             exit 0
             ;;
         --list-profiles|-l)
-            msg "${UL}Available profiles:"
-            find "$DOTREPO/setup/profiles" -type f -name "[0-9a-zA-Z]*.sh" -print0 | xargs -0 -n1 basename | cut -d. -f1|LC_ALL=C sort -h
+            list_profiles
             exit 0
             ;;
         --role|-r)
@@ -225,18 +235,12 @@ while [[ "$#" -gt 0 ]]; do
     esac
 done
 
-
-
 system_info
 check_git
 check_dotrepo
-# ---- This ends the section for first time curl/wget based installs. The rest runs from the local repo.
+# ---- This ends the section for first time curl/wget based installs. The rest should run from the local repo.
 
 
-# Prompt user for a Role
-# I'm going with a similar Role/Profile setup to Puppet.
-# Profiles are just a targeted script that performs a block of actions.
-# Roles are a collection of profiles that are related and are executed together.
 
 # If we dont find a role then prompt the user if they want to pick one.
 [[ $ROLE == "" ]] && prompt_for_role

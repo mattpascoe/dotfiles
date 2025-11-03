@@ -1,8 +1,6 @@
 #!/bin/bash
 # Prompt for each profile you want to install
 
-source "$DOTREPO/setup/setup_lib.sh"
-
 msg "\n${UL}You will now be prompted for each available profile individually."
 for FILE in $(find "$DOTREPO/setup/profiles" -type f -name "[0-9a-zA-Z]*.sh"); do
   # Get the name of the file as the extra item we are installing
