@@ -10,18 +10,16 @@ case "$ID" in
     if ! command -v hs >/dev/null 2>&1; then
       "$BREWPATH"/brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
       msg "${BLU}Starting Hammerspoon the first time."
-      msg "${BLU}You should set it to Always launch at login."
       msg "${BLU}Launching Accessibility settings. Enable Hammerspoon there."
-      sleep 3
-      #open -a hammerspoon
-      #sleep 1
+
       open "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
 
+      sleep 3
       defaults write org.hammerspoon.Hammerspoon HSUploadCrashData 0
       defaults write org.hammerspoon.Hammerspoon SUAutomaticallyUpdate 0
       osascript -e 'tell application "System Events" to make login item at end with properties {path:"/Applications/Hammerspoon.app", hidden:false}'
 
-      killall Hammerspoon && open -a Hammerspoon
+      killall Hammerspoon && open -a hammerspoon
 
     else
       # Normal updates and setup
