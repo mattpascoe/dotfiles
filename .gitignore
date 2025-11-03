@@ -16,3 +16,5 @@
 .config/btop/btop.log
 # Skip kitty config backups
 .config/kitty/kitty.conf.bak
+# Skip local hammerspoon config
+.hammerspoon/local-config.lua

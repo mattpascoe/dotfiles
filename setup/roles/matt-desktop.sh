@@ -8,6 +8,7 @@ PROFILES=(
   brave-browser
   ghostty
   kanata
+  hammerspoon
   lazygit
   lnav
   neovim
