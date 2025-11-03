@@ -17,9 +17,11 @@ case "$ID" in
       sleep 3
       defaults write org.hammerspoon.Hammerspoon HSUploadCrashData 0
       defaults write org.hammerspoon.Hammerspoon SUAutomaticallyUpdate 0
+      defaults write org.hammerspoon.Hammerspoon SUEnableAutomaticChecks 0
       osascript -e 'tell application "System Events" to make login item at end with properties {path:"/Applications/Hammerspoon.app", hidden:false}'
 
-      killall Hammerspoon && open -a hammerspoon
+      killall Hammerspoon
+      open -a hammerspoon
 
     else
       # Normal updates and setup
