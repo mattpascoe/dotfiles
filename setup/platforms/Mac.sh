@@ -46,8 +46,8 @@ else
 fi
 
 # Disable reduce motion.  This is a bit brutal but there are not other great ways to do this
-MOTION=$(defaults read com.apple.universalaccess reduceMotion)
-if [ "$MOTION" == "0" ]; then
+MOTION=$(defaults read com.apple.universalaccess reduceMotion 2>/dev/null)
+if [ "$MOTION" != "1" ]; then
   msg "${BLU}Reduce Motion is not disabled. Popping settings window."
   open "x-apple.systempreferences:com.apple.preference.universalaccess?Display"
 fi
