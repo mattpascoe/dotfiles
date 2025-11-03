@@ -10,21 +10,19 @@ case "$ID" in
     if ! command -v hs >/dev/null 2>&1; then
       "$BREWPATH"/brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
       msg "${BLU}Starting Hammerspoon the first time."
-      msg "${BLU}Launching Accessibility settings. Enable Hammerspoon there."
+      msg "${BLU}Launching Accessibility settings. Enable Hammerspoon there first."
 
-      open "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
-
-      sleep 1
+      # Setup app settings
       defaults write org.hammerspoon.Hammerspoon HSUploadCrashData 0
       defaults write org.hammerspoon.Hammerspoon SUAutomaticallyUpdate 0
       defaults write org.hammerspoon.Hammerspoon SUEnableAutomaticChecks 0
       defaults write org.hammerspoon.Hammerspoon SUHasLaunchedBefore 1
       osascript -e 'tell application "System Events" to make login item at end with properties {path:"/Applications/Hammerspoon.app", hidden:false}'
 
-      killall Hammerspoon
-      sleep 1
+      # The intent is to have the user allow hammerspoon to access accessibility
+      # before they click the ok on starting hammerspoon the first time
+      open "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
       open -a hammerspoon
-
     else
       # Normal updates and setup
       "$BREWPATH"/brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
