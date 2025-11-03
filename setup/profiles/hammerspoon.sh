@@ -14,13 +14,15 @@ case "$ID" in
 
       open "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
 
-      sleep 3
+      sleep 1
       defaults write org.hammerspoon.Hammerspoon HSUploadCrashData 0
       defaults write org.hammerspoon.Hammerspoon SUAutomaticallyUpdate 0
       defaults write org.hammerspoon.Hammerspoon SUEnableAutomaticChecks 0
+      defaults write org.hammerspoon.Hammerspoon SUHasLaunchedBefore 1
       osascript -e 'tell application "System Events" to make login item at end with properties {path:"/Applications/Hammerspoon.app", hidden:false}'
 
       killall Hammerspoon
+      sleep 1
       open -a hammerspoon
 
     else
