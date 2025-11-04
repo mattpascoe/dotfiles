@@ -87,3 +87,33 @@ hs.hotkey.bind({ "cmd" }, "k", function()
 		win:maximize()
 	end
 end)
+
+-- Cmd + Alt + H to show hotkey cheat sheet
+hs.hotkey.bind(MEH, "/", function()
+	local hotkeys = [[
+
+WINDOW MANAGEMENT:
+⌘ + h   → Move window to left half
+⌘ + l   → Move window to right half
+⌘ + k   → Maximize window
+
+APP lAUNCHERS:
+MEH + A   → Launch Spotify
+MEH + B   → Launch Brave Browser
+MEH + C   → Launch Calculator
+MEH + D   → Launch Beekeeper Studio
+MEH + F   → Launch Finder
+MEH + G   → Launch Ghostty
+MEH + M   → Launch Messages
+MEH + P   → Launch 1Password
+MEH + S   → Launch Slack
+MEH + T   → Launch Telegram
+MEH + Z   → Launch Zoom
+MEH + /   → Show this hotkey reference
+
+MEH = { "shift", "ctrl", "alt" }
+
+]]
+
+	hs.dialog.blockAlert("Hammerspoon Hotkey Reference", hotkeys, "Close")
+end)
