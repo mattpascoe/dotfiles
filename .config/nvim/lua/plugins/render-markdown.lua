@@ -26,7 +26,7 @@ return {
   dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
   enabled = true,
   init = function()
-    vim.keymap.set('n', '<leader>tm', ':RenderMarkdown buf_toggle<cr>', { desc = '[M]arkdown Rendering' })
+    vim.keymap.set('n', '<leader>tm', ':silent! RenderMarkdown buf_toggle<cr>', { desc = '[M]arkdown Rendering' })
   end,
   -- Moved highlight creation out of opts as suggested by plugin maintainer
   -- There was no issue, but it was creating unnecessary noise when ran
