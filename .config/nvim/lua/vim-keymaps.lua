@@ -24,7 +24,12 @@ vim.keymap.set('i', 'ii', '<C-[>') -- Quick escape to normal mode TBD if useful
 vim.keymap.set('n', '<leader>tt', ':terminal<cr>', { desc = '[T]erminal', noremap = true, silent = true })
 
 -- Toggle paste and spell mode with status
-vim.keymap.set('n', '<leader>tn', ':set number!<cr>', { desc = 'line [N]umbers', noremap = true, silent = true })
+vim.keymap.set(
+  'n',
+  '<leader>tn',
+  ':set number! | set relativenumber!<cr>',
+  { desc = 'line [N]umbers', noremap = true, silent = true }
+)
 vim.keymap.set('n', '<leader>tp', ':set paste!<cr>', { desc = '[P]aste mode', noremap = true, silent = true })
 vim.keymap.set('n', '<leader>ts', ':set spell!<cr>', { desc = '[S]pellcheck mode', noremap = true, silent = true })
 --vim.api.nvim_set_hl(0, 'SpellBad', { ctermfg = 12, sp = 12, italic = true, undercurl = true })
