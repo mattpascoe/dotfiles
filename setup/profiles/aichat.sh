@@ -15,9 +15,14 @@ case "$ID" in
     tar xf "$tmpdir/aichat"*.tar.gz -C "$tmpdir" ${PKG_NAME}
     install -b "$tmpdir/${PKG_NAME}" "$HOME/bin"
     rm -rf "$tmpdir"
+    # link our config dir
+    link_file ".config/$PKG_NAME"
     ;;
   macos*)
-    brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
+    brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
+    # link our config dir
+    link_file ".config/$PKG_NAME"
+    ;;
   *)
     echo "-!- Install not supported."
     ;;

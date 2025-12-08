@@ -61,6 +61,22 @@ function prompt() {
   command echo -e "${BOLD}${GRN}$*${NC}\c"
 }
 
+# Links the file in Home to dotfile repo
+function link_file() {
+  FILE=$1
+  if [ ! -L "$HOME/$FILE" ]; then
+    if [ -e "$HOME/$FILE" ]; then
+      msg "${BLU}Backing up current file to ${FILE}.bak"
+      mv "$HOME/$FILE" "$HOME/$FILE.bak"
+    fi
+    msg "${BLU}Linking file $HOME/$FILE -> $DOTREPO/$FILE"
+    ln -s "$DOTREPO/$FILE" "$HOME/$FILE"
+  else
+    echo -n "Link exists: "
+    ls -o "$HOME/$FILE"
+  fi
+}
+
 # Check for and install git if needed
 # This is a base requirement to establish the dotfiles repo
 function check_git() {
