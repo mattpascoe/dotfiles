@@ -18,3 +18,7 @@
 .config/kitty/kitty.conf.bak
 # Skip local hammerspoon config
 .hammerspoon/local-config.lua
+# Skip aichat model override for now, maybe we want it??
+.config/aichat/models-override.yaml
+# Skip aichat env
+.config/aichat/.env

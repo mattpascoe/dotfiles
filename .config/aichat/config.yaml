@@ -1,0 +1,32 @@
+# see https://github.com/sigoden/aichat/blob/main/config.example.yaml
+
+keybindings: vi
+#model: groq:meta-llama/llama-4-maverick-17b-128e-instruct
+#model: ollama:gemma3:4b-it-qat
+# Add the model name for context
+right_prompt: '{model} {color.purple}{?session {?consume_tokens {consume_tokens}({consume_percent}%)}{!consume_tokens {consume_tokens}}}{color.reset}'
+model: Local:qwen3
+wrap: auto
+clients:
+- type: openai-compatible
+  name: groq
+  api_base: https://api.groq.com/openai/v1
+  #api_key: set in ~/.config/aichat/.env as GROQ_API_KEY
+- type: openai-compatible
+  # its Ollama
+  name: Local
+  api_base: http://localhost:11434/v1
+  models:
+    - name: qwen3:latest
+    - name: qwen3
+      real_name: qwen3:latest
+    - name: qwen3:4b
+      max_input_tokens: 131072
+    - name: gemma3:latest
+    - name: gemma3
+      real_name: gemma3:latest
+    - name: gemma3:4b-it-qat
+      max_input_tokens: 131072
+    - name: deepseek-r1:7b
+      max_input_tokens: 131072
+      supports_reasoning: true
