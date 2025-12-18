@@ -14,9 +14,12 @@ case "$ID" in
     tar xf "$tmpdir/zk"*.tar.gz -C "$tmpdir" ${PKG_NAME}
     install -b "$tmpdir/${PKG_NAME}" "$HOME/bin"
     rm -rf "$tmpdir"
+    link_file ".config/$PKG_NAME"
     ;;
   macos*)
-    brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
+    brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
+    link_file ".config/$PKG_NAME"
+    ;;
   *)
     echo "-!- Install not supported."
     ;;

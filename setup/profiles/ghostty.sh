@@ -9,9 +9,12 @@ case "$ID" in
   debian*|ubuntu*)
     # Install using the community managed ubuntu install script
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)" >& /dev/null
+    link_file ".config/$PKG_NAME"
     ;;
   macos*)
-    brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
+    brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
+    link_file ".config/$PKG_NAME"
+    ;;
   *)
     echo "-!- Install not supported."
     ;;

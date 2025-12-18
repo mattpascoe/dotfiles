@@ -7,7 +7,9 @@ PKG_NAME=kanata
 case "$ID" in
   macos*)
     # This may still need some karabiner-hiddriver stuff and whatever comes with that
-    brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
+    brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
+    link_file ".config/$PKG_NAME"
+    ;;
   # Should work on any linux system as long as it is x86 based
   *)
     tmpdir=$(mktemp -d)
@@ -34,6 +36,7 @@ Restart=on-failure
 WantedBy=default.target
 EOF
 
+      link_file ".config/$PKG_NAME"
       sudo systemctl enable kanata.service
       sudo systemctl start kanata.service
     else

@@ -15,9 +15,12 @@ case "$ID" in
     # Move to a system-wide location
     sudo install -b "$tmpdir"/lazygit /usr/local/bin
     rm -rf "$tmpdir"
+    link_file ".config/$PKG_NAME"
     ;;
   macos*)
-    brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
+    brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
+    link_file ".config/$PKG_NAME"
+    ;;
   *)
     echo "-!- Install not supported."
     ;;
