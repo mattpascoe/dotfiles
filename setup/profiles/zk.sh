@@ -13,8 +13,8 @@ case "$ID" in
     wget -q -P "$tmpdir" https://github.com/zk-org/zk/releases/latest/download/zk-v"${VERSION}"-linux-"${ARCH}".tar.gz
     tar xf "$tmpdir/zk"*.tar.gz -C "$tmpdir" ${PKG_NAME}
     install -b "$tmpdir/${PKG_NAME}" "$HOME/bin"
-    rm -rf "$tmpdir"
     link_file ".config/$PKG_NAME"
+    rm -rf "$tmpdir"
     ;;
   macos*)
     brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'

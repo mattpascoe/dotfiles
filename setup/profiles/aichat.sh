@@ -14,9 +14,8 @@ case "$ID" in
     wget -q -P "$tmpdir" https://github.com/sigoden/aichat/releases/latest/download/aichat-v"${VERSION}"-arm-unknown-linux-musleabihf.tar.gz
     tar xf "$tmpdir/aichat"*.tar.gz -C "$tmpdir" ${PKG_NAME}
     install -b "$tmpdir/${PKG_NAME}" "$HOME/bin"
-    rm -rf "$tmpdir"
-    # link our config dir
     link_file ".config/$PKG_NAME"
+    rm -rf "$tmpdir"
     ;;
   macos*)
     brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
