@@ -1,5 +1,5 @@
 #!/bin/bash
-# Fancy icons for your terminal
+# Fancy icons for your terminal (installed in home dir)
 
 if [[ "$ID" == "macos" ]]; then
   "$BREWPATH"/brew install font-monaspace-nerd-font 2>&1|sed '/^To reinstall/,$d'

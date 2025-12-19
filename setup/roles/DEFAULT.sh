@@ -2,6 +2,8 @@
 # A basic install with no desktop settings
 
 PROFILES=(
+  tmux
+  nerdfonts
   lazygit
   neovim
 )

@@ -2,6 +2,8 @@
 # Keri's mac environment setup
 
 PROFILES=(
+  tmux
+  nerdfonts
   1password
   brave-browser
   ghostty

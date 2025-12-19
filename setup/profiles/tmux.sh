@@ -1,11 +1,7 @@
 #!/bin/bash
 # tmux terminal multiplexer
 
-# This profile will be installed by the COMMON profile so you
-# dont need to add it to other roles
-
 PKG_NAME=tmux
-
 # On linux lets prompt to install since we may be running this on a shared server
 # NOTE: This means in this case we will not upgrade the current package.
 function linux_install_tmux() {
@@ -36,7 +32,11 @@ case "$ID" in
     ;;
 esac
 
-# Run <prefix> + I to install plugins the first time
+# Link our config
+link_file ".config/$PKG_NAME"
+
+# Now install tmux plugin manager
+# You may need to run <prefix> + I to install plugins the first time
 TMUXDIR="$HOME/.config/tmux/plugins/tpm"
 if [ ! -d "$TMUXDIR" ];then
   msg "${UL}Installing TMUX plugin manager."

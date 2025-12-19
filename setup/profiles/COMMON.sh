@@ -88,9 +88,7 @@ declare -a LINKFILES
 LINKFILES+=(
   ".config/btop"
   ".config/git"
-  ".config/nvim"
   ".config/starship.toml"
-  ".config/tmux"
   ".profile"
   ".vimrc"
   ".zshrc"
@@ -103,13 +101,3 @@ for FILE in "${LINKFILES[@]}"
 do
   link_file "$FILE"
 done
-
-# These are best run after .config is setup
-# Ensure Tmux is installed
-echo
-msg "Installing tmux -- # TMUX terminal multiplexer"
-source "$DOTREPO/setup/profiles/tmux.sh"
-
-# Everyone should have a good nerdfont
-msg "Installing nerdfonts -- # Fancy icons for your terminal"
-source "$DOTREPO/setup/profiles/nerdfonts.sh"

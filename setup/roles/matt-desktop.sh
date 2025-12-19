@@ -3,6 +3,8 @@
 
 PROFILES=(
   desktop
+  tmux
+  nerdfonts
   1password
   aichat
   brave-browser
