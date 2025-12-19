@@ -21,6 +21,7 @@
 DOTREPO="$HOME/dotfiles"
 DOTREPO_URL=https://github.com/mattpascoe/dotfiles
 DOTFILE_ROLE_PATH="$HOME/.dotfile_role"
+PROFILE_DIR="$DOTREPO/setup/profiles"
 
 # Get the current role from the cache file if it exists and we didnt set one in the ENV
 [[ -f "$DOTFILE_ROLE_PATH" ]] && [[ $ROLE == "" ]] && ROLE=$(cat "$DOTFILE_ROLE_PATH")
@@ -75,6 +76,22 @@ function link_file() {
     LINK_LIST=$(ls -o "$HOME/$FILE")
     msg "${BLU}Config link exists: $LINK_LIST"
   fi
+}
+
+# Execute the script for each profile passed in as an array
+function run_profiles() {
+  PROFILES=("${@}")
+  for PROFILE in "${PROFILES[@]}"; do
+    # Check that it actually exists
+    if [ ! -f "$PROFILE_DIR/$PROFILE.sh" ]; then
+      msg "${RED}-!- Profile $PROFILE does not exist. Skipping."
+      continue
+    fi
+    # Get the second line for a description to the user
+    DESC=$(sed -n '2p' "$PROFILE_DIR/$PROFILE.sh")
+    msg "Installing ${PROFILE} -- ${DESC}"
+    source "$PROFILE_DIR/$PROFILE.sh"
+  done
 }
 
 # Check for and install git if needed
