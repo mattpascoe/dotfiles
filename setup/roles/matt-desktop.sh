@@ -33,3 +33,10 @@ for PROFILE in "${PROFILES[@]}"; do
   msg "Installing ${PROFILE} -- ${DESC}"
   source "$PROFILE_DIR/$PROFILE.sh"
 done
+
+# Setup some common config symlinks
+link_file ".config/btop"
+link_file ".config/git"
+link_file ".profile"
+link_file ".vimrc"
+link_file ".zshrc"

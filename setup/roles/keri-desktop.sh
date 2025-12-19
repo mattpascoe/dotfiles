@@ -24,6 +24,13 @@ for PROFILE in "${PROFILES[@]}"; do
   source "$PROFILE_DIR/$PROFILE.sh"
 done
 
+# Setup some common config symlinks
+link_file ".config/btop"
+link_file ".config/git"
+link_file ".profile"
+link_file ".vimrc"
+link_file ".zshrc"
+
 # TODO: Turn these into profiles
 brew install -q \
   spotify \

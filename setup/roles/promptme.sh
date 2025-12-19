@@ -15,3 +15,10 @@ for FILE in $(find "$DOTREPO/setup/profiles" -type f -name "[0-9a-zA-Z]*.sh"); d
     source "$FILE"
   fi
 done
+
+# Setup some common config symlinks
+link_file ".config/btop"
+link_file ".config/git"
+link_file ".profile"
+link_file ".vimrc"
+link_file ".zshrc"

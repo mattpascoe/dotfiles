@@ -9,10 +9,14 @@
 # A goal on this common setup is to only install as the local user. No sudo and all in $HOME.
 
 # Ensure $HOME/data exists. Also used in _macos.sh script
-if [ ! -d "$HOME"/data ]
-then
+if [ ! -d "$HOME"/data ]; then
   msg "${BLU}Creating $HOME/data directory. PUT YOUR DATA HERE!"
   mkdir -p "$HOME"/data
+fi
+
+# Ensure $HOME/.config exists
+if [ ! -d "$HOME/.config" ]; then
+  mkdir -p "$HOME/.config"
 fi
 
 # Add $HOME/bin to PATH so we can install and use binaries during this install
@@ -32,6 +36,7 @@ else
   msg "Starship is already installed. Running installer again to get updates"
   eval "$SHIP_INST"
 fi
+link_file ".config/starship.toml"
 # Starship installer leaves a bunch of mktemp dirs all over. This will clean them up even ones that are not ours!
 find /tmp/ -name "tmp.*.tar.gz" -print0 2>/dev/null | while IFS= read -r -d '' file; do
   prefix="${file%.tar.gz}"
@@ -41,16 +46,14 @@ done
 # Everyone gets FZF!
 # NOTE: Their installer will throw an error about the BASH_SOURCE variable.
 # This installs in $HOME/bin
-FZF_INST="curl -fsSL https://raw.githubusercontent.com/junegunn/fzf/master/install | bash -s -- --bin --xdg --no-update-rc --no-completion --no-key-bindings
-"
+FZF_INST="curl -fsSL https://raw.githubusercontent.com/junegunn/fzf/master/install | bash -s -- --bin --xdg --no-update-rc --no-completion --no-key-bindings"
 pushd "$HOME" >/dev/null || exit
 if ! command -v "fzf" &> /dev/null; then
   msg "Installing FZF tools"
-  eval "$FZF_INST"
 else
   msg "FZF is already installed. Running installer again to get updates"
-  eval "$FZF_INST"
 fi
+eval "$FZF_INST"
 popd >/dev/null || exit
 
 msg "\n${UL}Ensuring install of requested base packages"
@@ -82,22 +85,3 @@ case "$ID" in
     ;;
 esac
 msg "${BLU}Base packages installed."
-
-###### Link dotfile configs, could I use stow or chezmoi.io? sure, but less dependancies here
-declare -a LINKFILES
-LINKFILES+=(
-  ".config/btop"
-  ".config/git"
-  ".config/starship.toml"
-  ".profile"
-  ".vimrc"
-  ".zshrc"
-)
-msg "\n${UL}Checking dotfile config symlinks"
-if [ ! -d "$HOME/.config" ]; then
-  mkdir -p "$HOME/.config"
-fi
-for FILE in "${LINKFILES[@]}"
-do
-  link_file "$FILE"
-done
