@@ -22,39 +22,6 @@ fi
 # Add $HOME/bin to PATH so we can install and use binaries during this install
 mkdir -p "$HOME/bin"
 export PATH="$HOME/bin:$PATH"
-# Everyone gets starship!
-# This installs in $HOME/bin
-SHIP_INST="curl -fsSL https://starship.rs/install.sh | sh -s -- --force --bin-dir $HOME/bin | sed '/Please follow the steps/,\$d'"
-if ! command -v "starship" &> /dev/null; then
-  prompt "Do you want to install Starship.rs prompt? (N/y) "
-  read -r REPLY < /dev/tty
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    msg "Installing Starship prompt"
-    eval "$SHIP_INST"
-  fi
-else
-  msg "Starship is already installed. Running installer again to get updates"
-  eval "$SHIP_INST"
-fi
-link_file ".config/starship.toml"
-# Starship installer leaves a bunch of mktemp dirs all over. This will clean them up even ones that are not ours!
-find /tmp/ -name "tmp.*.tar.gz" -print0 2>/dev/null | while IFS= read -r -d '' file; do
-  prefix="${file%.tar.gz}"
-  rm "${prefix}"* 2>/dev/null
-done
-
-# Everyone gets FZF!
-# NOTE: Their installer will throw an error about the BASH_SOURCE variable.
-# This installs in $HOME/bin
-FZF_INST="curl -fsSL https://raw.githubusercontent.com/junegunn/fzf/master/install | bash -s -- --bin --xdg --no-update-rc --no-completion --no-key-bindings"
-pushd "$HOME" >/dev/null || exit
-if ! command -v "fzf" &> /dev/null; then
-  msg "Installing FZF tools"
-else
-  msg "FZF is already installed. Running installer again to get updates"
-fi
-eval "$FZF_INST"
-popd >/dev/null || exit
 
 msg "\n${UL}Ensuring install of requested base packages"
 case "$ID" in

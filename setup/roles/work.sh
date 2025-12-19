@@ -2,6 +2,8 @@
 # A basic install with no desktop settings for work purposes
 
 PROFILES=(
+  starship
+  fzf
   tmux
   nerdfonts
   # This installs to ~/bin not system wide

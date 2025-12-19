@@ -2,6 +2,8 @@
 # Keri's mac environment setup
 
 PROFILES=(
+  starship
+  fzf
   tmux
   nerdfonts
   1password

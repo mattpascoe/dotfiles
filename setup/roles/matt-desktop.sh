@@ -2,6 +2,8 @@
 # This role is for Matts standard Mac desktop setup
 
 PROFILES=(
+  starship
+  fzf
   desktop
   tmux
   nerdfonts
