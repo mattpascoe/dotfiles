@@ -23,6 +23,7 @@ for PROFILE in "${PROFILES[@]}"; do
   source "$PROFILE_DIR/$PROFILE.sh"
 done
 
+msg "${UL}Checking dotfile config symlinks"
 # Link in our nvim config. We will expect neovim to be installed already outside of our profile
 link_file ".config/nvim"
 

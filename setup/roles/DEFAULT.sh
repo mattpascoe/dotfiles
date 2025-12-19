@@ -22,6 +22,7 @@ for PROFILE in "${PROFILES[@]}"; do
 done
 
 # Setup some common config symlinks
+msg "${UL}Checking dotfile config symlinks"
 link_file ".config/btop"
 link_file ".config/git"
 link_file ".profile"
