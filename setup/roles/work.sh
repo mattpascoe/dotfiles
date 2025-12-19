@@ -10,7 +10,7 @@ PROFILES=(
   #neovim
 )
 
-run_profiles "$PROFILES"
+run_profiles "${PROFILES[@]}"
 
 msg "Checking dotfile config symlinks"
 # Link in our nvim config. We will expect neovim to be installed already outside of our profile
