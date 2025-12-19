@@ -1,6 +1,7 @@
 #!/bin/bash
 # Prompt for each profile you want to install
 
+# This does not use run_profiles since we want to prompt the user for each
 msg "\n${UL}You will now be prompted for each available profile individually."
 for FILE in $(find "$DOTREPO/setup/profiles" -type f -name "[0-9a-zA-Z]*.sh"); do
   # Get the name of the file as the extra item we are installing
@@ -17,7 +18,7 @@ for FILE in $(find "$DOTREPO/setup/profiles" -type f -name "[0-9a-zA-Z]*.sh"); d
 done
 
 # Setup some common config symlinks
-msg "${UL}Checking dotfile config symlinks"
+msg "Checking dotfile config symlinks"
 link_file ".config/btop"
 link_file ".config/git"
 link_file ".profile"
