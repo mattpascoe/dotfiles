@@ -66,14 +66,14 @@ function link_file() {
   FILE=$1
   if [ ! -L "$HOME/$FILE" ]; then
     if [ -e "$HOME/$FILE" ]; then
-      msg "${BLU}Backing up current file to ${FILE}.bak"
+      msg "${BLU}Backing up current config file to ${FILE}.bak"
       mv "$HOME/$FILE" "$HOME/$FILE.bak"
     fi
-    msg "${BLU}Linking file $HOME/$FILE -> $DOTREPO/$FILE"
+    msg "${BLU}Linking config file $HOME/$FILE -> $DOTREPO/$FILE"
     ln -s "$DOTREPO/$FILE" "$HOME/$FILE"
   else
-    echo -n "Link exists: "
-    ls -o "$HOME/$FILE"
+    LINK_LIST=$(ls -o "$HOME/$FILE")
+    msg "${BLU}Config link exists: $LINK_LIST"
   fi
 }
 
