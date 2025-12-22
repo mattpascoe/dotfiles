@@ -8,8 +8,8 @@ PROFILES=(
   nerdfonts
   # This installs to ~/bin not system wide
   lazygit
-  # neovim is managed separately and will conflict
-  #neovim
+  # This installs to ~/bin not system wide
+  neovim
 )
 
 run_profiles "${PROFILES[@]}"
