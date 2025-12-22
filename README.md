@@ -41,12 +41,14 @@ This is determined by uname -s and other attributes within /etc/os-release for e
 Not much is done here usually. It just makes sure certain low level things are done like pacakge management setup.
 
 # Roles and Profiles
-In a similar way to the puppet roles and profiles pattern I have structured things similarly.
+In a similar way to the puppet roles and profiles pattern, I have used a similar structure.
 
-A role is like a profile. It allows you to with a single definition, combine multiple
+A role is a collection of profiles. It allows you to with a single definition, combine multiple
 other profile scripts together to complete a setup.
 If you do not specify a role, the DEFAULT role will be used. This default role
-will just run through all the profiles asking if you want to apply them.
+basically sets the lowest common denominator for the platform and a few base settings.
+
+There is a `promptme` role that will just ask you if you want to install each available profile option.
 
 Typically a role is going to be a specific set of profiles to accoplish a specific
 setup. A role could have other actions defined in it but SHOULD just call the list of other
@@ -55,13 +57,15 @@ profiles.
 Once a role is selected on the box, that role will be stored in `~/.dotfile_role`
 and used for subsequent runs. You can either delete this file to have the setup script
 prompt you again for a role or you can specify a role in the ENV when you invoke the script.
-`ROLE=role_name ./setup.sh` for example.
+`./setup.sh -r myrole` for example.
 
 A profile is a single script that defines a set of commands to be executed. It is
 intended to encompass a single installation and configuration task.
 
 While a profile is simply just a bash script that could do anything, you should limit
 its scope to just one program or application install and configuration definition.
+
+You can invoke a single profile with `./setup.sh -p myprofile`
 
 ## MISC MAC info
 The following is a list of 'crap I do' to a new mac, maybe one day this is a set of 'default' plist settings.
@@ -119,7 +123,7 @@ My current position is that NIX is too painful a syntax and the ecosystem seems 
 I do like it as a package manager instead of brew. For now I'll stick to JUST packages.
 
 I've decided to go back to brew and ditch NIX. While in principal it was interesting,
-and I liked the  ability to roll back and run apps to try them without installing them,
+and I liked the ability to roll back and run apps to try them without installing them,
 I can do that with a VM in a similar way.  For my needs that will work fine.
 
 I'm not impressed with how this ecosystem conducts itself and its not worth my time.
@@ -131,6 +135,6 @@ Interesting zsh 'global' alias option
 
      alias -g H='| head'  # git log H will show only the first 10 lines of the log
 
-Also I have a "tools" method for shell functions. look at shell-common and the __tools* functions.
+Also I have a "tools" method for shell functions. Look at shell-common and the __tools* functions.
 
 I may look at https://www.chezmoi.io/ as an alternative to this dotfiles repo and setup.sh.  I do like I can just use my script anywhere tho.
