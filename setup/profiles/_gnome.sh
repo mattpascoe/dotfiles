@@ -145,6 +145,7 @@ case "$ID" in
       dconf write /org/gnome/shell/extensions/application-hotkeys/configs "@as [
         '[\"org.gnome.Terminal.desktop\",    \"<Shift><Control><Alt>t\"]',
         '[\"brave-browser.desktop\",         \"<Shift><Control><Alt>b\"]',
+        '[\"calculator.desktop\",            \"<Shift><Control><Alt>c\"]',
         '[\"com.mitchellh.ghostty.desktop\", \"<Shift><Control><Alt>g\"]',
         '[\"1password.desktop\",             \"<Shift><Control><Alt>p\"]'
       ]"
