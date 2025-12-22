@@ -13,7 +13,7 @@ else
     msg "${BLU}Installing Nerd Fonts..."
     curl -s -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Meslo/M/Regular/MesloLGMNerdFontMono-Regular.ttf --output-dir "$FONTDIR"
     curl -s -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/Meslo/M/Regular/MesloLGMNerdFontPropo-Regular.ttf --output-dir "$FONTDIR"
-    fc-cache -fv "$FONTDIR"
+    [ -x "$(command -v fc-cache 2>/dev/null)" ] && fc-cache -fv "$FONTDIR"
   fi
 fi
 

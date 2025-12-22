@@ -298,7 +298,7 @@ fi
 if [[ $NO_SAVE_ROLE == true ]]; then
   msg "\n${UL}Requested to skip role cache update."
 else
-  if [[ $ROLE != $(cat "$DOTFILE_ROLE_PATH") ]]; then
+  if [[ $ROLE != $(cat "$DOTFILE_ROLE_PATH" 2>/dev/null) ]]; then
     msg "\n${UL}Saving role to cache:${NC} ${BLU}$ROLE"
     echo "$ROLE" > "$DOTFILE_ROLE_PATH"
   fi
