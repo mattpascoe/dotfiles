@@ -22,7 +22,7 @@ $time\
 
 [time]
 disabled = false
-style = "#11111b"
+style = "#1e1e2e"
 format = '[$time]($style)'
 
 # ----- The following lines come from running `starship preset nerd-font-symbols` -----
