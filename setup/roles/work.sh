@@ -14,13 +14,10 @@ PROFILES=(
 
 run_profiles "${PROFILES[@]}"
 
-msg "Checking dotfile config symlinks"
-# Link in our nvim config. We will expect neovim to be installed already outside of our profile
-link_file ".config/nvim"
-
 # Setup some common config symlinks
+msg "Checking dotfile config symlinks"
 link_file ".config/btop"
 #link_file ".config/git"
-#link_file ".profile"
-#link_file ".vimrc"
-#link_file ".zshrc"
+link_file ".profile"
+link_file ".vimrc"
+link_file ".zshrc"
