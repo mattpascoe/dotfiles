@@ -166,3 +166,8 @@ else
   echo "Installing zsh-vi-mode plugin."
   git clone https://github.com/jeffreytse/zsh-vi-mode.git $XDG_CONFIG_HOME/zsh/zsh-vi-mode
 fi
+
+# Allow for locally defined extra zsh configuration
+if [ -f ~/.zsh_local_extras ]; then
+  source ~/.zsh_local_extras
+fi
