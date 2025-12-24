@@ -214,6 +214,7 @@ Usage: $0 [options]
 Options:
   -l, --list-profiles    List available profiles
   -p, --profile          Directly execute a specific profile.
+  -g, --gitpull          Perform a git pull on the dotfiles repo
   -L, --list-roles       List available roles
   -r, --role             Role to setup. Overrides cache and ENV.
   -n, --no-save-role     Do not save role to local file cache
@@ -242,6 +243,12 @@ while [[ "$#" -gt 0 ]]; do
         --role|-r)
             ROLE="$2"
             shift 2
+            ;;
+        --gitpull|-g)
+            msg "${UL}Performing git pull on dotfiles repo:${NC} ${BLU}$DOTREPO"
+            cd "$DOTREPO" || exit
+            git pull
+            exit 0
             ;;
         --profile|-p)
             PROFILE="$2"
