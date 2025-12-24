@@ -241,6 +241,10 @@ while [[ "$#" -gt 0 ]]; do
             exit 0
             ;;
         --role|-r)
+            if [[ -z "$2" || "$2" == -* ]]; then
+              echo "Error: role requires an argument" >&2
+              exit 1
+            fi
             ROLE="$2"
             shift 2
             ;;
@@ -251,6 +255,10 @@ while [[ "$#" -gt 0 ]]; do
             exit 0
             ;;
         --profile|-p)
+            if [[ -z "$2" || "$2" == -* ]]; then
+              echo "Error: profile requires an argument" >&2
+              exit 1
+            fi
             PROFILE="$2"
             shift 2
             system_info
