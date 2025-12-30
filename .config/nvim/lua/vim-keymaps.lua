@@ -14,6 +14,9 @@ vim.keymap.set('n', '<leader>w', ':update<CR>', { desc = 'Save file if modified'
 -- Optional: Also in Insert mode (exits Insert temporarily)
 vim.keymap.set('i', '<leader>w', '<C-o>:update<CR>', { desc = 'Save from Insert' })
 
+-- Save with sudo
+vim.keymap.set('i', '<leader>W', ':w !sudo tee % > /dev/null<CR>', { desc = 'Write with sudo' })
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
