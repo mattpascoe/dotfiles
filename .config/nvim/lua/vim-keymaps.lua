@@ -15,7 +15,10 @@ vim.keymap.set('n', '<leader>w', ':update<CR>', { desc = 'Save file if modified'
 vim.keymap.set('i', '<leader>w', '<C-o>:update<CR>', { desc = 'Save from Insert' })
 
 -- Save with sudo
-vim.keymap.set('i', '<leader>W', ':w !sudo tee % > /dev/null<CR>', { desc = 'Write with sudo' })
+vim.keymap.set('n', '<leader>W', function()
+  vim.cmd('silent! write !sudo tee % > /dev/null')
+  vim.cmd('edit!') -- reloads the file to clear the W12 warning
+end, { desc = 'Write with sudo' })
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
