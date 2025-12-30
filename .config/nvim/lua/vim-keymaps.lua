@@ -8,6 +8,11 @@ vim.cmd.abbrev(
   'NuM',
   '1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890'
 )
+-- Save with :update (only writes if modified—faster/smarter than :w)
+vim.keymap.set('n', '<leader>w', ':update<CR>', { desc = 'Save file if modified' })
+
+-- Optional: Also in Insert mode (exits Insert temporarily)
+vim.keymap.set('i', '<leader>w', '<C-o>:update<CR>', { desc = 'Save from Insert' })
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
