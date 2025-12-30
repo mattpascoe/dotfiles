@@ -332,7 +332,6 @@ vim.api.nvim_create_autocmd('FileType', {
 -- Set the TMUX title to the file name of current buffer
 -- This requires the following tmux settings:
 --   set -g allow-rename on
---   set -g automatic-rename off
 vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter', 'BufFilePost', 'BufWritePost' }, {
   callback = function()
     local filename = vim.fn.expand('%:t')
