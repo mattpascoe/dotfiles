@@ -11,9 +11,6 @@ vim.cmd.abbrev(
 -- Save with :update (only writes if modified—faster/smarter than :w)
 vim.keymap.set('n', '<leader>w', ':update<CR>', { desc = 'Save file if modified' })
 
--- Optional: Also in Insert mode (exits Insert temporarily)
-vim.keymap.set('i', '<leader>w', '<C-o>:update<CR>', { desc = 'Save from Insert' })
-
 -- Save with sudo
 vim.keymap.set('n', '<leader>W', function()
   vim.cmd('silent! write !sudo tee % > /dev/null')
