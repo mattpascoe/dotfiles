@@ -9,6 +9,9 @@ vim.opt.number = true
 --  Experiment for yourself to see if you like it!
 vim.opt.relativenumber = true
 
+-- Set the status line to always show but for the last window only.
+vim.opt.laststatus = 3
+
 -- Dont backup files
 vim.opt.backup = false
 vim.opt.writebackup = false
