@@ -102,3 +102,18 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+-- Define a function for toggling a zoom tab. Used in small windows like on DAP Debugger-ui
+local function toggle_zoom()
+  -- If the current tab is marked as 'zoomed', close it to return to the previous layout
+  if vim.t.is_zoomed then
+    vim.cmd('tabclose')
+  else
+    -- Create a new tab for the current buffer and mark it
+    vim.cmd('tab split')
+    vim.t.is_zoomed = true
+  end
+end
+
+-- Map it to <leader>z (or your preferred key)
+vim.keymap.set('n', '<leader>z', toggle_zoom, { desc = '[Z]oom/Toggle Tab Split', noremap = true, silent = true })
