@@ -1,10 +1,6 @@
 return {
   -- Setup a debugger
-  -- TODO: this stuff is not yet fully working. more to do with dap and php
-  --
-  --{ 'rcarriga/nvim-dap-ui', dependencies = { 'mfussenegger/nvim-dap', 'nvim-neotest/nvim-nio' } },
   {
-    --'rcarriga/nvim-dap-ui',
     'mfussenegger/nvim-dap',
     dependencies = { 'rcarriga/nvim-dap-ui', 'nvim-neotest/nvim-nio' },
     config = function()
@@ -26,7 +22,7 @@ return {
       dap.adapters.php = {
         type = 'executable',
         command = 'node',
-        args = { '/Users/mpascoe/.local/share/nvim/mason/packages/php-debug-adapter/extension/out/phpDebug.js' },
+        args = { vim.fn.expand('~/.local/share/nvim/mason/packages/php-debug-adapter/extension/out/phpDebug.js') },
       }
 
       dap.configurations.php = {
@@ -35,13 +31,20 @@ return {
           request = 'launch',
           name = 'Listen for Xdebug',
           hostname = '127.0.0.1',
-          pathMappings = {
-            ['/opt/trader'] = '/Users/mpascoe/data/workrepos/xdt6000',
-          },
+          -- pathMappings = {
+          --   ['/opt/trader'] = vim.fn.expand('~/data/workrepos/xdt6000'),
+          -- },
           port = 9009,
         },
       }
 
+      vim.lsp.config.phpactor = {
+        cmd = {
+          'php8.1',
+          vim.env.HOME .. '/.local/share/nvim/mason/bin/phpactor',
+          'language-server',
+        },
+      }
       --require 'nvim-dap-virtual-text'
       vim.fn.sign_define(
         'DapBreakpoint',
@@ -52,6 +55,8 @@ return {
       vim.keymap.set('n', '<leader>dt', dapui.toggle, { desc = 'Debugger UI [T]oggle', noremap = true })
       vim.keymap.set('n', '<leader>db', dap.toggle_breakpoint, { desc = 'Debugger [B]reakpoint', noremap = true })
       vim.keymap.set('n', '<leader>dc', dap.continue, { desc = 'Debugger [C]ontinue', noremap = true })
+      vim.keymap.set('n', '<leader>dn', ':DapNew<CR>', { desc = 'Debugger [S]tart', noremap = true })
+      vim.keymap.set('n', '<leader>dd', dap.disconnect, { desc = 'Debugger [D]isconnect', noremap = true })
       vim.keymap.set(
         'n',
         '<leader>dr',
