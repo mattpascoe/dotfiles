@@ -9,11 +9,11 @@ vim.cmd.abbrev(
   '1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890'
 )
 -- Save with :update (only writes if modified—faster/smarter than :w)
-vim.keymap.set('n', '<leader>w', ':update<CR>', { desc = 'Save file if modified' })
+vim.keymap.set('n', '<leader>w', ':update<CR>', { desc = 'Save file if modified', noremap = true, silent = true })
 
--- Save with sudo
+-- Save with sudo, does not actually work on mac due to 'no terminal'
 vim.keymap.set('n', '<leader>W', function()
-  vim.cmd('silent! write !sudo tee % > /dev/null')
+  vim.cmd('update !sudo tee % > /dev/null')
   vim.cmd('edit!') -- reloads the file to clear the W12 warning
 end, { desc = 'Write with sudo' })
 
