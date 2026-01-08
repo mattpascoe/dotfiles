@@ -38,13 +38,6 @@ return {
         },
       }
 
-      vim.lsp.config.phpactor = {
-        cmd = {
-          'php8.1',
-          vim.env.HOME .. '/.local/share/nvim/mason/bin/phpactor',
-          'language-server',
-        },
-      }
       --require 'nvim-dap-virtual-text'
       vim.fn.sign_define(
         'DapBreakpoint',
