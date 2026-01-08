@@ -174,14 +174,20 @@ return {
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        phpactor = {},
-        cssls = {},
-        html = {},
-        dockerls = {},
+        phpactor = {
+          -- cmd = {
+          --   'php8.3',
+          --   vim.env.HOME .. '/.local/share/nvim/mason/bin/phpactor',
+          --   'language-server',
+          -- },
+        },
+        -- cssls = {},
+        -- html = {},
         bashls = { filetypes = { 'sh', 'zsh', 'bash' } },
-        yamlls = {},
-        jsonls = {},
-        docker_compose_language_service = {},
+        -- yamlls = {},
+        -- jsonls = {},
+        -- dockerls = {},
+        -- docker_compose_language_service = {},
         -- clangd = {},
         -- gopls = {},
         -- pyright = {},
