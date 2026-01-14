@@ -349,6 +349,16 @@ vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter', 'BufFilePost', 'BufWrit
     io.write('\027kVI:' .. shortname .. '\027\\')
   end,
 })
+-- Restore tmux control on exit
+-- This is a lame hack because tmux sets automatic-rename off if we rename the window.
+vim.api.nvim_create_autocmd('VimLeavePre', {
+  callback = function()
+    if vim.env.TMUX then
+      os.execute("tmux rename-window ''")
+      os.execute('tmux set-window-option automatic-rename on')
+    end
+  end,
+})
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
