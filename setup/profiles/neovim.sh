@@ -24,6 +24,7 @@ case "$ID" in
       msg "Failed to determine latest github Neovim version; skipping"
     elif [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
       msg "${BLU}Latest Neovim v$LATEST_VERSION already installed. Nothing to do."
+      link_file ".config/nvim"
     else
       msg "${BLU}Installing Neovim v$LATEST_VERSION"
       tmpdir=$(mktemp -d)
