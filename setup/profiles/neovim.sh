@@ -5,7 +5,9 @@ PKG_NAME=neovim
 case "$ID" in
   arch*)
     # Since its arch we'll expect the version to be pretty close to the latest
-    sudo pacman --needed --noconfirm -S "$PKG_NAME" ;;
+    sudo pacman --needed --noconfirm -S "$PKG_NAME"
+    link_file ".config/nvim"
+    ;;
   debian*|ubuntu*)
     # This variation will install latest version into a local dir since we find yourselves on older systems
     ARCH=${ARCH:-$(uname -m)}; ARCH=${ARCH/aarch64/arm64}
@@ -38,11 +40,14 @@ case "$ID" in
       hash -r
       # Cleanup
       rm -rf "$tmpdir"
+      link_file ".config/nvim"
     fi
     ;;
   macos*)
     # Should track pretty close to latest
-    brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
+    brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
+    link_file ".config/nvim"
+    ;;
   *)
     echo "-!- Install not supported."
     ;;
