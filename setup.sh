@@ -24,7 +24,7 @@ DOTFILE_ROLE_PATH="$HOME/.dotfile_role"
 PROFILE_DIR="$DOTREPO/setup/profiles"
 
 # Get the current role from the cache file if it exists and we didnt set one in the ENV
-[[ -f "$DOTFILE_ROLE_PATH" ]] && [[ $ROLE == "" ]] && ROLE=$(cat "$DOTFILE_ROLE_PATH")
+[[ -f "$DOTFILE_ROLE_PATH" ]] && [[ $ROLE == "" ]] && ROLE=$(cat "$DOTFILE_ROLE_PATH" 2>/dev/null)
 
 # Colors/formatting
 UL="\033[4m" # underline

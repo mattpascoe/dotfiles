@@ -29,6 +29,7 @@ else
   sudo kanata -q --no-wait --nodelay -c ~/.config/kanata/kanata.kbd &
 fi
 EOF
+    sudo chmod +x ~/start-kanata.sh
     ;;
   # Should work on any linux system as long as it is x86 based
   *)
