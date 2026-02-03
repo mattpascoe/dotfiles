@@ -9,7 +9,7 @@ case "$ID" in
     # This may still need some karabiner-hiddriver stuff and whatever comes with that
     brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
     link_file ".config/$PKG_NAME"
-    sudo tee ~/start-kanata.sh > /dev/null <<'EOF'
+    tee ~/bin/start-kanata.sh > /dev/null <<'EOF'
 #!/bin/bash
 
 # prompt up front
@@ -29,7 +29,7 @@ else
   sudo kanata -q --no-wait --nodelay -c ~/.config/kanata/kanata.kbd &
 fi
 EOF
-    sudo chmod +x ~/start-kanata.sh
+    chmod +x ~/bin/start-kanata.sh
     ;;
   # Should work on any linux system as long as it is x86 based
   *)
