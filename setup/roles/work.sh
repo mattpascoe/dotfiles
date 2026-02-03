@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # A basic install with no desktop settings for work purposes
 
 PROFILES=(

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # This role is for Matts standard Mac desktop setup
 
 PROFILES=(

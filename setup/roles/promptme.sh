@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Prompt for each profile you want to install
 
 # This does not use run_profiles since we want to prompt the user for each

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Keri's mac environment setup
 
 PROFILES=(

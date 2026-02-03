@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # This role is a minimal desktop setup with my must haves only
 
 PROFILES=(
