@@ -1,5 +1,12 @@
+-- Ignore undefined global warnings for Hammerspoon
+---@diagnostic disable: undefined-global
+
 -- Modifier key combo
 MEH = { "shift", "ctrl", "alt" }
+
+-- These install the `hs` cli interface. I was using it for notification popups
+-- hs.ipc.cliInstall("/opt/homebrew/bin")
+-- require("hs.ipc")
 
 -- Define app hotkeys in a table
 -- This will add a binding for MEH + key
