@@ -117,7 +117,7 @@ function check_git() {
       # Also a stupid thing to ensure I have a user setup, maybe prompt for this at some point
       msg "Adding mdp user, please provide a password when prompted"
       if ! id -u mdp &> /dev/null; then
-        useradd -m -G wheel -s /bin/bash mdp && sudo passwd mdp
+        useradd -m -G wheel -s /bin/zsh mdp && passwd mdp < /dev/tty
       fi
       ;;
     macos*)
