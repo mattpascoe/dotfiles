@@ -111,6 +111,14 @@ function check_git() {
       #dmesg -n 3
       # Update the system and ensure git is installed, grab some others just for good measure
       pacman --needed --noconfirm -Syu git curl wget sudo fontconfig jq zsh base-devel
+      # A special case on Arch, I'm going to enable the wheel group for sudo
+      # This is here and assumes that if git is not installed, then we have not set up sudo. Probably better ways to do this.
+      sed -i.bak '/^[[:space:]]*#\s*%wheel[[:space:]]\+ALL=(ALL)[[:space:]]\+ALL/s/^#\s*//' /etc/sudoers
+      # Also a stupid thing to ensure I have a user setup, maybe prompt for this at some point
+      msg "Adding mdp user, please provide a password when prompted"
+      if ! id -u mdp &> /dev/null; then
+        useradd -m -G wheel -s /bin/bash mdp && sudo passwd mdp
+      fi
       ;;
     macos*)
       # Run git command, it may ask to install developer tools, go ahead and do that to get the git command
