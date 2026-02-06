@@ -83,13 +83,10 @@ alias dot='$DOTREPO/setup.sh'
 
 # Turn on vi mode and set our default editor
 set -o vi
-export EDITOR=nvim
+export EDITOR; EDITOR=$(command -v nvim >/dev/null 2>&1 && echo nvim || echo vim)
 export VISUAL=$EDITOR
-alias e=$EDITOR
-# If we dont have vim installed add an alias to nvim
-if ! command -v vim &> /dev/null; then
-  alias vim=$EDITOR
-fi
+alias e='$EDITOR'
+alias vi='$EDITOR'
 
 # Set PAGER
 export PAGER=less
