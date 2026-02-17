@@ -28,6 +28,7 @@ PROFILE_DIR="$DOTREPO/setup/profiles"
 
 # Colors/formatting
 UL="\033[4m" # underline
+UL_OFF="\033[24m" # no underline
 NC="\033[0m" # no color/format
 YEL="\033[33m"
 BLU="\033[34m"
@@ -147,7 +148,7 @@ function check_dotrepo() {
     CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
     BEHIND_COUNT=$(git rev-list --count HEAD..origin/"$CURRENT_BRANCH" || echo "unknown")
     if [ "$BEHIND_COUNT" -gt 0 ]; then
-      msg "!! Dotfile repo is NOT up to date on branch $CURRENT_BRANCH."
+      msg "!! Dotfile repo is NOT up to date on branch $CURRENT_BRANCH. Use ${UL}${BLU}pull${UL_OFF}${YEL} command to update."
     else
       msg "${BLU}Dotfile branch: ${UL}$CURRENT_BRANCH${NC} ${BLU}(Up to date)"
     fi
@@ -163,9 +164,9 @@ function list_profiles() {
   for FILE in $(find "$DOTREPO/setup/profiles" -type f -name "[0-9a-zA-Z]*.sh"|LC_ALL=C sort -h); do
     PROFILE=$(basename "$FILE" | cut -d. -f1)
     DESC=$(sed -n '2p' "$FILE")
-    LIST="$LIST\n$PROFILE:$DESC"
+    LIST+=("$PROFILE:$DESC\n")
   done
-  echo -e "$LIST"|column -t -s ':'
+  echo -e " ${LIST[*]}"|column -t -s ':'|sed 's/^ //g'
 }
 
 # List the available roles
@@ -213,20 +214,94 @@ function system_info() {
   msg "${BLU}OS type:        ${UL}$PRETTY_NAME"
 }
 
+# The main function to process the selected role
+function process_role() {
+  # If we dont find a role then prompt the user if they want to pick one.
+  [[ $ROLE == "" ]] && prompt_for_role
+  # If we made it this far but the role doesnt actually exist, prompt the user again
+  [[ ! -f "$DOTREPO/setup/roles/$ROLE.sh" ]] && msg "${RED}-!- Role '$ROLE' does not exist. Please select a valid one." && prompt_for_role
+
+  msg "${BLU}Selected role:  ${UL}$ROLE"
+
+  setup_platform
+
+  # Run the COMMON.sh script that EVERYONE should run
+  source "${DOTREPO}/setup/profiles/COMMON.sh"
+
+  # Actually process the selected role
+  source "$DOTREPO/setup/roles/$ROLE.sh"
+
+  # Save the role to the local cache file
+  if [[ $NO_SAVE_ROLE == true ]]; then
+    msg "\n${UL}Requested to skip role cache update."
+  else
+    if [[ $ROLE != $(cat "$DOTFILE_ROLE_PATH" 2>/dev/null) ]]; then
+      msg "\n${UL}Saving role to cache:${NC} ${BLU}$ROLE"
+      echo "$ROLE" > "$DOTFILE_ROLE_PATH"
+    fi
+  fi
+
+  # Finalize
+  msg "\n${UL}Setup complete"
+}
+
+# List the profiles used in the selected role
+function profiles_in_role() {
+  local ROLE="$1"
+  LIST=()
+  # Gather the list of profiles defined in role
+  ROLE_STATUS=1 source "$DOTREPO/setup/roles/$ROLE.sh"
+  msg "${GRN}Profile count:  ${UL}${#PROFILES[@]}"
+
+  for PROFILE in "${PROFILES[@]}"; do
+      DESC=$(sed -n '2p' "$DOTREPO/setup/profiles/$PROFILE.sh")
+      LIST+=("$PROFILE:$DESC\n")
+  done
+
+  echo -e " ${LIST[*]}"|column -t -s ':'|sort
+  echo
+}
+
+# Display a basic status components
+function basic_status() {
+  system_info
+  check_git
+  check_dotrepo
+}
+
+# Display a full status including profile details for role
+function full_status() {
+  basic_status
+  [[ ! -f "$DOTREPO/setup/roles/$ROLE.sh" ]] && ROLE="Unknown"
+  msg "${GRN}Selected role:  ${UL}$ROLE"
+
+  profiles_in_role "$ROLE"
+
+  msg "Use ${UL}${BLU}run${UL_OFF}${YEL} command to process profiles in the selected role."
+}
 
 # Display help
 function help() {
   cat <<EOF
-Usage: $0 [options]
+Usage: $0 [command] [options]
 
-Options:
-  -l, --list-profiles    List available profiles
-  -p, --profile          Directly execute a specific profile.
-  -g, --gitpull          Perform a git pull on the dotfiles repo
-  -L, --list-roles       List available roles
-  -r, --role             Role to setup. Overrides cache and ENV.
-  -n, --no-save-role     Do not save role to local file cache
-  -h, --help             Show this help message
+Commands:
+  status             Show status (default if no command given)
+  run                Run the setup process
+  profile [name]     Directly execute a specific Profile or list all if no name given
+  role [name]        Select a Role or list all if no name given. Overrides cache and ENV
+  pull               Perform a git pull on the dotfiles repo
+  help               Show help
+
+Option flags:
+  -s                 Show status
+  -l                 List available profiles
+  -L                 List available roles
+  -g                 Perform a git pull on the dotfiles repo
+  -n                 Do not save role to local file cache
+  -p, --profile      Directly execute a specific profile
+  -r, --role         Select a Role. Overrides cache and ENV
+  -h, --help         Show this help message
 EOF
 }
 # ---------- END standard functions
@@ -237,35 +312,54 @@ EOF
 # Unraid OS installs are special so just call it here, this will exit in that script
 [[ -f /etc/unraid-version ]] && source "${DOTREPO}/setup/platforms/unraid.sh"
 
+# Make the default behavior a status call if no options are given
+if [[ "$#" -eq 0 ]]; then
+    full_status
+    exit 0
+fi
+
 # Parse command-line options
 while [[ "$#" -gt 0 ]]; do
     case "$1" in
-        --list-roles|-L)
-            list_roles
-            exit 0
+        --no-save-role|-n)
+            NO_SAVE_ROLE=true
+            shift
             ;;
-        --list-profiles|-l)
-            list_profiles
-            exit 0
-            ;;
-        --role|-r)
+        --role|-r|role)
             if [[ -z "$2" || "$2" == -* ]]; then
-              echo "Error: role requires an argument" >&2
-              exit 1
+              list_roles
+              exit 0
             fi
             ROLE="$2"
             shift 2
             ;;
-        --gitpull|-g)
+        --run|up|run)
+            basic_status
+            process_role
+            exit 0
+            ;;
+        -L)
+            list_roles
+            exit 0
+            ;;
+        -s|--status|status)
+            full_status
+            exit 0
+            ;;
+        -l)
+            list_profiles
+            exit 0
+            ;;
+        -g|pull)
             msg "${UL}Performing git pull on dotfiles repo:${NC} ${BLU}$DOTREPO"
             cd "$DOTREPO" || exit
             git pull
             exit 0
             ;;
-        --profile|-p)
+        --profile|-p|profile|pro)
             if [[ -z "$2" || "$2" == -* ]]; then
-              echo "Error: profile requires an argument" >&2
-              exit 1
+              list_profiles
+              exit 0
             fi
             PROFILE="$2"
             shift 2
@@ -275,59 +369,14 @@ while [[ "$#" -gt 0 ]]; do
             source "$DOTREPO/setup/profiles/$PROFILE.sh"
             exit 0
             ;;
-        --no-save-role|-n)
-            NO_SAVE_ROLE=true
-            shift
-            ;;
-        --help|-h)
+        --help|-h|help)
             help
             exit 0
             ;;
         *)
             echo "Error: Unknown option: $1"
-            echo "Run with -h flag for help."
+            echo "Run with -h flag or help command."
             exit 1
             ;;
     esac
 done
-
-system_info
-check_git
-check_dotrepo
-# ---- This ends the section for first time curl/wget based installs. The rest should run from the local repo.
-
-
-
-# If we dont find a role then prompt the user if they want to pick one.
-[[ $ROLE == "" ]] && prompt_for_role
-# If we made it this far but the role doesnt actually exist, prompt the user again
-[[ ! -f "$DOTREPO/setup/roles/$ROLE.sh" ]] && msg "${RED}-!- Role '$ROLE' does not exist. Please select a valid one." && prompt_for_role
-
-msg "${BLU}Selected role:  ${UL}$ROLE"
-
-setup_platform
-
-# Run the COMMON.sh script that EVERYONE should run
-source "${DOTREPO}/setup/profiles/COMMON.sh"
-
-# Actually process the selected role
-prompt "\nRun ${UL}${ROLE}${NC}${GRN} role setup script? (N/y) "
-read -r REPLY < /dev/tty
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-  source "$DOTREPO/setup/roles/$ROLE.sh"
-fi
-
-# Save the role to the local cache file
-if [[ $NO_SAVE_ROLE == true ]]; then
-  msg "\n${UL}Requested to skip role cache update."
-else
-  if [[ $ROLE != $(cat "$DOTFILE_ROLE_PATH" 2>/dev/null) ]]; then
-    msg "\n${UL}Saving role to cache:${NC} ${BLU}$ROLE"
-    echo "$ROLE" > "$DOTFILE_ROLE_PATH"
-  fi
-fi
-
-# Finalize
-msg "\n${UL}Setup complete"
-msg "You should probably reboot if this is your first run"
-msg "OR at least log out or start a 'tmux' session to utilize new shell changes."
