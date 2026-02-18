@@ -71,16 +71,29 @@ function prompt() {
 # Links the file in Home to dotfile repo
 function link_file() {
   FILE=$1
-  if [ ! -L "$HOME/$FILE" ]; then
-    if [ -e "$HOME/$FILE" ]; then
-      msg "${BLU}Backing up current config file to ${FILE}.bak"
-      mv "$HOME/$FILE" "$HOME/$FILE.bak"
+  if [[ "$DRY_RUN" == true ]]; then
+    if [ ! -L "$HOME/$FILE" ]; then
+      if [ -e "$HOME/$FILE" ]; then
+        msg "${BLU}[DRY-RUN] Would backup current config file to ${FILE}.bak"
+      else
+        msg "${BLU}[DRY-RUN] Would link config file $HOME/$FILE -> $DOTREPO/$FILE"
+      fi
+    else
+      LINK_LIST=$(ls -o "$HOME/$FILE")
+      msg "${BLU}Config link exists: $LINK_LIST"
     fi
-    msg "${BLU}Linking config file $HOME/$FILE -> $DOTREPO/$FILE"
-    ln -s "$DOTREPO/$FILE" "$HOME/$FILE"
   else
-    LINK_LIST=$(ls -o "$HOME/$FILE")
-    msg "${BLU}Config link exists: $LINK_LIST"
+    if [ ! -L "$HOME/$FILE" ]; then
+      if [ -e "$HOME/$FILE" ]; then
+        msg "${BLU}Backing up current config file to ${FILE}.bak"
+        mv "$HOME/$FILE" "$HOME/$FILE.bak"
+      fi
+      msg "${BLU}Linking config file $HOME/$FILE -> $DOTREPO/$FILE"
+      ln -s "$DOTREPO/$FILE" "$HOME/$FILE"
+    else
+      LINK_LIST=$(ls -o "$HOME/$FILE")
+      msg "${BLU}Config link exists: $LINK_LIST"
+    fi
   fi
 }
 
@@ -348,9 +361,8 @@ while [[ "$#" -gt 0 ]]; do
             shift 2
             ;;
         --run|up|run)
-            basic_status
-            process_role
-            exit 0
+            RUN_FLAG=true
+            shift
             ;;
         -L)
             list_roles
@@ -375,13 +387,9 @@ while [[ "$#" -gt 0 ]]; do
               list_profiles
               exit 0
             fi
+            PROFILE_FLAG=true
             PROFILE="$2"
             shift 2
-            system_info
-            setup_platform
-            msg "${UL}Directly running profile setup script:${NC} ${BLU}$PROFILE"
-            source "$DOTREPO/setup/profiles/$PROFILE.sh"
-            exit 0
             ;;
         --help|-h|help)
             help
@@ -394,3 +402,20 @@ while [[ "$#" -gt 0 ]]; do
             ;;
     esac
 done
+
+# Main processing based on flags status
+
+# If we are actually applying a role
+if [[ "$RUN_FLAG" == true ]]; then
+  basic_status
+  process_role
+  exit 0
+fi
+
+# If we are applying a specific profile
+if [[ "$PROFILE_FLAG" == true && "$PROFILE" != "" ]]; then
+  system_info
+  msg "${UL}Directly running profile setup script:${NC} ${BLU}$PROFILE"
+  source "$DOTREPO/setup/profiles/$PROFILE.sh"
+  exit 0
+fi

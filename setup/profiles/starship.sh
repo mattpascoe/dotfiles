@@ -11,7 +11,11 @@ else
   msg "Starship is already installed. Running installer again to get updates"
 fi
 SHIP_INST="curl -fsSL https://starship.rs/install.sh | sh -s -- --force --bin-dir $HOME/bin | sed '/Please follow the steps/,\$d'"
-eval "$SHIP_INST"
+if [[ "$DRY_RUN" == true ]]; then
+  msg "${GRN}[DRY_RUN: command]${NC} $SHIP_INST"
+else
+  eval "$SHIP_INST"
+fi
 link_file ".config/starship.toml"
 # Starship installer leaves a bunch of mktemp dirs all over. This will clean them up even ones that are not ours!
 find /tmp/ -name "tmp.*.tar.gz" -print0 2>/dev/null | while IFS= read -r -d '' file; do

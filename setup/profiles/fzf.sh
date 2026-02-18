@@ -14,7 +14,11 @@ else
   msg "FZF is already installed. Running installer again to get updates"
 fi
 FZF_INST="curl -fsSL https://raw.githubusercontent.com/junegunn/fzf/master/install | bash -s -- --bin --xdg --no-update-rc --no-completion --no-key-bindings"
-eval "$FZF_INST"
+if [[ "$DRY_RUN" == true ]]; then
+  msg "${GRN}[DRY_RUN: command]${NC} $FZF_INST"
+else
+  eval "$FZF_INST"
+fi
 popd >/dev/null || exit
 
 msg "${BLU}Install complete."
