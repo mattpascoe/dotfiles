@@ -4,7 +4,8 @@
 PKG_NAME=spotify
 case "$ID" in
   arch*)
-    sudo pacman --needed --noconfirm -S "$PKG_NAME" ;;
+    # shellcheck disable=SC2086
+    $PLATFORM_INSTALLER_BIN $INSTALLER_OPTS "$PKG_NAME" ;;
   debian*|ubuntu*)
     ARCH=${ARCH:-$(uname -m)}; ARCH=${ARCH/aarch64/arm64}
     if [[ $ARCH == "arm64" ]]; then
@@ -12,12 +13,14 @@ case "$ID" in
     else
       curl -sS https://download.spotify.com/debian/pubkey_C85668DF69375001.gpg | sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/spotify.gpg
       echo "deb [signed-by=/etc/apt/trusted.gpg.d/spotify.gpg] https://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
-      sudo apt update -y
-      sudo apt install -y spotify-client
+      $PLATFORM_INSTALLER_BIN update -y
+      # shellcheck disable=SC2086
+      $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS spotify-client
     fi
     ;;
   macos*)
-    brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
+    # shellcheck disable=SC2086
+    $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
   *)
     echo "-!- Install not supported."
     ;;

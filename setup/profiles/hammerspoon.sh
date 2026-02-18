@@ -8,7 +8,8 @@ case "$ID" in
   macos*)
     # First time setup
     if ! command -v hs >/dev/null 2>&1; then
-      "$BREWPATH"/brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
+      # shellcheck disable=SC2086
+      $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
       msg "${BLU}Starting Hammerspoon the first time."
       msg "${BLU}Launching Accessibility settings. Enable Hammerspoon there first."
 
@@ -25,7 +26,8 @@ case "$ID" in
       open -a hammerspoon
     else
       # Normal updates and setup
-      "$BREWPATH"/brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
+      # shellcheck disable=SC2086
+      $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
       link_file ".hammerspoon"
     fi
     ;;

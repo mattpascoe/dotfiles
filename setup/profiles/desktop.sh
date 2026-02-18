@@ -31,7 +31,8 @@ case "$ID" in
         case "$ID" in
           ubuntu*)
             if [[ $REPLY =~ ^[Yy]$ ]]; then
-              sudo apt install -y ubuntu-desktop-minimal rsyslog
+              # shellcheck disable=SC2086
+              $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS ubuntu-desktop-minimal rsyslog
               sudo systemctl set-default graphical.target
               export DESK="GNOME"
               source "$DOTREPO/setup/profiles/_gnome.sh"
@@ -40,7 +41,8 @@ case "$ID" in
             ;;
           arch*)
             if [[ $REPLY =~ ^[Yy]$ ]]; then
-              sudo pacman --disable-sandbox --needed --noconfirm -Sy gnome-themes-standard gnome
+              # shellcheck disable=SC2086
+              $PLATFORM_INSTALLER_BIN $INSTALLER_OPTS gnome-themes-standard gnome
               sudo systemctl set-default graphical.target
               sudo systemctl enable --now gdm
               export DESK="GNOME"

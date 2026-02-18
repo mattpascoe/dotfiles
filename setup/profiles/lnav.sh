@@ -4,11 +4,14 @@
 PKG_NAME=lnav
 case "$ID" in
   arch*)
-    sudo pacman --needed --noconfirm -S "$PKG_NAME" ;;
+    # shellcheck disable=SC2086
+    $PLATFORM_INSTALLER_BIN $INSTALLER_OPTS "$PKG_NAME" ;;
   debian*|ubuntu*)
-    sudo apt install -y "$PKG_NAME" ;;
+    # shellcheck disable=SC2086
+    $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS "$PKG_NAME" ;;
   macos*)
-    brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
+    # shellcheck disable=SC2086
+    $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
   *)
     echo "-!- Install not supported."
     ;;

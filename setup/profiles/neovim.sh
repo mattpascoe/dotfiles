@@ -5,7 +5,8 @@ PKG_NAME=neovim
 case "$ID" in
   arch*)
     # Since its arch we'll expect the version to be pretty close to the latest
-    sudo pacman --needed --noconfirm -S "$PKG_NAME"
+    # shellcheck disable=SC2086
+    $PLATFORM_INSTALLER_BIN $INSTALLER_OPTS "$PKG_NAME"
     link_file ".config/nvim"
     ;;
   debian*|ubuntu*)
@@ -46,7 +47,8 @@ case "$ID" in
     ;;
   macos*)
     # Should track pretty close to latest
-    brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
+    # shellcheck disable=SC2086
+    $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
     link_file ".config/nvim"
     ;;
   *)

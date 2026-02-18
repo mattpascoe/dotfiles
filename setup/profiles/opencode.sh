@@ -8,7 +8,8 @@ case "$ID" in
   debian*|ubuntu*)
     sudo curl -fsSL https://opencode.ai/install | bash ;;
   macos*)
-    brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
+    # shellcheck disable=SC2086
+    $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
   *)
     echo "-!- Install not supported."
     ;;

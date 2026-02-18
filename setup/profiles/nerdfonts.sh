@@ -2,8 +2,10 @@
 # Fancy icons for your terminal (installed in home dir)
 
 if [[ "$ID" == "macos" ]]; then
-  "$BREWPATH"/brew install font-monaspace-nerd-font 2>&1|sed '/^To reinstall/,$d'
-  "$BREWPATH"/brew install font-meslo-lg-nerd-font 2>&1|sed '/^To reinstall/,$d'
+  # shellcheck disable=SC2086
+  $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS font-monaspace-nerd-font 2>&1|sed '/^To reinstall/,$d'
+  # shellcheck disable=SC2086
+  $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS font-meslo-lg-nerd-font 2>&1|sed '/^To reinstall/,$d'
 else
   FONTDIR=$HOME/.local/share/fonts
   mkdir -p "$FONTDIR"

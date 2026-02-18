@@ -11,12 +11,14 @@ case "$ID" in
       echo "-!- Not supported on arm64."
     else
       curl -L -o /tmp/zoom.deb "https://zoom.us/client/latest/zoom_${ARCH}.deb"
-      sudo apt install /tmp/zoom.deb -y
+      # shellcheck disable=SC2086
+      $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS /tmp/zoom.deb
       sudo rm /tmp/zoom.deb
     fi
     ;;
   macos*)
-    brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
+    # shellcheck disable=SC2086
+    $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
   *)
     echo "-!- Install not supported."
     ;;

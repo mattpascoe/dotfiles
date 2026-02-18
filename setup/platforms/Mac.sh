@@ -52,3 +52,7 @@ if [ "$MOTION" != "1" ]; then
   open "x-apple.systempreferences:com.apple.preference.universalaccess?Display"
 fi
 
+PLATFORM_INSTALLER_BIN="$BREWPATH/brew"
+INSTALLER_OPTS=""
+PLATFORM_INSTALLER_DRYRUN_FLAG="--dry-run"
+

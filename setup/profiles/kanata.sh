@@ -7,7 +7,8 @@ PKG_NAME=kanata
 case "$ID" in
   macos*)
     # This may still need some karabiner-hiddriver stuff and whatever comes with that
-    brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
+    # shellcheck disable=SC2086
+    $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
     link_file ".config/$PKG_NAME"
     tee ~/bin/start-kanata.sh > /dev/null <<'EOF'
 #!/bin/bash

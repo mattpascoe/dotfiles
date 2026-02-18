@@ -5,12 +5,12 @@ PKG_NAME=tmux
 # On linux lets prompt to install since we may be running this on a shared server
 # NOTE: This means in this case we will not upgrade the current package.
 function linux_install_tmux() {
-  local -a install_cmd=("${@}")
+  local -a INSTALL_COMMAND=("${@}")
   if ! command -v "$PKG_NAME" &> /dev/null; then
     prompt "Install tmux system wide? (N/y) "
     read -r REPLY < /dev/tty
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-      sudo "${install_cmd[@]}" "$PKG_NAME"
+      "${INSTALL_COMMAND[@]}" "$PKG_NAME"
     fi
   else
     VERSION=$(tmux -V | cut -d ' ' -f 2)
@@ -20,13 +20,16 @@ function linux_install_tmux() {
 
 case "$ID" in
   arch*)
-    linux_install_tmux pacman --needed --noconfirm -S
+    #shellcheck disable=SC2086
+    linux_install_tmux "$PLATFORM_INSTALLER_BIN" $INSTALLER_OPTS "$PKG_NAME"
     ;;
   debian*|ubuntu*)
-    linux_install_tmux apt install -y
+    #shellcheck disable=SC2086
+    linux_install_tmux "$PLATFORM_INSTALLER_BIN" install $INSTALLER_OPTS "$PKG_NAME"
     ;;
   macos*)
-    "$BREWPATH"/brew install "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
+    #shellcheck disable=SC2086
+    $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
   *)
     echo "-!- Install not supported."
     ;;

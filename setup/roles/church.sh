@@ -39,5 +39,6 @@ if [[ -z "$ROLE_STATUS" ]]; then
   gsettings set org.gnome.desktop.session idle-delay 0
 
   # Install some apps
-  sudo apt install vlc libreoffice
+  # shellcheck disable=SC2086
+  $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS vlc libreoffice
 fi

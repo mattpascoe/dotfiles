@@ -26,7 +26,8 @@ if [[ -z "$ROLE_STATUS" ]]; then
   link_file ".zshrc"
 
   # TODO: Turn these into profiles
-  brew install -q \
+  # shellcheck disable=SC2086
+  $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS -q \
     spotify \
     quicken \
     google-chrome

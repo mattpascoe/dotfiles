@@ -26,14 +26,16 @@ export PATH="$HOME/bin:$PATH"
 msg "\n${UL}Ensuring install of requested base packages"
 case "$ID" in
   debian*|ubuntu*)
-    sudo apt update -y
-    sudo apt install -y "${LINUX_PKGS[@]}"
+    $PLATFORM_INSTALLER_BIN update -y
+    # shellcheck disable=SC2086
+    $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS "${LINUX_PKGS[@]}"
     # Remove some useless crap
-    sudo apt purge -y whoopsie
+    $PLATFORM_INSTALLER_BIN purge -y whoopsie
     ;;
   arch*)
     sudo dmesg -n 3 # Disable kernel messages since we are likely on a console
-    sudo pacman --disable-sandbox --needed --noconfirm -Syu "${LINUX_PKGS[@]}"
+    # shellcheck disable=SC2086
+    $PLATFORM_INSTALLER_BIN --disable-sandbox $INSTALLER_OPTS "${LINUX_PKGS[@]}"
     # Also make sure yay is installed for AUR support
     if ! command -v "yay" &> /dev/null; then
       tmpdir=$(mktemp -d)
@@ -44,7 +46,8 @@ case "$ID" in
     fi
     ;;
   macos*)
-    "$BREWPATH/brew" install -q "${BREW_PKGS[@]}"
+    #shellcheck disable=SC2086
+    $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS -q "${BREW_PKGS[@]}"
     ;;
   *)
     msg "${RED}-!- This system is not a supported type, You should check that the following packages are installed:"
