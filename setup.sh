@@ -53,6 +53,11 @@ case "${unameOut}" in
     *)          PLATFORM="UNKNOWN:${unameOut}"
 esac
 
+PLATFORM_INSTALLER_BIN=""
+INSTALLER_OPTS=""
+PLATFORM_INSTALLER_DRYRUN_FLAG=""
+DRY_RUN=""
+
 [[ -f /etc/os-release ]] && source /etc/os-release
 
 # --------- Define standard functions --------
@@ -199,13 +204,15 @@ function prompt_for_role() {
   done
 }
 
-
-# Call the PLATFORM specific setup scripts
-function setup_platform() {
-  msg "\n${UL}Running platform setup script"
-  source "${DOTREPO}/setup/platforms/${PLATFORM}.sh"
+# If we are doing a dry run, set the flag for the installer
+function set_dry_run() {
+  if [[ "$DRY_RUN" == true ]]; then
+    msg "${YEL}Setting up for DRY RUN"
+    INSTALLER_OPTS="$INSTALLER_OPTS $PLATFORM_INSTALLER_DRYRUN_FLAG"
+  else
+    msg "${YEL}Setting up for REAL RUN"
+  fi
 }
-
 
 # Display some info about the system
 function system_info() {
@@ -222,8 +229,6 @@ function process_role() {
   [[ ! -f "$DOTREPO/setup/roles/$ROLE.sh" ]] && msg "${RED}-!- Role '$ROLE' does not exist. Please select a valid one." && prompt_for_role
 
   msg "${BLU}Selected role:  ${UL}$ROLE"
-
-  setup_platform
 
   # Run the COMMON.sh script that EVERYONE should run
   source "${DOTREPO}/setup/profiles/COMMON.sh"
@@ -299,6 +304,7 @@ Option flags:
   -L                 List available roles
   -g                 Perform a git pull on the dotfiles repo
   -n                 Do not save role to local file cache
+  -d, --dry-run      Enable dry-run mode for package installs
   -p, --profile      Directly execute a specific profile
   -r, --role         Select a Role. Overrides cache and ENV
   -h, --help         Show this help message
@@ -318,12 +324,20 @@ if [[ "$#" -eq 0 ]]; then
     exit 0
 fi
 
+# We will always setup based on the platform to establish the package manager etc
+source "${DOTREPO}/setup/platforms/${PLATFORM}.sh"
+
 # Parse command-line options
 while [[ "$#" -gt 0 ]]; do
     case "$1" in
         --no-save-role|-n)
             NO_SAVE_ROLE=true
             shift
+            ;;
+        --dry-run|-d)
+            DRY_RUN=true
+            shift
+            set_dry_run
             ;;
         --role|-r|role)
             if [[ -z "$2" || "$2" == -* ]]; then
