@@ -304,15 +304,13 @@ function check_package_updates() {
       ;;
   esac
 
-  if command -v "$PLATFORM_INSTALLER_BIN" &> /dev/null; then
-    # shellcheck disable=SC2086
-    UPGRADABLE=$($PLATFORM_INSTALLER_BIN $UPGRADEABLE_PARAMS 2>/dev/null)
-    if [[ -n "$UPGRADABLE" ]]; then
-      msg "${YEL}Upgradeable packages:${NC}"
-      echo "$UPGRADABLE"
-    else
-      msg "${BLU}All packages are up to date"
-    fi
+  # shellcheck disable=SC2086
+  UPGRADABLE=$($PLATFORM_INSTALLER_BIN $UPGRADEABLE_PARAMS 2>/dev/null)
+  if [[ -n "$UPGRADABLE" ]]; then
+    msg "${YEL}Upgradeable packages:${NC}"
+    echo "$UPGRADABLE"
+  else
+    msg "${BLU}All packages are up to date"
   fi
 }
 
