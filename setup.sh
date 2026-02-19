@@ -360,14 +360,14 @@ EOF
 # Unraid OS installs are special so just call it here, this will exit in that script
 [[ -f /etc/unraid-version ]] && source "${DOTREPO}/setup/platforms/unraid.sh"
 
+# We will always setup based on the platform to establish the package manager etc
+source "${DOTREPO}/setup/platforms/${PLATFORM}.sh"
+
 # Make the default behavior a status call if no options are given
 if [[ "$#" -eq 0 ]]; then
     full_status
     exit 0
 fi
-
-# We will always setup based on the platform to establish the package manager etc
-source "${DOTREPO}/setup/platforms/${PLATFORM}.sh"
 
 # Parse command-line options
 while [[ "$#" -gt 0 ]]; do
