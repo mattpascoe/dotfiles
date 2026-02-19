@@ -220,10 +220,8 @@ function prompt_for_role() {
 # If we are doing a dry run, set the flag for the installer
 function set_dry_run() {
   if [[ "$DRY_RUN" == true ]]; then
-    msg "${YEL}Setting up for DRY RUN"
+    msg "${YEL}Processing as a DRY RUN"
     INSTALLER_OPTS="$INSTALLER_OPTS $PLATFORM_INSTALLER_DRYRUN_FLAG"
-  else
-    msg "${YEL}Setting up for REAL RUN"
   fi
 }
 
@@ -295,12 +293,15 @@ function check_package_updates() {
   case "$ID" in
     macos*)
       UPGRADEABLE_PARAMS="outdated --greedy --verbose"
+      UPGRADE_SYNTAX="brew upgrade"
       ;;
     debian*|ubuntu*)
       UPGRADEABLE_PARAMS="list --upgradable"
+      UPGRADE_SYNTAX="apt upgrade"
       ;;
     arch*)
       UPGRADEABLE_PARAMS="-Qu"
+      UPGRADE_SYNTAX="pacman -Su ??"
       ;;
   esac
 
@@ -309,6 +310,7 @@ function check_package_updates() {
   if [[ -n "$UPGRADABLE" ]]; then
     msg "${YEL}Upgradeable packages:${NC}"
     echo "$UPGRADABLE"
+    msg "\n${YEL}Use ${UL}${BLU}${UPGRADE_SYNTAX}${UL_OFF}${YEL} command to update."
   else
     msg "${BLU}All packages are up to date"
   fi
@@ -432,7 +434,7 @@ while [[ "$#" -gt 0 ]]; do
     esac
 done
 
-# Main processing based on flags status
+# Start main processing based on flag status
 
 # If we are actually applying a role
 if [[ "$RUN_FLAG" == true ]]; then
@@ -443,7 +445,7 @@ fi
 
 # If we are applying a specific profile
 if [[ "$PROFILE_FLAG" == true && "$PROFILE" != "" ]]; then
-  system_info
+  basic_status
   msg "${UL}Directly running profile setup script:${NC} ${BLU}$PROFILE"
   source "$DOTREPO/setup/profiles/$PROFILE.sh"
   exit 0
