@@ -287,10 +287,41 @@ function basic_status() {
   check_dotrepo
 }
 
+# Check for package updates using the package manager
+function check_package_updates() {
+  echo
+  msg "${GRN}Checking for package updates using package manager..."
+
+  case "$ID" in
+    macos*)
+      UPGRADEABLE_PARAMS="outdated --greedy --verbose"
+      ;;
+    debian*|ubuntu*)
+      UPGRADEABLE_PARAMS="list --upgradable"
+      ;;
+    arch*)
+      UPGRADEABLE_PARAMS="-Qu"
+      ;;
+  esac
+
+  if command -v "$PLATFORM_INSTALLER_BIN" &> /dev/null; then
+    # shellcheck disable=SC2086
+    UPGRADABLE=$($PLATFORM_INSTALLER_BIN $UPGRADEABLE_PARAMS 2>/dev/null)
+    if [[ -n "$UPGRADABLE" ]]; then
+      msg "${YEL}Upgradeable packages:${NC}"
+      echo "$UPGRADABLE"
+    else
+      msg "${BLU}All packages are up to date"
+    fi
+  fi
+}
+
 # Display a full status including profile details for role
 function full_status() {
   basic_status
+  check_package_updates
   [[ ! -f "$DOTREPO/setup/roles/$ROLE.sh" ]] && ROLE="Unknown"
+  echo
   msg "${GRN}Selected role:  ${UL}$ROLE"
 
   profiles_in_role "$ROLE"
