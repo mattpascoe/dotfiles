@@ -174,6 +174,36 @@ function check_dotrepo() {
   fi
 }
 
+# Check for package updates using the package manager
+function check_package_updates() {
+  echo
+  msg "${GRN}Checking for package updates using package manager..."
+
+  case "$ID" in
+    macos*)
+      UPGRADEABLE_PARAMS="outdated --greedy --verbose"
+      UPGRADE_SYNTAX="brew upgrade"
+      ;;
+    debian*|ubuntu*)
+      UPGRADEABLE_PARAMS="list --upgradable"
+      UPGRADE_SYNTAX="apt upgrade"
+      ;;
+    arch*)
+      UPGRADEABLE_PARAMS="-Qu"
+      UPGRADE_SYNTAX="pacman -Su ??"
+      ;;
+  esac
+
+  # shellcheck disable=SC2086
+  UPGRADABLE=$($PLATFORM_INSTALLER_BIN $UPGRADEABLE_PARAMS 2>/dev/null|grep -v "Listing...")
+  if [[ -n "$UPGRADABLE" ]]; then
+    msg "${YEL}Upgradeable packages:${NC}"
+    echo "$UPGRADABLE"
+    msg "\n${YEL}Use ${UL}${BLU}${UPGRADE_SYNTAX}${UL_OFF}${YEL} command to update."
+  else
+    msg "${BLU}All packages are up to date"
+  fi
+}
 # List the available profiles
 function list_profiles() {
   msg "${GRN}Available profiles:${NC}"
@@ -283,37 +313,6 @@ function basic_status() {
   system_info
   check_git
   check_dotrepo
-}
-
-# Check for package updates using the package manager
-function check_package_updates() {
-  echo
-  msg "${GRN}Checking for package updates using package manager..."
-
-  case "$ID" in
-    macos*)
-      UPGRADEABLE_PARAMS="outdated --greedy --verbose"
-      UPGRADE_SYNTAX="brew upgrade"
-      ;;
-    debian*|ubuntu*)
-      UPGRADEABLE_PARAMS="list --upgradable"
-      UPGRADE_SYNTAX="apt upgrade"
-      ;;
-    arch*)
-      UPGRADEABLE_PARAMS="-Qu"
-      UPGRADE_SYNTAX="pacman -Su ??"
-      ;;
-  esac
-
-  # shellcheck disable=SC2086
-  UPGRADABLE=$($PLATFORM_INSTALLER_BIN $UPGRADEABLE_PARAMS 2>/dev/null)
-  if [[ -n "$UPGRADABLE" ]]; then
-    msg "${YEL}Upgradeable packages:${NC}"
-    echo "$UPGRADABLE"
-    msg "\n${YEL}Use ${UL}${BLU}${UPGRADE_SYNTAX}${UL_OFF}${YEL} command to update."
-  else
-    msg "${BLU}All packages are up to date"
-  fi
 }
 
 # Display a full status including profile details for role
