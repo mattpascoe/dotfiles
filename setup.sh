@@ -296,16 +296,18 @@ function profiles_in_role() {
   local ROLE="$1"
   LIST=()
   # Gather the list of profiles defined in role
-  ROLE_STATUS=1 source "$DOTREPO/setup/roles/$ROLE.sh"
-  msg "${GRN}Profile count:  ${UL}${#PROFILES[@]}"
+  if [[ -f "$DOTREPO/setup/roles/$ROLE.sh" ]]; then
+    ROLE_STATUS=1 source "$DOTREPO/setup/roles/$ROLE.sh"
+    msg "${GRN}Profile count:  ${UL}${#PROFILES[@]}"
 
-  for PROFILE in "${PROFILES[@]}"; do
-      DESC=$(sed -n '2p' "$DOTREPO/setup/profiles/$PROFILE.sh")
-      LIST+=("$PROFILE:$DESC\n")
-  done
+    for PROFILE in "${PROFILES[@]}"; do
+        DESC=$(sed -n '2p' "$DOTREPO/setup/profiles/$PROFILE.sh")
+        LIST+=("$PROFILE:$DESC\n")
+    done
 
-  echo -e " ${LIST[*]}"|column -t -s ':'|sort
-  echo
+    echo -e " ${LIST[*]}"|column -t -s ':'|sort
+    echo
+  fi
 }
 
 # Display a basic status components
