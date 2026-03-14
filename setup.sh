@@ -182,7 +182,7 @@ function check_package_updates() {
   case "$ID" in
     macos*)
       UPGRADEABLE_PARAMS="outdated --greedy --verbose"
-      UPGRADE_SYNTAX="brew upgrade"
+      UPGRADE_SYNTAX="brew upgrade -g"
       ;;
     debian*|ubuntu*)
       UPGRADEABLE_PARAMS="list --upgradable"
