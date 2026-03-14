@@ -322,8 +322,10 @@ function full_status() {
   basic_status
   check_package_updates
   [[ ! -f "$DOTREPO/setup/roles/$ROLE.sh" ]] && ROLE="Unknown"
+
+  local DESC; DESC=$(sed -n '2p' "$DOTREPO/setup/roles/$ROLE.sh")
   echo
-  msg "${GRN}Selected role:  ${UL}$ROLE"
+  msg "${GRN}Selected role:  ${UL}$ROLE${NC} ${DESC}"
 
   profiles_in_role "$ROLE"
 
