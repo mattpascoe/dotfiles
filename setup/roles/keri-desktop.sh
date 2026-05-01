@@ -10,6 +10,7 @@ PROFILES=(
   brave-browser
   ghostty
   neovim
+  spotify
   zoom
 )
 
@@ -28,7 +29,6 @@ if [[ -z "$ROLE_STATUS" ]]; then
   # TODO: Turn these into profiles
   # shellcheck disable=SC2086
   $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS -q \
-    spotify \
     quicken \
     google-chrome
 
