@@ -15,6 +15,7 @@ TIMEZONE=America/Boise
 COMMON_PKGS+=(
   "bat"
   "eza"
+  "gdu"
   "highlight"
   "jq"
   "tree"
