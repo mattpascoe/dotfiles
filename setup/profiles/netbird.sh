@@ -7,6 +7,7 @@ case "$ID" in
     # Install and setup if we dont have it yet
     # This one uses a tap
     if ! command -v "$PKG_NAME" &> /dev/null; then
+      brew trust --formula netbirdio/tap/"$PKG_NAME"
       # shellcheck disable=SC2086
       $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS "netbirdio/tap/$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
       netbird service install
