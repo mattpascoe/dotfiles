@@ -39,8 +39,10 @@ EOF
     if [ "$ARCH" != "arm64" ]; then
       echo 'Installing kanata...'
       VERSION=$(curl -s https://api.github.com/repos/jtroo/kanata/releases/latest | grep -Po '"tag_name": "v\K[0-9.]+')
-      wget -q -P "$tmpdir" https://github.com/jtroo/kanata/releases/download/v"${VERSION}"/kanata
-      sudo install -b "$tmpdir"/kanata /usr/local/bin/kanata
+      wget -q -P "$tmpdir" https://github.com/jtroo/kanata/releases/download/v"${VERSION}"/linux-binaries-x64.zip
+      cd "$tmpdir" || exit
+      unzip linux-binaries-x64.zip
+      sudo install -b "$tmpdir"/kanata_linux_x64 /usr/local/bin/kanata
       rm -rf "$tmpdir"
 
       sudo rm -f /etc/kanata.cfg
