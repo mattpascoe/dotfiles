@@ -54,6 +54,8 @@ case "$ID" in
       gsettings set org.gnome.desktop.wm.keybindings minimize "['<Super>j']"
       gsettings set org.gnome.shell.extensions.tiling-assistant tile-left-half-ignore-ta "['<Super>h']"
       gsettings set org.gnome.shell.extensions.tiling-assistant tile-right-half-ignore-ta "['<Super>l']"
+      gsettings set org.gnome.mutter.keybindings toggle-tiled-left  "['<Super>h']"
+      gsettings set org.gnome.mutter.keybindings toggle-tiled-right "['<Super>l']"
 
       # Careful here.. need to test this more
       # There is other info about adjusting all GTK apps using this
