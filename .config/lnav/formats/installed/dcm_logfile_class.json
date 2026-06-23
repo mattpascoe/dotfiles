@@ -1,0 +1,11 @@
+{
+	"$schema": "https://lnav.org/schemas/format-v1.schema.json",
+	"syslog_log": {
+		"_comment": "Syslog overlay to Classifiy log levels properly from DCM log output",
+		"level": {
+			"debug": "\\] DEBUG =>",
+			"info": "\\] INFO =>",
+			"warning": "\\] NOTICE =>"
+		}
+	}
+}

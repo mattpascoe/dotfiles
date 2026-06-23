@@ -16,5 +16,6 @@ case "$ID" in
     echo "-!- Install not supported."
     ;;
 esac
+link_file ".config/$PKG_NAME"
 
 msg "${BLU}Install complete."

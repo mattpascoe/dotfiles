@@ -1,6 +1,19 @@
 {
+    "$schema": "https://lnav.org/schemas/config-v1.schema.json",
+    "tuning": {
+        "external-editor": {
+            "impls": {
+                "IntelliJ": {
+                    "prefers": "^.*(?:\\.java|\\.kt|\\.py)$"
+                },
+                "RustRover": {
+                    "prefers": "^.*(?:Cargo.toml|\\.rs)"
+                }
+            }
+        }
+    },
     "ui": {
-        "theme": "night-owl",
+        "theme": "eldar",
         "theme-defs": {
             "default": {
                 "highlights": {

@@ -5,6 +5,7 @@
 # But I dont want to check .git into git
 .git
 
+**/.DS_Store
 
 # lazygit stores a state file in config, I dont want to track it
 .config/lazygit/state.yml
@@ -22,3 +23,9 @@
 .config/aichat/models-override.yaml
 # Skip aichat env
 .config/aichat/.env
+# Skip LNAV related extras
+.config/lnav/*/default
+.config/lnav/view-info*.json
+.config/lnav/*.history
+.config/lnav/*.db
+.config/lnav/crash
