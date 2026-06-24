@@ -30,6 +30,13 @@
                         "pattern": "<!([^ >=!]+)[^>]*>"
                     }
                 }
+            },
+            "eldar": {
+                "log-level-styles": {
+                    "debug": {
+                        "color": "#707070"
+                    }
+                }
             }
         },
         "mouse": {
