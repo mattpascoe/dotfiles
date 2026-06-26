@@ -29,3 +29,4 @@
 .config/lnav/*.history
 .config/lnav/*.db
 .config/lnav/crash
+.config/lnav/configs
