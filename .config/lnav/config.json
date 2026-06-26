@@ -13,8 +13,24 @@
         }
     },
     "ui": {
-        "theme": "eldar",
+        "theme": "night-owl",
         "theme-defs": {
+            "night-owl": {
+                "styles": {
+                    "text": {
+                        "color": "#a6e3a1",
+                        "background-color": "#000000"
+                    },
+                    "alt-text": {
+                        "background-color": "#1e1e2e"
+                    }
+                },
+                "log-level-styles": {
+                    "debug": {
+                        "color": "#707070"
+                    }
+                }
+            },
             "default": {
                 "highlights": {
                     "colors": {
@@ -30,17 +46,7 @@
                         "pattern": "<!([^ >=!]+)[^>]*>"
                     }
                 }
-            },
-            "eldar": {
-                "log-level-styles": {
-                    "debug": {
-                        "color": "#707070"
-                    }
-                }
             }
-        },
-        "mouse": {
-            "mode": "enabled"
         },
         "views": {
             "log": {
