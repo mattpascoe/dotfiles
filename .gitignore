@@ -28,5 +28,6 @@
 .config/lnav/view-info*.json
 .config/lnav/*.history
 .config/lnav/*.db
+.config/lnav/*.tmp
 .config/lnav/crash
 .config/lnav/configs
