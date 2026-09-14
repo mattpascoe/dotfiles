@@ -290,6 +290,7 @@ vim.g.php_noShortTags = 1 --Disable PHP short tags.
 -- Load options and keymaps
 require('vim-opts')
 require('vim-keymaps')
+require('virt-column')
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`

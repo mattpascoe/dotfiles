@@ -6,15 +6,11 @@ return {
     priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
       vim.opt.termguicolors = true
-      vim.cmd.colorscheme 'catppuccin'
-      -- vim.opt.colorcolumn = '80'
-      -- vim.api.nvim_set_hl(0, 'ColorColumn', { bg = '#06060F' }) -- Draw a highlight at the colorcolumn position
-      -- Using virt-column now instead of the colorcolumn above
-      vim.api.nvim_set_hl(0, 'VirtColumn', { fg = '#06060F' }) -- Draw a highlight at the virtcolumn position
     end,
     config = function()
+      -- setup() must run before colorscheme or color_overrides are ignored
       require('catppuccin').setup {
-        flavor = 'mocha',
+        flavour = 'mocha',
         no_italic = true,
         -- TODO more playing with colors yet to be done
         color_overrides = {
@@ -23,6 +19,9 @@ return {
             -- mantle = '#242424',
             -- crust = '#474747',
           },
+        },
+        custom_highlights = {
+          VirtColumn = { fg = '#06060F' },
         },
         integrations = {
           cmp = true,
@@ -42,6 +41,7 @@ return {
           -- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
         },
       }
+      vim.cmd.colorscheme 'catppuccin'
     end,
   },
 }
