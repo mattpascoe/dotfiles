@@ -16,7 +16,7 @@ if vim.fn.has('nvim-0.10') == 1 then
             style = '#1c1f21',
           },
           line_num = {
-            enable = true,
+            enable = false,
             style = '#806d9c',
           },
           blank = {

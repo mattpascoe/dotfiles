@@ -1,5 +1,6 @@
 return {
   {
+    enabled = false,
     -- TODO: Consider zen-mode plugin as well, it would wrap/include this
     -- This will highlight a section of code to make it stand out. Uses telescope
     'folke/twilight.nvim',
