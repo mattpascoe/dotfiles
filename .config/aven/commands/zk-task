@@ -1,0 +1,224 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+mode="${1:-}"
+case "$mode" in
+  open|link) ;;
+  *)
+    printf 'usage: zk-task open|link\n' >&2
+    exit 2
+    ;;
+esac
+
+need() {
+  command -v "$1" >/dev/null 2>&1 || {
+    printf 'zk-task: missing %s\n' "$1" >&2
+    exit 1
+  }
+}
+
+need jq
+need zk
+need python3
+
+context="${AVEN_COMMAND_CONTEXT:-}"
+if [[ -z "$context" || ! -f "$context" ]]; then
+  printf 'zk-task: AVEN_COMMAND_CONTEXT is required\n' >&2
+  exit 1
+fi
+
+ref=$(jq -r '.selection.primary.ref // empty' "$context")
+if [[ -z "$ref" ]]; then
+  printf 'zk-task: no focused task\n' >&2
+  exit 1
+fi
+
+description=$(jq -r '.selection.primary.task.description // ""' "$context")
+haystack=$(jq -r '
+  [
+    (.selection.primary.task.description // ""),
+    (.selection.primary.notes[]? | (.text // .body // .content // empty))
+  ] | join("\n")
+' "$context")
+aven_exe=$(jq -r '.invocation.aven_exe // empty' "$context")
+db_path=$(jq -r '.invocation.db_path // empty' "$context")
+workspace=$(jq -r '.workspace.key // empty' "$context")
+
+extract_targets() {
+  python3 -c '
+import re, sys
+from urllib.parse import unquote
+text = sys.argv[1]
+seen = []
+
+def add(target):
+    target = unquote(target).strip()
+    if target and target not in seen:
+        seen.append(target)
+
+for match in re.finditer(r"\[\[([^\]|]+)(?:\|[^\]]*)?\]\]", text):
+    add(match.group(1))
+for match in re.finditer(r"(?<!!)\[([^\]]*)\]\(([^)]+)\)", text):
+    target = match.group(2).strip()
+    if re.match(r"^[a-zA-Z][a-zA-Z0-9+.-]*:", target):
+        continue
+    add(target)
+sys.stdout.write("\n".join(seen))
+' "$1"
+}
+
+upsert_link() {
+  python3 -c '
+import re, sys
+from urllib.parse import unquote
+link = sys.argv[1]
+desc = sys.argv[2]
+if link and link in desc:
+    sys.stdout.write(desc)
+    sys.exit(0)
+
+wiki_re = re.compile(r"\[\[[^\]|]+(?:\|[^\]]*)?\]\]")
+md_re = re.compile(r"(?<!!)\[([^\]]*)\]\(([^)]+)\)")
+
+def is_url(target):
+    return bool(re.match(r"^[a-zA-Z][a-zA-Z0-9+.-]*:", target))
+
+spans = list(wiki_re.finditer(desc))
+spans.extend(
+    match for match in md_re.finditer(desc)
+    if not is_url(unquote(match.group(2).strip()))
+)
+spans.sort(key=lambda match: match.start())
+if spans:
+    first = spans[0]
+    sys.stdout.write(desc[: first.start()] + link + desc[first.end() :])
+    sys.exit(0)
+
+if desc and not desc.endswith("\n"):
+    desc += "\n"
+if desc:
+    sys.stdout.write(desc + "\n" + link + "\n")
+else:
+    sys.stdout.write(link + "\n")
+' "$1" "$2"
+}
+
+first_line() {
+  local value="$1"
+  value="${value#"${value%%[![:space:]]*}"}"
+  value="${value%%$'\n'*}"
+  printf '%s' "$value"
+}
+
+resolve_note() {
+  local target="$1"
+  local paths path stem
+  paths=$(zk list --quiet --format '{{path}}' --no-pager -- "$target" || true)
+  if [[ -z "$paths" && "$target" == *.md ]]; then
+    paths=$(zk list --quiet --format '{{path}}' --no-pager -- "${target%.md}" || true)
+  fi
+  [[ -n "$paths" ]] || return 1
+  while IFS= read -r path; do
+    [[ -n "$path" ]] || continue
+    stem="${path%.md}"
+    if [[ "$path" == "$target" || "$stem" == "$target" ]]; then
+      printf '%s' "$path"
+      return 0
+    fi
+  done <<< "$paths"
+  printf '%s' "$(first_line "$paths")"
+}
+
+note_link() {
+  local path="$1"
+  local link
+  link=$(zk list --quiet --format '{{link}}' --no-pager -- "$path" || true)
+  first_line "$link"
+}
+
+pick_note() {
+  local path status
+  set +e
+  path=$(zk list --interactive --quiet --format '{{path}}' --no-pager)
+  status=$?
+  set -e
+  path=$(first_line "$path")
+  if [[ -z "$path" ]]; then
+    return 1
+  fi
+  if [[ "$status" -ne 0 ]]; then
+    return 1
+  fi
+  printf '%s' "$path"
+}
+
+aven_bin() {
+  if [[ -n "$aven_exe" && "$aven_exe" != "null" ]]; then
+    printf '%s' "$aven_exe"
+  else
+    printf '%s' "aven"
+  fi
+}
+
+write_description() {
+  local desc="$1"
+  local args
+  args=("$(aven_bin)")
+  if [[ -n "$db_path" && "$db_path" != "null" ]]; then
+    args+=(--db "$db_path")
+  fi
+  if [[ -n "$workspace" && "$workspace" != "null" ]]; then
+    args+=(--workspace "$workspace")
+  fi
+  printf '%s' "$desc" | "${args[@]}" edit "$ref" --description-stdin
+}
+
+link_path_to_task() {
+  local path="$1"
+  local link new_desc
+  link=$(note_link "$path")
+  if [[ -z "$link" ]]; then
+    printf 'zk-task: could not format link for %s\n' "$path" >&2
+    exit 1
+  fi
+  new_desc=$(upsert_link "$link" "$description")
+  if [[ "$new_desc" != "$description" ]]; then
+    write_description "$new_desc"
+    description="$new_desc"
+  fi
+}
+
+open_path() {
+  exec zk edit --no-input --limit 1 -- "$1"
+}
+
+resolved=""
+if [[ "$mode" == "open" ]]; then
+  targets=$(extract_targets "$haystack")
+  if [[ -n "$targets" ]]; then
+    while IFS= read -r target; do
+      [[ -n "$target" ]] || continue
+      if resolved=$(resolve_note "$target"); then
+        break
+      fi
+      resolved=""
+    done <<< "$targets"
+  fi
+fi
+
+if [[ -z "$resolved" ]]; then
+  if ! resolved=$(pick_note); then
+    if [[ "$mode" == "link" ]]; then
+      exit 0
+    fi
+    printf 'zk-task: no note selected\n' >&2
+    exit 1
+  fi
+  link_path_to_task "$resolved"
+elif [[ "$mode" == "link" ]]; then
+  link_path_to_task "$resolved"
+fi
+
+if [[ "$mode" == "open" ]]; then
+  open_path "$resolved"
+fi

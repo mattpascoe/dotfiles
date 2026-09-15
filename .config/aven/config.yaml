@@ -1,0 +1,20 @@
+tui:
+  commands:
+    - name: open-note
+      aliases: [zk]
+      description: Open the zk note linked in this task
+      program: ~/.config/aven/commands/zk-task
+      args: [open]
+      keys: [z n]
+      target: focused
+      execution: terminal
+      on_success: refresh
+    - name: link-note
+      aliases: [zk-link]
+      description: Fuzzy-find a zk note and link it to this task
+      program: ~/.config/aven/commands/zk-task
+      args: [link]
+      keys: [z l]
+      target: focused
+      execution: terminal
+      on_success: refresh
