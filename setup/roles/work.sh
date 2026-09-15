@@ -6,6 +6,7 @@ PROFILES=(
   fzf
   tmux
   nerdfonts
+  batcat
   # This installs to ~/bin not system wide
   lazygit
   # This installs to ~/bin not system wide

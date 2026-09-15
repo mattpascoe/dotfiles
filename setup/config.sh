@@ -13,7 +13,6 @@ TIMEZONE=America/Boise
 
 # Some common packages for all platforms
 COMMON_PKGS+=(
-  "bat"
   "eza"
   "gdu"
   "highlight"

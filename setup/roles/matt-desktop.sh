@@ -7,6 +7,7 @@ PROFILES=(
   desktop
   tmux
   nerdfonts
+  batcat
   1password
   aichat
   brave-browser

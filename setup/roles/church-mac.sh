@@ -6,6 +6,7 @@ PROFILES=(
   fzf
   tmux
   nerdfonts
+  batcat
   brave-browser
   ghostty
   neovim

@@ -6,6 +6,7 @@ PROFILES=(
   fzf
   tmux
   nerdfonts
+  batcat
   lazygit
   neovim
 )

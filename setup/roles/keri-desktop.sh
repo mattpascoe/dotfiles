@@ -6,6 +6,7 @@ PROFILES=(
   fzf
   tmux
   nerdfonts
+  batcat
   1password
   brave-browser
   ghostty
