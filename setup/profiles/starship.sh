@@ -2,7 +2,7 @@
 # Starship fancy prompts
 
 # Everyone should get Starship! Add it to all the roles! (unless ya dont)
-# This will be installed in $HOME/bin
+# This will be installed in $BIN_DIR
 
 # We will use the starship curl installer to ensure we get the latest version.
 if ! command -v "starship" &> /dev/null; then
@@ -10,7 +10,7 @@ if ! command -v "starship" &> /dev/null; then
 else
   msg "Starship is already installed. Running installer again to get updates"
 fi
-SHIP_INST="curl -fsSL https://starship.rs/install.sh | sh -s -- --force --bin-dir $HOME/bin | sed '/Please follow the steps/,\$d'"
+SHIP_INST="curl -fsSL https://starship.rs/install.sh | sh -s -- --force --bin-dir $BIN_DIR | sed '/Please follow the steps/,\$d'"
 if [[ "$DRY_RUN" == true ]]; then
   msg "${GRN}[DRY_RUN: command]${NC} $SHIP_INST"
 else

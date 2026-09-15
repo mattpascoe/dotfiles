@@ -2,7 +2,7 @@
 # Fuzzy search cli tool
 
 # Everyone should get FZF! Add it to all the roles! (unless ya dont)
-# This will be installed in $HOME/bin
+# This will be installed in $BIN_DIR
 
 # We will use the fzf curl installer to ensure we get the latest version.
 

@@ -10,7 +10,7 @@ case "$ID" in
     # shellcheck disable=SC2086
     $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
     link_file ".config/$PKG_NAME"
-    tee ~/bin/start-kanata.sh > /dev/null <<'EOF'
+    tee "$BIN_DIR/start-kanata.sh" > /dev/null <<'EOF'
 #!/bin/bash
 
 # prompt up front
@@ -30,7 +30,7 @@ else
   sudo kanata -q --no-wait --nodelay -c ~/.config/kanata/kanata.kbd &
 fi
 EOF
-    chmod +x ~/bin/start-kanata.sh
+    chmod +x "$BIN_DIR/start-kanata.sh"
     ;;
   # Should work on any linux system as long as it is x86 based
   *)
@@ -42,7 +42,7 @@ EOF
       wget -q -P "$tmpdir" https://github.com/jtroo/kanata/releases/download/v"${VERSION}"/linux-binaries-x64.zip
       cd "$tmpdir" || exit
       unzip linux-binaries-x64.zip
-      sudo install -b "$tmpdir"/kanata_linux_x64 /usr/local/bin/kanata
+      sudo install "$tmpdir"/kanata_linux_x64 /usr/local/bin/kanata
       rm -rf "$tmpdir"
 
       sudo rm -f /etc/kanata.cfg

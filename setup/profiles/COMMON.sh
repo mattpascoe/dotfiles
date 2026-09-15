@@ -19,9 +19,9 @@ if [ ! -d "$HOME/.config" ]; then
   mkdir -p "$HOME/.config"
 fi
 
-# Add $HOME/bin to PATH so we can install and use binaries during this install
-mkdir -p "$HOME/bin"
-export PATH="$HOME/bin:$PATH"
+# Add $BIN_DIR to PATH so we can install and use binaries during this install
+mkdir -p "$BIN_DIR"
+export PATH="$BIN_DIR:$PATH"
 
 msg "\n${UL}Ensuring install of requested base packages"
 case "$ID" in

@@ -13,7 +13,7 @@ case "$ID" in
     # Download and extract
     wget -q -P "$tmpdir" https://github.com/zk-org/zk/releases/latest/download/zk-v"${VERSION}"-linux-"${ARCH}".tar.gz
     tar xf "$tmpdir/zk"*.tar.gz -C "$tmpdir" ${PKG_NAME}
-    install -b "$tmpdir/${PKG_NAME}" "$HOME/bin"
+    install "$tmpdir/${PKG_NAME}" "$BIN_DIR"
     link_file ".config/$PKG_NAME"
     rm -rf "$tmpdir"
     ;;

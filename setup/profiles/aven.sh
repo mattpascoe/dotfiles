@@ -9,11 +9,10 @@ case "$ID" in
   debian*|ubuntu*)
     tmpdir=$(mktemp -d)
     ARCH=${ARCH:-$(uname -m)}; ARCH=${ARCH/aarch64/arm64}
-    VERSION=$(curl -s https://api.github.com/repos/raine/aven/releases/latest | grep -Po '"tag_name": "v\K[0-9.]+')
     # Download and extract
-    wget -q -P "$tmpdir" https://github.com/raine/aven/releases/latest/download/aven-v"${VERSION}"-linux-"${ARCH}".tar.gz
+    wget -q -P "$tmpdir" https://github.com/raine/aven/releases/latest/download/aven-linux-"${ARCH}".tar.gz
     tar xf "$tmpdir/aven"*.tar.gz -C "$tmpdir" ${PKG_NAME}
-    install -b "$tmpdir/${PKG_NAME}" "$HOME/bin"
+    install "$tmpdir/${PKG_NAME}" "$BIN_DIR"
     link_file ".config/$PKG_NAME"
     rm -rf "$tmpdir"
     ;;

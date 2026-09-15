@@ -38,7 +38,7 @@ case "$ID" in
       [[ -d "$INSTALL_DIR" ]] && mv "$INSTALL_DIR" "$PREVIOUS_DIR"
       mv "$tmpdir/nvim-linux-$ARCH" "$INSTALL_DIR"
       # Link to personal bin
-      ln -sfn "$INSTALL_DIR/bin/nvim" "$HOME/bin/nvim"
+      ln -sfn "$INSTALL_DIR/bin/nvim" "$BIN_DIR/nvim"
       hash -r
       # Cleanup
       rm -rf "$tmpdir"

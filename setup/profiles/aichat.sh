@@ -13,7 +13,7 @@ case "$ID" in
     #wget https://github.com/sigoden/aichat/releases/latest/download/aichat-v${AICHAT_VERSION}-$(dpkg --print-architecture)-unknown-linux-musl.tar.gz
     wget -q -P "$tmpdir" https://github.com/sigoden/aichat/releases/latest/download/aichat-v"${VERSION}"-arm-unknown-linux-musleabihf.tar.gz
     tar xf "$tmpdir/aichat"*.tar.gz -C "$tmpdir" ${PKG_NAME}
-    install -b "$tmpdir/${PKG_NAME}" "$HOME/bin"
+    install "$tmpdir/${PKG_NAME}" "$BIN_DIR"
     link_file ".config/$PKG_NAME"
     rm -rf "$tmpdir"
     ;;

@@ -24,7 +24,7 @@ case "$ID" in
       VERSION=$(curl -s https://api.github.com/repos/sharkdp/bat/releases/latest | grep -Po '"tag_name": "v\K[0-9.]+')
       wget -q -P "$tmpdir" https://github.com/sharkdp/bat/releases/latest/download/bat-v"${VERSION}"-"${TARGET}".tar.gz
       tar xf "$tmpdir/bat"*.tar.gz -C "$tmpdir"
-      install -b "$tmpdir"/bat-*/"${PKG_NAME}" "$HOME/bin"
+      install "$tmpdir"/bat-*/"${PKG_NAME}" "$BIN_DIR"
     fi
     rm -rf "$tmpdir"
     ;;
