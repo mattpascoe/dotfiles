@@ -22,6 +22,7 @@ PROFILES=(
   trippy
   zoom
   zk
+  aven
 )
 
 # Only process if we are not checking status
