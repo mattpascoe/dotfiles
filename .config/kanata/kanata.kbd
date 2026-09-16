@@ -35,6 +35,7 @@
   ; (tap-hold $tap-time $hold-time ; S-;) ;; hold for :
   = (tap-hold $tap-time $hold-time = S-=) ;; hold for +
   - (tap-hold $tap-time $hold-time - S--) ;; hold for _
+  \ (tap-hold $tap-time $hold-time \ S-\) ;; hold for |
   s (tap-hold $tap-time $hold-time-slow s @layerSym)
   v (tap-hold $tap-time $hold-time v @layerNum)
   m (tap-hold $tap-time $hold-time m @layerNum)
@@ -74,7 +75,7 @@
   XX     XX    XX   XX    XX     XX       XX    XX    XX    XX    XX     -    @=    bspc
   S-grv  S-1   S-2    S-3     S-4      S-5   S-6   S-7   S-8   S-9    S-0    S--   S-=    bspc
   XX     XX    XX   XX    XX     XX     left  down   up  right    @-     @=    XX
-  XX     XX    XX   XX    XX     XX     S-[  S-]    [    ]    XX     XX
+  XX     XX    XX   XX    XX     XX     S-[  S-]    [    ]    @\     XX
   XX     XX    XX         spc             XX    XX
 )
 
@@ -83,6 +84,6 @@
   XX     XX    XX   XX     XX     XX       XX    XX    XX    XX    XX     -    XX    bspc
   grv     1    2    3      4       5        6    7     8     9     0      @-   @=    XX
   XX     XX    XX   XX     XX     XX       XX    4     5     6     .     XX    XX
-  XX     XX    XX   C-c    XX     XX     lsft    1     2     3     XX    XX
+  XX     XX    XX   C-c    XX     XX     lsft    1     2     3     @\    XX
   XX     XX    XX          spc             XX    XX
 )

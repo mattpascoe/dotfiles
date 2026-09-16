@@ -37,7 +37,6 @@ EOF
     tmpdir=$(mktemp -d)
     ARCH=${ARCH:-$(uname -m)}; ARCH=${ARCH/aarch64/arm64}
     if [ "$ARCH" != "arm64" ]; then
-      echo 'Installing kanata...'
       VERSION=$(curl -s https://api.github.com/repos/jtroo/kanata/releases/latest | grep -Po '"tag_name": "v\K[0-9.]+')
       wget -q -P "$tmpdir" https://github.com/jtroo/kanata/releases/download/v"${VERSION}"/linux-binaries-x64.zip
       # Unzip in-place; do not cd into tmpdir (profiles are sourced, so that would break setup cwd)
