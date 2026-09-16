@@ -38,6 +38,8 @@ if [[ -z "$ROLE_STATUS" ]]; then
 
   # Disable screen blank
   gsettings set org.gnome.desktop.session idle-delay 0
+  # Disable dim screen on idle (Power settings)
+  gsettings set org.gnome.settings-daemon.plugins.power idle-dim false
 
   # Install some apps
   # shellcheck disable=SC2086
