@@ -109,7 +109,15 @@ function run_profiles() {
     # Get the second line for a description to the user
     DESC=$(sed -n '2p' "$PROFILE_DIR/$PROFILE.sh")
     msg "Installing ${PROFILE} -- ${DESC}"
+    # Profiles are sourced; capture cwd so a profile cannot leave us in a deleted dir
+    local PROFILE_PWD="$PWD"
     source "$PROFILE_DIR/$PROFILE.sh"
+    # Restore cwd if it changed or was removed (avoids: getcwd() failed: No such file or directory)
+    if ! cd . 2>/dev/null; then
+      cd "$PROFILE_PWD" 2>/dev/null || cd "$HOME" 2>/dev/null || true
+    elif [[ "$PWD" != "$PROFILE_PWD" ]]; then
+      cd "$PROFILE_PWD" 2>/dev/null || true
+    fi
   done
 }
 

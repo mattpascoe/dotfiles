@@ -40,8 +40,8 @@ EOF
       echo 'Installing kanata...'
       VERSION=$(curl -s https://api.github.com/repos/jtroo/kanata/releases/latest | grep -Po '"tag_name": "v\K[0-9.]+')
       wget -q -P "$tmpdir" https://github.com/jtroo/kanata/releases/download/v"${VERSION}"/linux-binaries-x64.zip
-      cd "$tmpdir" || exit
-      unzip linux-binaries-x64.zip
+      # Unzip in-place; do not cd into tmpdir (profiles are sourced, so that would break setup cwd)
+      unzip -q -d "$tmpdir" "$tmpdir/linux-binaries-x64.zip"
       sudo install "$tmpdir"/kanata_linux_x64 /usr/local/bin/kanata
       rm -rf "$tmpdir"
 

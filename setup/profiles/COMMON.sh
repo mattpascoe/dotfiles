@@ -40,9 +40,9 @@ case "$ID" in
     if ! command -v "yay" &> /dev/null; then
       tmpdir=$(mktemp -d)
       git clone https://aur.archlinux.org/yay.git "$tmpdir/yay"
-      cd "$tmpdir/yay" || exit
-      makepkg -si --noconfirm
-      cd - > /dev/null || exit
+      # Build in a subshell so we never leave setup's cwd in a temp dir
+      (cd "$tmpdir/yay" || exit 1; makepkg -si --noconfirm)
+      rm -rf "$tmpdir"
     fi
     ;;
   macos*)
