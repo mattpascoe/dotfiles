@@ -4,13 +4,16 @@
 PKG_NAME=tmux
 # On linux lets prompt to install since we may be running this on a shared server
 # NOTE: This means in this case we will not upgrade the current package.
+# Extra args (e.g. "install" for apt) are passed through; PLATFORM_INSTALLER_BIN
+# is expanded unquoted so "sudo apt" splits into separate words like other profiles.
 function linux_install_tmux() {
-  local -a INSTALL_COMMAND=("${@}")
+  local -a EXTRA_ARGS=("${@}")
   if ! command -v "$PKG_NAME" &> /dev/null; then
     prompt "Install tmux system wide? (N/y) "
     read -r REPLY < /dev/tty
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-      "${INSTALL_COMMAND[@]}" "$PKG_NAME"
+      # shellcheck disable=SC2086
+      $PLATFORM_INSTALLER_BIN "${EXTRA_ARGS[@]}" $INSTALLER_OPTS "$PKG_NAME"
     fi
   else
     VERSION=$(tmux -V | cut -d ' ' -f 2)
@@ -20,15 +23,13 @@ function linux_install_tmux() {
 
 case "$ID" in
   arch*)
-    #shellcheck disable=SC2086
-    linux_install_tmux "$PLATFORM_INSTALLER_BIN" $INSTALLER_OPTS "$PKG_NAME"
+    linux_install_tmux
     ;;
   debian*|ubuntu*)
-    #shellcheck disable=SC2086
-    linux_install_tmux "$PLATFORM_INSTALLER_BIN" install $INSTALLER_OPTS "$PKG_NAME"
+    linux_install_tmux install
     ;;
   macos*)
-    #shellcheck disable=SC2086
+    # shellcheck disable=SC2086
     $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
   *)
     echo "-!- Install not supported."
