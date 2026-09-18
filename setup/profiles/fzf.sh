@@ -7,7 +7,7 @@
 # We will use the fzf curl installer to ensure we get the latest version.
 
 # NOTE: Their installer will throw an error about the BASH_SOURCE variable.
-pushd "$HOME" >/dev/null || exit
+pushd "$HOME/.local" >/dev/null || exit
 if ! command -v "fzf" &> /dev/null; then
   msg "Installing FZF tools"
 else

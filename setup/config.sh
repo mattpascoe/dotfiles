@@ -6,7 +6,7 @@
 DOTREPO=~/dotfiles
 
 # Destination path for user-local binaries installed by profiles
-BIN_DIR="$HOME/bin"
+BIN_DIR="$HOME/.local/bin"
 
 # Set the URL of the dotfiles repo
 DOTREPO_URL=https://github.com/mattpascoe/dotfiles

@@ -8,7 +8,9 @@ case "$ID" in
     $PLATFORM_INSTALLER_BIN $INSTALLER_OPTS "$PKG_NAME" ;;
   debian*|ubuntu*)
     tmpdir=$(mktemp -d)
-    ARCH=${ARCH:-$(uname -m)}; ARCH=${ARCH/aarch64/arm64}
+    ARCH=${ARCH:-$(uname -m)}
+    ARCH=${ARCH/aarch64/arm64}
+    ARCH=${ARCH/x86_64/amd64}
     # Download and extract
     wget -q -P "$tmpdir" https://github.com/raine/aven/releases/latest/download/aven-linux-"${ARCH}".tar.gz
     tar xf "$tmpdir/aven"*.tar.gz -C "$tmpdir" ${PKG_NAME}
