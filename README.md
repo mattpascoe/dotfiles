@@ -20,7 +20,7 @@ or
 
 ```
 git clone https://github.com/mattpascoe/dotfiles.git ~/dotfiles
-~/dotfiles/setup.sh
+~/dotfiles/dot.sh
 ```
 
 On a basic Arch install you first need to run:
@@ -28,7 +28,7 @@ On a basic Arch install you first need to run:
 pacman -Syu wget sudo
 ```
 
-When `setup.sh` is run, it will determine the Platform and Role of the system through
+When `dot.sh` is run, it will determine the Platform and Role of the system through
 various means. It will then apply configuration in the following order:
 * The `Platform` definition. Basically the basic OS specific configuration
 * The `COMMON.sh` profile
@@ -57,7 +57,7 @@ profiles.
 Once a role is selected on the box, that role will be stored in `~/.dotfile_role`
 and used for subsequent runs. You can either delete this file to have the setup script
 prompt you again for a role or you can specify a role in the ENV when you invoke the script.
-`./setup.sh -r myrole` for example.
+`./dot.sh -r myrole` for example.
 
 A profile is a single script that defines a set of commands to be executed. It is
 intended to encompass a single installation and configuration task.
@@ -65,7 +65,7 @@ intended to encompass a single installation and configuration task.
 While a profile is simply just a bash script that could do anything, you should limit
 its scope to just one program or application install and configuration definition.
 
-You can invoke a single profile with `./setup.sh -p myprofile`
+You can invoke a single profile with `./dot.sh -p myprofile`
 
 ## MISC MAC info
 The following is a list of 'crap I do' to a new mac, maybe one day this is a set of 'default' plist settings.
@@ -105,7 +105,7 @@ It is also assumed that you have the NerdTools plugin installed and that the
 fzf, zsh packages have been installed.
 
 Unraid will run from /boot/config so if there are any changes to vimrc, zshrc or
-shell-common, you will need to run `setup.sh` again.
+shell-common, you will need to run `dot.sh` again.
 
 # Hyprland
 It looks cool. Tiling is nice. So far its too new to be common. I'm going to
@@ -137,4 +137,4 @@ Interesting zsh 'global' alias option
 
 Also I have a "tools" method for shell functions. Look at shell-common and the __tools* functions.
 
-I may look at https://www.chezmoi.io/ as an alternative to this dotfiles repo and setup.sh.  I do like I can just use my script anywhere tho.
+I may look at https://www.chezmoi.io/ as an alternative to this dotfiles repo and dot.sh.  I do like I can just use my script anywhere tho.

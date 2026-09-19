@@ -82,7 +82,7 @@ alias wg='curl --max-time 5 --connect-timeout 3 "v2n.wttr.in/Boise?Fu"'
 # Export the path, so I can use the dotfiles script can reference other sourced files
 export DOTREPO=$HOME/dotfiles
 alias cdot='cd $DOTREPO'
-alias dot='$DOTREPO/setup.sh'
+alias dot='$DOTREPO/dot.sh'
 
 # Turn on vi mode and set our default editor
 set -o vi
