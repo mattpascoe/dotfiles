@@ -328,6 +328,8 @@ function basic_status() {
 function full_status() {
   basic_status
   check_package_updates
+  # If we dont find a role then prompt the user to select one
+  [[ $ROLE == "" ]] && process_role
   [[ ! -f "$DOTREPO/setup/roles/$ROLE.sh" ]] && ROLE="Unknown"
 
   local DESC; DESC=$(sed -n '2p' "$DOTREPO/setup/roles/$ROLE.sh")
