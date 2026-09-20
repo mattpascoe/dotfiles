@@ -1,48 +1,83 @@
+--- nvim-treesitter `main` always compiles parsers from source (no prebuilt
+--- binaries). Skip auto-install on hosts without a C compiler / tree-sitter CLI
+--- so startup stays quiet; Neovim 0.12 still ships c/lua/markdown*/query/vim/vimdoc.
+local function has_c_compiler()
+  for _, c in ipairs { 'cc', 'gcc', 'clang', 'cl', 'zig' } do
+    if vim.fn.executable(c) == 1 then
+      return true
+    end
+  end
+  return false
+end
+
+local function has_tree_sitter_cli()
+  if vim.fn.executable('tree-sitter') == 1 then
+    return true
+  end
+  -- treesitter loads lazy=false; Mason may not have put its bin on PATH yet.
+  local mason_cli = vim.fs.joinpath(vim.fn.stdpath('data'), 'mason', 'bin', 'tree-sitter')
+  return vim.uv.fs_stat(mason_cli) ~= nil
+end
+
+local function has_parser_build_tools()
+  return has_c_compiler() and has_tree_sitter_cli()
+end
+
+local function install_parsers()
+  if not has_parser_build_tools() then
+    return
+  end
+
+  local ensure_installed = {
+    'bash',
+    'c',
+    'css',
+    'csv',
+    'diff',
+    'dockerfile',
+    'git_config',
+    'gitcommit',
+    'gitignore',
+    'html',
+    'javascript',
+    'json',
+    'lua',
+    'make',
+    'markdown',
+    'markdown_inline',
+    'php',
+    'python',
+    'query',
+    'ruby',
+    'sql',
+    'toml',
+    'typescript',
+    'vim',
+    'vimdoc',
+    'yaml',
+  }
+  require('nvim-treesitter').install(ensure_installed)
+end
+
 return {
   {
     -- Neovim 0.12+ requires the rewrite on `main` (master is frozen at 0.11).
     'nvim-treesitter/nvim-treesitter',
     branch = 'main',
     lazy = false,
-    build = ':TSUpdate',
+    build = function()
+      -- Lazy runs this after clone/update; only compile when tools exist.
+      install_parsers()
+    end,
     config = function()
       local ts = require('nvim-treesitter')
 
       -- Default install_dir is stdpath('data')/site — fine for most setups.
       ts.setup {}
 
-      -- Parsers used across this config / daily editing.
-      -- Bundled with nvim 0.12 already: c, lua, markdown, markdown_inline, query, vim, vimdoc.
-      -- Still listed so :TSUpdate keeps them current when desired.
-      local ensure_installed = {
-        'bash',
-        'c',
-        'css',
-        'csv',
-        'diff',
-        'dockerfile',
-        'git_config',
-        'gitcommit',
-        'gitignore',
-        'html',
-        'javascript',
-        'json',
-        'lua',
-        'make',
-        'markdown',
-        'markdown_inline',
-        'php',
-        'python',
-        'query',
-        'ruby',
-        'sql',
-        'toml',
-        'typescript',
-        'vim',
-        'vimdoc',
-        'yaml',
-      }
-      ts.install(ensure_installed)
+      -- Best-effort async install when a compiler is available. No-op (and no
+      -- error spam) on locked-down hosts without cc/tree-sitter.
+      install_parsers()
 
       -- Enable treesitter features per buffer (highlighting is not automatic on main).
       vim.api.nvim_create_autocmd('FileType', {
