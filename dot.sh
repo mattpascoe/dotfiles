@@ -322,7 +322,6 @@ function profiles_in_role() {
 function basic_status() {
   system_info
   check_git
-  check_dotrepo
 }
 
 # Display a full status including profile details for role
@@ -366,6 +365,8 @@ Option flags:
 EOF
 }
 # ---------- END standard functions
+
+check_dotrepo
 
 # Gather configuration for this process to use
 [[ -f "$DOTREPO/setup/config.sh" ]] && source "$DOTREPO/setup/config.sh"
