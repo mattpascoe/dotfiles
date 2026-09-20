@@ -10,10 +10,10 @@ It will attempt to upgrade and set the settings as defined in this repo.
 
 If you are not me and you are crazy, you can run one of the following to get started.
 ```
-curl -fsSL https://raw.githubusercontent.com/mattpascoe/dotfiles/master/setup.sh | bash
-curl -fsSL demo.opennetadmin.com/dotsetup.sh | bash
-wget https://raw.githubusercontent.com/mattpascoe/dotfiles/master/setup.sh -O- | bash
-wget demo.opennetadmin.com/dotsetup.sh -O- | bash
+curl -fsSL https://raw.githubusercontent.com/mattpascoe/dotfiles/master/dot.sh | bash
+curl -fsSL demo.opennetadmin.com/dotinstall.sh | bash
+wget https://raw.githubusercontent.com/mattpascoe/dotfiles/master/dot.sh -O- | bash
+wget demo.opennetadmin.com/dotinstall.sh -O- | bash
 ```
 
 or
