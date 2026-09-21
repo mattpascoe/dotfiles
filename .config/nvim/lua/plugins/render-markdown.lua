@@ -124,6 +124,10 @@ return {
       position = 'right',
       -- dont add extra highlight for inline code
       highlight_inline = '',
+      -- Default 'hide' conceal_lines the fence unless a language icon/name is
+      -- present, so untyped ``` blocks lose their boundary lines entirely.
+      -- 'thin' keeps a visible top/bottom border for language-less fences.
+      border = 'thin',
     },
     sign = {
       enabled = true,

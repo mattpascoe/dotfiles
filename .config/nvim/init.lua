@@ -62,8 +62,8 @@ local function set_markdown_folding()
   -- vim.opt_local.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
   vim.opt_local.foldexpr = 'v:lua.markdown_foldexpr()'
   -- Start with mostly folded on markdown
-  vim.opt_local.foldlevel = 1
-  vim.opt_local.foldtext = ''
+  -- vim.opt_local.foldlevel = 1
+  -- vim.opt_local.foldtext = ''
   -- vim.opt_local.foldcolumn = '0'
   -- remove the empty dots in the fold
   vim.opt_local.fillchars:append({ fold = ' ' })
