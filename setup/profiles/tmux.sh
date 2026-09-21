@@ -14,6 +14,8 @@ function linux_install_tmux() {
     if [[ $REPLY =~ ^[Yy]$ ]]; then
       # shellcheck disable=SC2086
       $PLATFORM_INSTALLER_BIN "${EXTRA_ARGS[@]}" $INSTALLER_OPTS "$PKG_NAME"
+    else
+      msg "${BLU}Skipping system-wide tmux install."
     fi
   else
     VERSION=$(tmux -V | cut -d ' ' -f 2)
@@ -36,13 +38,20 @@ case "$ID" in
     ;;
 esac
 
+# Config + plugins only make sense when tmux is actually available
+# (e.g. user declined system-wide install on a shared host with no tmux).
+if ! command -v "$PKG_NAME" &> /dev/null; then
+  msg "${YEL}tmux not found on PATH; skipping config link and plugins."
+  return 0 2>/dev/null || exit 0
+fi
+
 # Link our config
 link_file ".config/$PKG_NAME"
 
 # Now install tmux plugin manager
 # You may need to run <prefix> + I to install plugins the first time
 TMUXDIR="$HOME/.config/tmux/plugins/tpm"
-if [ ! -d "$TMUXDIR" ];then
+if [ ! -d "$TMUXDIR" ]; then
   msg "${UL}Installing TMUX plugin manager."
   mkdir -p "$TMUXDIR"
   git clone https://github.com/tmux-plugins/tpm "$TMUXDIR"
