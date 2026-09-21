@@ -1,93 +1,31 @@
---- nvim-treesitter `main` always compiles parsers from source (no prebuilt
---- binaries). Skip auto-install on hosts without a C compiler / tree-sitter CLI
---- so startup stays quiet; Neovim 0.12 still ships c/lua/markdown*/query/vim/vimdoc.
-local function has_c_compiler()
-  for _, c in ipairs { 'cc', 'gcc', 'clang', 'cl', 'zig' } do
-    if vim.fn.executable(c) == 1 then
-      return true
-    end
-  end
-  return false
-end
-
-local function has_tree_sitter_cli()
-  if vim.fn.executable('tree-sitter') == 1 then
-    return true
-  end
-  -- treesitter loads lazy=false; Mason may not have put its bin on PATH yet.
-  local mason_cli = vim.fs.joinpath(vim.fn.stdpath('data'), 'mason', 'bin', 'tree-sitter')
-  return vim.uv.fs_stat(mason_cli) ~= nil
-end
-
-local function has_parser_build_tools()
-  return has_c_compiler() and has_tree_sitter_cli()
-end
-
-local function install_parsers()
-  if not has_parser_build_tools() then
-    return
-  end
-
-  local ensure_installed = {
-    'bash',
-    'c',
-    'css',
-    'csv',
-    'diff',
-    'dockerfile',
-    'git_config',
-    'gitcommit',
-    'gitignore',
-    'html',
-    'javascript',
-    'json',
-    'lua',
-    'make',
-    'markdown',
-    'markdown_inline',
-    'php',
-    'python',
-    'query',
-    'ruby',
-    'sql',
-    'toml',
-    'typescript',
-    'vim',
-    'vimdoc',
-    'yaml',
-  }
-  require('nvim-treesitter').install(ensure_installed)
-end
-
 return {
   {
-    -- Neovim 0.12+ requires the rewrite on `main` (master is frozen at 0.11).
     'nvim-treesitter/nvim-treesitter',
-    branch = 'main',
     lazy = false,
-    build = function()
-      -- Lazy runs this after clone/update; only compile when tools exist.
-      install_parsers()
-    end,
+    build = ':TSUpdate',
     config = function()
-      local ts = require('nvim-treesitter')
+      -- Ensure common parsers used by markdown code fences / injections.
+      require('nvim-treesitter').install {
+        'markdown',
+        'markdown_inline',
+      }
 
-      -- Default install_dir is stdpath('data')/site — fine for most setups.
-      ts.setup {}
-
-      -- Best-effort async install when a compiler is available. No-op (and no
-      -- error spam) on locked-down hosts without cc/tree-sitter.
-      install_parsers()
-
-      -- Enable treesitter features per buffer (highlighting is not automatic on main).
       vim.api.nvim_create_autocmd('FileType', {
-        callback = function()
+        callback = function(ev)
           if not pcall(vim.treesitter.start) then
             return
           end
-          -- Markdown folding is overridden separately in init.lua.
-          vim.wo.foldmethod = 'expr'
-          vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+
+          -- Markdown uses a custom heading-only foldexpr in init.lua.
+          -- Treesitter folds fenced_code_block nodes, which with foldlevel=1 and
+          -- foldtext='' makes untyped code blocks appear as blank lines
+          -- (opening ``` is conceal_lines'd by render-markdown border='hide').
+          local ft = ev.match
+          if ft ~= 'markdown' then
+            vim.wo.foldmethod = 'expr'
+            vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+          end
+
           vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
         end,
       })
@@ -96,14 +34,15 @@ return {
   {
     'nvim-treesitter/nvim-treesitter-context',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
-    event = 'BufReadPost',
+    event = 'BufReadPost', -- Load when a file is opened
     config = function()
       require('treesitter-context').setup {
-        enable = true,
-        max_lines = 3,
-        trim_scope = 'inner',
-        min_window_height = 10,
-        mode = 'cursor',
+        enable = true, -- Enable the plugin
+        max_lines = 3, -- Maximum lines of context to show
+        trim_scope = 'inner', -- Show only the innermost scope
+        min_window_height = 10, -- Disable if window is smaller than this
+        mode = 'cursor', -- "cursor" keeps the function at the top
+        -- separator = '─', -- Adds a separator line
       }
       vim.keymap.set('n', '<leader>tx', ':TSContext toggle<CR>', { desc = 'Treesitter Conte[x]t', noremap = true })
     end,
