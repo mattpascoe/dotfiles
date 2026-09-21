@@ -32,7 +32,7 @@ Since this is a shell script project without a formal test suite, testing is don
 ```bash
 ./dot.sh -d                                    # Dry-run mode
 ./dot.sh -p starship                           # Run a specific profile
-./dot.sh -r DEFAULT --dry-run                 # Run a specific role
+./dot.sh -r DEFAULT --dry-run                  # Run a specific role
 ./dot.sh -s                                    # Show status without changes
 ./dot.sh run                                   # Run the setup process
 ./dot.sh -l                                    # List available profiles
