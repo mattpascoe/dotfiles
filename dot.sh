@@ -125,7 +125,7 @@ function run_profiles() {
 # This is a base requirement to establish the dotfiles repo
 function check_git() {
   if ! command -v "git" &> /dev/null; then
-    msg "\n${UL}Installing Git"
+    msg "\n${UL}Git not found, Installing"
     case "$ID" in
     debian*|ubuntu*)
       sudo apt install -y git
