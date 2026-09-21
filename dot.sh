@@ -318,15 +318,9 @@ function profiles_in_role() {
   fi
 }
 
-# Display a basic status components
-function basic_status() {
-  system_info
-  check_git
-}
-
 # Display a full status including profile details for role
 function full_status() {
-  basic_status
+  system_info
   check_package_updates
   # If we dont find a role then prompt the user to select one
   [[ $ROLE == "" ]] && process_role
@@ -368,6 +362,7 @@ EOF
 }
 # ---------- END standard functions
 
+check_git
 check_dotrepo
 
 # Gather configuration for this process to use
@@ -452,14 +447,14 @@ done
 
 # If we are actually applying a role
 if [[ "$RUN_FLAG" == true ]]; then
-  basic_status
+  system_info
   process_role
   exit 0
 fi
 
 # If we are applying a specific profile
 if [[ "$PROFILE_FLAG" == true && "$PROFILE" != "" ]]; then
-  basic_status
+  system_info
   msg "${UL}Directly running profile setup script:${NC} ${BLU}$PROFILE"
   source "$DOTREPO/setup/profiles/$PROFILE.sh"
   exit 0
