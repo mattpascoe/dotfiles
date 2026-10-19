@@ -94,6 +94,19 @@ alias vi='$EDITOR'
 # Set PAGER
 export PAGER=less
 
+
+# A simple netbird status wrapper function
+nbs() {
+  netbird status --json |
+    jq -r '
+      ("THIS HOST:\n  \(.fqdn) [\(.netbirdIp)] \(
+          if .signal.connected then "Connected" else "Disconnected" end
+        )"),
+      ("PEERS:"),
+      (.peers.details[] | "  \(.fqdn) [\(.netbirdIp)] \(.status)")
+    '
+}
+
 # Lets make things pretty with bat
 # Check which bat binary to use
 [ -x "$(command -v batcat)" ] && BATCATBIN=batcat

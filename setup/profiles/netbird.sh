@@ -10,8 +10,8 @@ case "$ID" in
       brew trust --formula netbirdio/tap/"$PKG_NAME"
       # shellcheck disable=SC2086
       $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS "netbirdio/tap/$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
-      netbird service install
-      netbird service start
+      sudo netbird service install
+      sudo netbird service start
     else
       # Otherwise "install/upgrade" it
       # shellcheck disable=SC2086
