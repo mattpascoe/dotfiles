@@ -25,6 +25,19 @@
 (defalias
   meh  (multi lctl lalt lsft)
   th_meh (tap-hold $tap-time $hold-time spc @meh)
+  ;; Caps: tap = Esc, double-tap = Esc, triple-tap = Caps Lock, hold = Ctrl
+  ;; Single-tap Esc is delayed by $tap-time while waiting for more taps.
+  caps (tap-hold $tap-time $hold-time
+    (tap-dance $tap-time (esc esc caps))
+    lctl)
+  ;; Live-reload: press both shifts together (either order). No delay on single shift.
+  rld lrld
+  lsh (switch
+    ((input real rsft)) (multi (release-key rsft) @rld) break
+    () lsft break)
+  rsh (switch
+    ((input real lsft)) (multi (release-key lsft) @rld) break
+    () rsft break)
 
   layerSym (layer-toggle symbols)
   layerNum (layer-toggle num)
@@ -65,8 +78,8 @@
   esc    🔅   🔆   XX   XX   XX      XX   ◀◀   ▶⏸    ▶▶    🔇    🔉    🔊
   grv    1    2    3    4    5       6    7    8    9    0       @-   @=    bspc
   tab    q    w    e    r    t       y    u    i    o    p       [    ]     ret
-  esc    @a   @s   @cd  @cf  g       h    @cj  @ck  l    @;      '    \
-  lsft   @z   x    c    @v   b       n    @m    ,    .   @/       rsft
+  @caps  a    @s   @cd  @cf  g       h    @cj  @ck  l    @;      '    \
+  @lsh   @z   x    c    @v   b       n    @m    ,    .   @/       @rsh
   lctl   lalt lmet          @th_meh            rmet ralt
 )
 
@@ -75,7 +88,7 @@
   XX     XX    XX   XX    XX     XX       XX    XX    XX    XX    XX     -    @=    bspc
   S-grv  S-1   S-2    S-3     S-4      S-5   S-6   S-7   S-8   S-9    S-0    S--   S-=    bspc
   XX     XX    XX   XX    XX     XX     left  down   up  right    @-     @=    XX
-  XX     XX    XX   XX    XX     XX     S-[  S-]    [    ]    @\     XX
+  @lsh   XX    XX   XX    XX     XX     S-[  S-]    [    ]    @\     @rsh
   XX     XX    XX         spc             XX    XX
 )
 
@@ -84,6 +97,6 @@
   XX     XX    XX   XX     XX     XX       XX    XX    XX    XX    XX     -    XX    bspc
   grv     1    2    3      4       5        6    7     8     9     0      @-   @=    XX
   XX     XX    XX   XX     XX     XX       XX    4     5     6     .     XX    XX
-  XX     XX    XX   C-c    XX     XX     lsft    1     2     3     @\    XX
+  @lsh   XX    XX   C-c    XX     XX     lsft    1     2     3     @\    @rsh
   XX     XX    XX          spc             XX    XX
 )
