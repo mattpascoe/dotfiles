@@ -115,7 +115,19 @@ APP LAUNCHERS:
 		helpText = helpText .. string.format("MEH + %s   → Launch %s\n", key:upper(), appName)
 	end
 
-	helpText = helpText .. "\nMEH + /   → Show this hotkey reference\n\nMEH = { shift, ctrl, alt }"
+	helpText = helpText
+		.. "\nMEH + /   → Show this hotkey reference"
+		.. "\n\nTMUX SESSIONS:"
+		.. "\nMEH + H   → Switch to Home session"
+		.. "\nMEH + R   → Switch to Remote session"
+		.. "\nMEH + W   → Switch to Wiki session"
+		.. "\n\nNOTEABLE KEYBOARD (Via Kanata):"
+		.. "\nCaps tap          → Escape"
+		.. "\nCaps double-tap   → Escape"
+		.. "\nCaps triple-tap   → Toggle Caps Lock"
+		.. "\nCaps hold         → Ctrl"
+		.. "\nBoth Shifts       → Reload Kanata config"
+		.. "\n\nMEH = { shift, ctrl, alt }"
 
 	hs.dialog.blockAlert("Hammerspoon Hotkey Reference", helpText, "Close")
 end)
