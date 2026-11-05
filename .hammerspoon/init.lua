@@ -105,13 +105,15 @@ local helpWebview = nil
 local helpEscapeHotkey = nil
 
 local function htmlEscape(s)
-	return (s:gsub("[&<>\"']", {
-		["&"] = "&amp;",
-		["<"] = "&lt;",
-		[">"] = "&gt;",
-		['"'] = "&quot;",
-		["'"] = "&#39;",
-	}))
+	return (
+		s:gsub("[&<>\"']", {
+			["&"] = "&amp;",
+			["<"] = "&lt;",
+			[">"] = "&gt;",
+			['"'] = "&quot;",
+			["'"] = "&#39;",
+		})
+	)
 end
 
 local function helpRow(keys, desc)
@@ -164,9 +166,7 @@ local function showHotkeyHelp()
 	local body = table.concat({
 		helpSection(
 			"Window management",
-			helpRow("⌘ + H", "Left half")
-				.. helpRow("⌘ + L", "Right half")
-				.. helpRow("⌘ + K", "Maximize"),
+			helpRow("⌘ + H", "Left half") .. helpRow("⌘ + L", "Right half") .. helpRow("⌘ + K", "Maximize"),
 			"window"
 		),
 		helpSection("App launchers", table.concat(appRows), "apps"),
@@ -317,7 +317,7 @@ local function showHotkeyHelp()
 <body>
   <div class="wrap">
     <div class="header">
-      <h1>Hotkey reference</h1>
+      <h1>Hammerspoon Hotkey reference</h1>
       <p class="sub">Press <kbd>Esc</kbd> or <kbd>MEH + /</kbd> to close</p>
     </div>
     <div class="grid">
@@ -333,12 +333,7 @@ local function showHotkeyHelp()
 	local screen = hs.screen.mainScreen()
 	local frame = screen:frame()
 	local width, height = 1100, 430
-	local rect = hs.geometry.rect(
-		frame.x + (frame.w - width) / 2,
-		frame.y + (frame.h - height) / 2,
-		width,
-		height
-	)
+	local rect = hs.geometry.rect(frame.x + (frame.w - width) / 2, frame.y + (frame.h - height) / 2, width, height)
 
 	helpWebview = hs.webview
 		.new(rect, {
