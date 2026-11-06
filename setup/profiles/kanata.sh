@@ -10,27 +10,11 @@ case "$ID" in
     # shellcheck disable=SC2086
     $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d'
     link_file ".config/$PKG_NAME"
-    tee "$BIN_DIR/start-kanata.sh" > /dev/null <<'EOF'
-#!/bin/bash
-
-# prompt up front
-sudo -v
-
-if pgrep -x "Karabiner-VirtualHIDDevice-Daemon" > /dev/null; then
-  echo "Karabiner is running"
-else
-  echo "Starting Karabiner HID Driver in background"
-  sudo /Library/Application\ Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon &
-fi
-
-if pgrep -x "kanata" > /dev/null; then
-  echo "Kanata is running"
-else
-  echo "Starting Kanata in background"
-  sudo kanata -q --no-wait --nodelay -c ~/.config/kanata/kanata.kbd &
-fi
-EOF
-    chmod +x "$BIN_DIR/start-kanata.sh"
+    # Launcher lives with config; only expose via BIN_DIR (~/.local/bin), not ~/bin.
+    # Use `start-kanata.sh restart` after plugging in a USB keyboard (lrld does not re-scan devices).
+    mkdir -p "${BIN_DIR}"
+    ln -sfn "${DOTREPO}/.config/${PKG_NAME}/start-kanata.sh" "${BIN_DIR}/start-kanata.sh"
+    chmod +x "${DOTREPO}/.config/${PKG_NAME}/start-kanata.sh"
     ;;
   # Should work on any linux system as long as it is x86 based
   *)
