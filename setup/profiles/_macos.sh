@@ -1,6 +1,7 @@
 #!/usr/bin/env zsh
-
-source setup/config.sh
+# macOS defaults / UI preferences
+#
+# Intended to be sourced from desktop.sh / dot.sh so referenced variables are available
 
 # A way to find what these items are:
 # defaults read > before
