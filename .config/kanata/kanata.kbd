@@ -46,6 +46,7 @@
   d (tap-hold $tap-time $hold-time d lctl)
   f (tap-hold $tap-time $hold-time f @layerNum)
   ; (tap-hold $tap-time $hold-time ; S-;) ;; hold for :
+  ' (tap-hold $tap-time $hold-time ' lctl) ;; hold for ctrl, like caps
   = (tap-hold $tap-time $hold-time = S-=) ;; hold for +
   - (tap-hold $tap-time $hold-time - S--) ;; hold for _
   \ (tap-hold $tap-time $hold-time \ S-\) ;; hold for |
@@ -78,7 +79,7 @@
   esc    🔅   🔆   XX   XX   XX      XX   ◀◀   ▶⏸    ▶▶    🔇    🔉    🔊
   grv    1    2    3    4    5       6    7    8    9    0       @-   @=    bspc
   tab    q    w    e    r    t       y    u    i    o    p       [    ]     ret
-  @caps  a    @s   @cd  @cf  g       h    @cj  @ck  l    @;      '    \
+  @caps  a    @s   @cd  @cf  g       h    @cj  @ck  l    @;      @'   \
   @lsh   @z   x    c    @v   b       n    @m    ,    .   @/       @rsh
   lctl   lalt lmet          @th_meh            rmet ralt
 )
