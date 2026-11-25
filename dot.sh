@@ -21,6 +21,7 @@
 DOTREPO="$HOME/dotfiles"
 DOTREPO_URL=https://github.com/mattpascoe/dotfiles
 DOTFILE_ROLE_PATH="$HOME/.dotfile_role"
+DOTFILE_MASTERLIST="$HOME/.dotfile_masterlist"
 PROFILE_DIR="$DOTREPO/setup/profiles"
 
 # Get the current role from the cache file if it exists and we didnt set one in the ENV
@@ -44,8 +45,6 @@ unameOut="$(uname -s)"
 case "${unameOut}" in
     Linux*)     PLATFORM=Linux;;
     Darwin*)    PLATFORM=Mac
-                # In leu of /etc/os-release we will provide our own
-                PRETTY_NAME=$(system_profiler SPSoftwareDataType | grep "System Version" | cut -d : -f 2 | xargs)
                 ID=macos
                 ;;
     CYGWIN*)    PLATFORM=Cygwin;;
@@ -265,9 +264,208 @@ function set_dry_run() {
 
 # Display some info about the system
 function system_info() {
+  if [[ -n "$PRETTY_NAME" || "$PLATFORM" == "Mac" ]]; then
+    # Mac has no /etc/os-release; only call system_profiler when a caller needs the pretty name.
+    PRETTY_NAME=$(system_profiler SPSoftwareDataType 2>/dev/null | grep "System Version" | cut -d : -f 2 | xargs)
+  fi
   msg "${BLU}Dotfile repo:   ${UL}$DOTREPO"
   msg "${BLU}Platform type:  ${UL}$PLATFORM"
   msg "${BLU}OS type:        ${UL}$PRETTY_NAME"
+}
+
+# Count upgradeable packages from the local package db. No index refresh and no sudo prompt.
+function upgradeable_count() {
+  local OUT
+  case "$ID" in
+    macos*)
+      # Auto-update dominates runtime and is not required to count outdated packages.
+      if ! OUT=$(HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_ANALYTICS=1 HOMEBREW_NO_ENV_HINTS=1 brew outdated --greedy 2>/dev/null); then
+        echo "?"
+        return
+      fi
+      ;;
+    debian*|ubuntu*)
+      if ! command -v apt &> /dev/null; then
+        echo "?"
+        return
+      fi
+      if ! OUT=$(apt list --upgradable 2>/dev/null); then
+        echo "?"
+        return
+      fi
+      OUT=$(printf '%s\n' "$OUT" | grep 'upgradable' || true)
+      ;;
+    arch*)
+      if ! command -v pacman &> /dev/null; then
+        echo "?"
+        return
+      fi
+      # Exit 1 means nothing is outdated, not a failure.
+      OUT=$(pacman -Qu 2>/dev/null) || true
+      ;;
+    *)
+      echo "?"
+      return
+      ;;
+  esac
+
+  if [[ -z "$OUT" ]]; then
+    echo 0
+  else
+    printf '%s\n' "$OUT" | grep -c .
+  fi
+}
+
+# One line: hostname= platform= role= branch= commit= upgradeable=
+# Local git only. No fetch, no platform-script side effects.
+function status_short() {
+  local HOST ROLE_NAME GIT_OUT BRANCH COMMIT UPGRADEABLE
+  HOST=$(hostname -f 2>/dev/null || hostname 2>/dev/null || echo "-")
+  ROLE_NAME="${ROLE:-"-"}"
+  BRANCH="-"
+  COMMIT="-"
+  if [[ -d "$DOTREPO/.git" ]] && command -v git &> /dev/null; then
+    # Two rev-parse modes cannot be combined; --abbrev-ref would rewrite the hash too.
+    if GIT_OUT=$( { git -C "$DOTREPO" rev-parse --abbrev-ref HEAD && git -C "$DOTREPO" rev-parse --short HEAD; } 2>/dev/null ); then
+      BRANCH="${GIT_OUT%%$'\n'*}"
+      COMMIT="${GIT_OUT##*$'\n'}"
+    fi
+  fi
+  UPGRADEABLE=$(upgradeable_count)
+  printf 'hostname=%s platform=%s role=%s branch=%s commit=%s upgradeable=%s\n' \
+    "$HOST" "${PLATFORM:-"-"}" "$ROLE_NAME" "$BRANCH" "$COMMIT" "$UPGRADEABLE"
+}
+
+function trim_line() {
+  local VALUE="$1"
+  VALUE="${VALUE//$'\r'/}"
+  VALUE="${VALUE#"${VALUE%%[![:space:]]*}"}"
+  VALUE="${VALUE%"${VALUE##*[![:space:]]}"}"
+  printf '%s\n' "$VALUE"
+}
+
+function status_field() {
+  local LINE="$1" KEY="$2" WORD
+  local -a WORDS
+  read -r -a WORDS <<< "$LINE"
+  for WORD in "${WORDS[@]}"; do
+    if [[ "$WORD" == "${KEY}="* ]]; then
+      printf '%s\n' "${WORD#*=}"
+      return 0
+    fi
+  done
+  return 1
+}
+
+# Color vars are literal \033 strings; %b is what actually emits the escape.
+function report_line() {
+  local COLOR="$1" MARKER="$2" REST="$3"
+  printf '%b%-9s%b %s\n' "$COLOR" "$MARKER" "$NC" "$REST"
+}
+
+# Short hashes from different clones can differ in length. Treat either as a match if one prefixes the other.
+function commits_match() {
+  local LEFT="$1" RIGHT="$2"
+  [[ -n "$LEFT" && -n "$RIGHT" && "$LEFT" != "-" && "$RIGHT" != "-" ]] || return 1
+  [[ "$LEFT" == "$RIGHT" || "$LEFT" == "$RIGHT"* || "$RIGHT" == "$LEFT"* ]]
+}
+
+# SSH status-short for each masterlist host, in parallel, and compare commits to this repo.
+function dot_report() {
+  local LINE HOST IDX REF_HOST RC ERR REMOTE_COMMIT ANY_BAD=0
+  local REF_COMMIT REF_BRANCH fd OUTPUT PART
+  local -a HOSTS SSH_OPTS OUT_FDS
+
+  if [[ ! -f "$DOTFILE_MASTERLIST" ]]; then
+    msg "${RED}Does not have a masterlist defined. This should be run from a primary dotfile instance."
+    exit 1
+  fi
+
+  while IFS= read -r LINE || [[ -n "$LINE" ]]; do
+    LINE=$(trim_line "$LINE")
+    [[ -z "$LINE" || "$LINE" == \#* ]] && continue
+    HOSTS+=("$LINE")
+  done < "$DOTFILE_MASTERLIST"
+
+  if [[ ${#HOSTS[@]} -eq 0 ]]; then
+    msg "${RED}Masterlist has no hosts."
+    exit 1
+  fi
+
+  # Compare to this checkout only when it already has the upstream commits. Do not pull.
+  local BEHIND COMPARE=false
+  REF_HOST=$(hostname -f 2>/dev/null || hostname 2>/dev/null || echo "-")
+  REF_BRANCH=$(git -C "$DOTREPO" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "-")
+  REF_COMMIT=$(git -C "$DOTREPO" rev-parse --short HEAD 2>/dev/null || echo "-")
+  if [[ "$REF_COMMIT" != "-" ]] && GIT_TERMINAL_PROMPT=0 git -C "$DOTREPO" fetch --quiet origin "$REF_BRANCH"; then
+    BEHIND=$(git -C "$DOTREPO" rev-list --count "HEAD..origin/${REF_BRANCH}" 2>/dev/null || echo unknown)
+    if [[ "$BEHIND" == "0" ]]; then
+      COMPARE=true
+    else
+      msg "!! Dotfile repo is NOT up to date on branch ${REF_BRANCH}. Commit comparison skipped. Use ${UL}${BLU}pull${UL_OFF}${YEL} to update."
+    fi
+  else
+    msg "${RED}Could not check upstream. Commit comparison skipped."
+  fi
+
+  report_line "$BLU" "reference" "hostname=${REF_HOST} branch=${REF_BRANCH} commit=${REF_COMMIT}"
+  if [[ "$COMPARE" == true ]]; then
+    msg "${BLU}Checking ${#HOSTS[@]} host(s) against commit ${REF_COMMIT}"
+  else
+    msg "${BLU}Checking ${#HOSTS[@]} host(s) without commit comparison"
+  fi
+
+  # Non-interactive ssh does not expand the dot alias. Call the script directly.
+  # Output stays in pipe buffers, not on disk.
+  SSH_OPTS=(-n -o BatchMode=yes -o ConnectTimeout=8 -o ConnectionAttempts=1)
+
+  for HOST in "${HOSTS[@]}"; do
+    exec {fd}< <(
+      ssh "${SSH_OPTS[@]}" "$HOST" 'bash "$HOME/dotfiles/dot.sh" status-short' 2>&1
+      printf '\n__DOT_RC__%s\n' $?
+    )
+    OUT_FDS+=("$fd")
+  done
+
+  IDX=0
+  for HOST in "${HOSTS[@]}"; do
+    fd="${OUT_FDS[$IDX]}"
+    OUTPUT=$(cat <&"$fd")
+    exec {fd}<&-
+    RC=1
+    LINE=""
+    ERR=""
+    while IFS= read -r PART || [[ -n "$PART" ]]; do
+      if [[ "$PART" == __DOT_RC__* ]]; then
+        RC="${PART#__DOT_RC__}"
+      elif [[ -z "$LINE" && "$PART" == hostname=* ]]; then
+        LINE="$PART"
+      elif [[ -n "$PART" ]]; then
+        ERR="${ERR:+$ERR }$PART"
+      fi
+    done <<< "$OUTPUT"
+    if [[ "$RC" -eq 0 && -n "$LINE" ]]; then
+      if [[ "$COMPARE" == true ]]; then
+        REMOTE_COMMIT=$(status_field "$LINE" commit || true)
+        if commits_match "$REF_COMMIT" "$REMOTE_COMMIT"; then
+          report_line "$GRN" "ok" "$LINE"
+        else
+          report_line "$YEL" "outdated" "$LINE"
+          ANY_BAD=1
+        fi
+      else
+        printf '%s\n' "$LINE"
+      fi
+    else
+      ERR=$(trim_line "$ERR")
+      ERR="${ERR:-status-short failed}"
+      report_line "$RED" "fail" "$HOST $ERR"
+      ANY_BAD=1
+    fi
+    IDX=$((IDX + 1))
+  done
+
+  exit "$ANY_BAD"
 }
 
 # The main function to process the selected role
@@ -342,6 +540,8 @@ Usage: $0 [command] [options]
 
 Commands:
   status             Show status (default if no command given)
+  status-short       One-line status: hostname platform role branch commit upgradeable
+  report             SSH status-short for ~/.dotfile_masterlist and compare commits
   run                Run the setup process
   profile [name]     Directly execute a specific Profile or list all if no name given
   role [name]        Select a Role or list all if no name given. Overrides cache and ENV
@@ -361,6 +561,15 @@ Option flags:
 EOF
 }
 # ---------- END standard functions
+
+# Fast path: stay ahead of git fetch, platform setup, and system_profiler.
+if [[ "$1" == "status-short" || "$1" == "--status-short" ]]; then
+  status_short
+  exit 0
+fi
+if [[ "$1" == "report" || "$1" == "--report" ]]; then
+  dot_report
+fi
 
 check_git
 check_dotrepo
@@ -411,6 +620,13 @@ while [[ "$#" -gt 0 ]]; do
         -s|--status|status)
             full_status
             exit 0
+            ;;
+        status-short|--status-short)
+            status_short
+            exit 0
+            ;;
+        report|--report)
+            dot_report
             ;;
         -l)
             list_profiles
