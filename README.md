@@ -11,9 +11,9 @@ It will attempt to upgrade and set the settings as defined in this repo.
 If you are not me and you are crazy, you can run one of the following to get started.
 ```
 curl -fsSL https://raw.githubusercontent.com/mattpascoe/dotfiles/master/dot.sh | bash
-curl -fsSL demo.opennetadmin.com/dotinstall.sh | bash
+curl -fsSL dotfiles.opennetadmin.com | bash
 wget https://raw.githubusercontent.com/mattpascoe/dotfiles/master/dot.sh -O- | bash
-wget demo.opennetadmin.com/dotinstall.sh -O- | bash
+wget dotfiles.opennetadmin.com -O- | bash
 ```
 
 or
@@ -67,6 +67,44 @@ its scope to just one program or application install and configuration definitio
 
 You can invoke a single profile with `./dot.sh -p myprofile`
 
+# Status
+By default if you just run `dot` it will execute with no arguments to print a full status output.
+
+## status-short
+Provides a one line status for use in reporting.
+The package count comes from the local package database and does not refresh indexes.
+
+```
+dot status-short
+hostname=host.example.com platform=Mac role=desktop branch=master commit=179836d upgradeable=3
+```
+
+Fields are the FQDN, platform, cached role, branch, short commit, and upgradeable package count.
+A missing value is `-`. If the package manager cannot be queried, the count is `?`.
+
+## report
+Run this from a "primary" dotfile instance. It SSHes `status-short` to each host in
+`~/.dotfile_masterlist`, one host per line. Blank lines and `#` comments are ignored.
+If that file is missing it tells you to run it from a primary instance.
+
+It does not pull. It fetches and compares other hosts to the commit already checked out here,
+but only when this repo is not behind `origin`. If upstream changes are available, comparison
+is skipped and it tells you to `pull`.
+
+Hosts are checked in parallel. Non-interactive SSH does not expand the `dot` alias, so the
+remote command is `bash "$HOME/dotfiles/dot.sh" status-short`.
+
+```
+Checking 3 host(s) against commit 179836d
+✔ srv1.example.com  Linux  web-server    master@179836d  up to date
+● lap1.example.com  Mac    desktop       master@179836d  3 upgrades
+✖ nas.example.com   Linux  storage       dev@a41c09e     12 upgrades
+```
+
+`✔` means the commit matches and nothing is upgradeable.
+`●` means the commit matches, but packages are waiting.
+`✖` means the commit differs, or the host could not be reached.
+
 ## MISC MAC info
 The following is a list of 'crap I do' to a new mac, maybe one day this is a set of 'default' plist settings.
 
@@ -83,16 +121,6 @@ The following is a list of 'crap I do' to a new mac, maybe one day this is a set
 * rsync /data from a previous box (remove the n option as needed)
   * sudo rsync -avzn mdp@10.1.1.206:/data/ /data
   * do it several times to ensure all is copied, I noticed some files didnt move????
-* set capslock to escape.. stupid thing is hard to add using .macos/defaults
-
-## MAC Apps to install
-
-* istatmenus - https://bjango.com/mac/istatmenus/ (replaces itsycal)
-* maccy - maccy.app good clipboard
-* postman - https://www.getpostman.com/downloads
-* GPGtools - https://gpgtools.org
-* BetterSnapTool - https://folivora.ai
-* lulu - firewall system
 
 # Unraid support
 The setup script will try and detect if it is being run on an unraid box.
@@ -128,13 +156,9 @@ I can do that with a VM in a similar way.  For my needs that will work fine.
 
 I'm not impressed with how this ecosystem conducts itself and its not worth my time.
 
-
-
 # Ideas to find a home for
 Interesting zsh 'global' alias option
 
      alias -g H='| head'  # git log H will show only the first 10 lines of the log
 
 Also I have a "tools" method for shell functions. Look at shell-common and the __tools* functions.
-
-I may look at https://www.chezmoi.io/ as an alternative to this dotfiles repo and dot.sh.  I do like I can just use my script anywhere tho.

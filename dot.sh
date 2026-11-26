@@ -357,10 +357,29 @@ function status_field() {
   return 1
 }
 
-# Color vars are literal \033 strings; %b is what actually emits the escape.
-function report_line() {
-  local COLOR="$1" MARKER="$2" REST="$3"
-  printf '%b%-9s%b %s\n' "$COLOR" "$MARKER" "$NC" "$REST"
+function upgrade_label() {
+  local COUNT="$1"
+  case "$COUNT" in
+    0) printf 'up to date' ;;
+    1) printf '1 upgrade' ;;
+    *)
+      if [[ "$COUNT" =~ ^[0-9]+$ ]]; then
+        printf '%s upgrades' "$COUNT"
+      else
+        printf 'unknown'
+      fi
+      ;;
+  esac
+}
+
+function column_width() {
+  local WIDTH=0 ITEM
+  for ITEM in "$@"; do
+    if [[ ${#ITEM} -gt $WIDTH ]]; then
+      WIDTH=${#ITEM}
+    fi
+  done
+  printf '%s\n' "$WIDTH"
 }
 
 # Short hashes from different clones can differ in length. Treat either as a match if one prefixes the other.
@@ -372,9 +391,12 @@ function commits_match() {
 
 # SSH status-short for each masterlist host, in parallel, and compare commits to this repo.
 function dot_report() {
-  local LINE HOST IDX REF_HOST RC ERR REMOTE_COMMIT ANY_BAD=0
+  local LINE HOST IDX RC ERR ANY_BAD=0
   local REF_COMMIT REF_BRANCH fd OUTPUT PART
+  local MARK COLOR NAME PLAT ROLE_NAME BRANCH COMMIT UP REF STATE
+  local W_NAME W_PLAT W_ROLE W_REF I
   local -a HOSTS SSH_OPTS OUT_FDS
+  local -a MARKS COLORS NAMES PLATS ROLES REFS STATES
 
   if [[ ! -f "$DOTFILE_MASTERLIST" ]]; then
     msg "${RED}Does not have a masterlist defined. This should be run from a primary dotfile instance."
@@ -394,7 +416,6 @@ function dot_report() {
 
   # Compare to this checkout only when it already has the upstream commits. Do not pull.
   local BEHIND COMPARE=false
-  REF_HOST=$(hostname -f 2>/dev/null || hostname 2>/dev/null || echo "-")
   REF_BRANCH=$(git -C "$DOTREPO" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "-")
   REF_COMMIT=$(git -C "$DOTREPO" rev-parse --short HEAD 2>/dev/null || echo "-")
   if [[ "$REF_COMMIT" != "-" ]] && GIT_TERMINAL_PROMPT=0 git -C "$DOTREPO" fetch --quiet origin "$REF_BRANCH"; then
@@ -408,7 +429,6 @@ function dot_report() {
     msg "${RED}Could not check upstream. Commit comparison skipped."
   fi
 
-  report_line "$BLU" "reference" "hostname=${REF_HOST} branch=${REF_BRANCH} commit=${REF_COMMIT}"
   if [[ "$COMPARE" == true ]]; then
     msg "${BLU}Checking ${#HOSTS[@]} host(s) against commit ${REF_COMMIT}"
   else
@@ -445,24 +465,66 @@ function dot_report() {
       fi
     done <<< "$OUTPUT"
     if [[ "$RC" -eq 0 && -n "$LINE" ]]; then
-      if [[ "$COMPARE" == true ]]; then
-        REMOTE_COMMIT=$(status_field "$LINE" commit || true)
-        if commits_match "$REF_COMMIT" "$REMOTE_COMMIT"; then
-          report_line "$GRN" "ok" "$LINE"
-        else
-          report_line "$YEL" "outdated" "$LINE"
-          ANY_BAD=1
-        fi
+      NAME=$(status_field "$LINE" hostname || true)
+      PLAT=$(status_field "$LINE" platform || true)
+      ROLE_NAME=$(status_field "$LINE" role || true)
+      BRANCH=$(status_field "$LINE" branch || true)
+      COMMIT=$(status_field "$LINE" commit || true)
+      UP=$(status_field "$LINE" upgradeable || true)
+      NAME="${NAME:-$HOST}"
+      PLAT="${PLAT:--}"
+      ROLE_NAME="${ROLE_NAME:--}"
+      if [[ -n "$BRANCH" && -n "$COMMIT" && "$BRANCH" != "-" && "$COMMIT" != "-" ]]; then
+        REF="${BRANCH}@${COMMIT}"
       else
-        printf '%s\n' "$LINE"
+        REF="-"
+      fi
+      STATE=$(upgrade_label "$UP")
+      if [[ "$COMPARE" == true ]] && ! commits_match "$REF_COMMIT" "$COMMIT"; then
+        MARK=$'\u2716'
+        COLOR="$RED"
+        ANY_BAD=1
+      elif [[ "$UP" == "0" ]]; then
+        MARK=$'\u2714'
+        COLOR="$GRN"
+      else
+        MARK=$'\u25cf'
+        COLOR="$YEL"
       fi
     else
       ERR=$(trim_line "$ERR")
       ERR="${ERR:-status-short failed}"
-      report_line "$RED" "fail" "$HOST $ERR"
+      MARK=$'\u2716'
+      COLOR="$RED"
+      NAME="$HOST"
+      PLAT="-"
+      ROLE_NAME="-"
+      REF="-"
+      STATE="$ERR"
       ANY_BAD=1
     fi
+    MARKS+=("$MARK")
+    COLORS+=("$COLOR")
+    NAMES+=("$NAME")
+    PLATS+=("$PLAT")
+    ROLES+=("$ROLE_NAME")
+    REFS+=("$REF")
+    STATES+=("$STATE")
     IDX=$((IDX + 1))
+  done
+
+  W_NAME=$(column_width "${NAMES[@]}")
+  W_PLAT=$(column_width "${PLATS[@]}")
+  W_ROLE=$(column_width "${ROLES[@]}")
+  W_REF=$(column_width "${REFS[@]}")
+  for I in "${!NAMES[@]}"; do
+    printf '%b%s%b %-*s  %-*s  %-*s  %-*s  %s\n' \
+      "${COLORS[$I]}" "${MARKS[$I]}" "$NC" \
+      "$W_NAME" "${NAMES[$I]}" \
+      "$W_PLAT" "${PLATS[$I]}" \
+      "$W_ROLE" "${ROLES[$I]}" \
+      "$W_REF" "${REFS[$I]}" \
+      "${STATES[$I]}"
   done
 
   exit "$ANY_BAD"
