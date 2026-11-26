@@ -341,25 +341,34 @@ function uptime_label() {
   fi
 }
 
-# One line: hostname= platform= role= branch= commit= upgradeable= uptime=
+# One line: hostname= platform= role= branch= commit= upgradeable= uptime= git=
 # Local git only. No fetch, no platform-script side effects.
 function status_short() {
-  local HOST ROLE_NAME GIT_OUT BRANCH COMMIT UPGRADEABLE UPTIME
+  local HOST ROLE_NAME GIT_OUT GIT_PORCELAIN BRANCH COMMIT UPGRADEABLE UPTIME GIT_STATE
   HOST=$(hostname -f 2>/dev/null || hostname 2>/dev/null || echo "-")
   ROLE_NAME="${ROLE:-"-"}"
   BRANCH="-"
   COMMIT="-"
+  GIT_STATE="-"
   if [[ -d "$DOTREPO/.git" ]] && command -v git &> /dev/null; then
     # Two rev-parse modes cannot be combined; --abbrev-ref would rewrite the hash too.
     if GIT_OUT=$( { git -C "$DOTREPO" rev-parse --abbrev-ref HEAD && git -C "$DOTREPO" rev-parse --short HEAD; } 2>/dev/null ); then
       BRANCH="${GIT_OUT%%$'\n'*}"
       COMMIT="${GIT_OUT##*$'\n'}"
     fi
+    # Untracked files count as unclean. No network.
+    if GIT_PORCELAIN=$(git -C "$DOTREPO" status --porcelain 2>/dev/null); then
+      if [[ -n "$GIT_PORCELAIN" ]]; then
+        GIT_STATE=dirty
+      else
+        GIT_STATE=clean
+      fi
+    fi
   fi
   UPGRADEABLE=$(upgradeable_count)
   UPTIME=$(uptime_days)
-  printf 'hostname=%s platform=%s role=%s branch=%s commit=%s upgradeable=%s uptime=%s\n' \
-    "$HOST" "${PLATFORM:-"-"}" "$ROLE_NAME" "$BRANCH" "$COMMIT" "$UPGRADEABLE" "$UPTIME"
+  printf 'hostname=%s platform=%s role=%s branch=%s commit=%s upgradeable=%s uptime=%s git=%s\n' \
+    "$HOST" "${PLATFORM:-"-"}" "$ROLE_NAME" "$BRANCH" "$COMMIT" "$UPGRADEABLE" "$UPTIME" "$GIT_STATE"
 }
 
 # The main function to process the selected role
@@ -434,7 +443,7 @@ Usage: $0 [command] [options]
 
 Commands:
   status             Show status (default if no command given)
-  status-short       One-line status: hostname platform role branch commit upgradeable uptime
+  status-short       One-line status: hostname platform role branch commit upgradeable uptime git
   report             SSH status-short for ~/.dotfile_masterlist and compare commits
   run                Run the setup process
   profile [name]     Directly execute a specific Profile or list all if no name given

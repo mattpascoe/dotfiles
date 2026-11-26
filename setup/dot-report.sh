@@ -76,7 +76,7 @@ function commits_match() {
 function dot_report() {
   local LINE HOST IDX RC ERR ANY_BAD=0 COMMIT_DIFFERS=false
   local REF_COMMIT REF_BRANCH fd OUTPUT PART
-  local MARK COLOR NAME PLAT ROLE_NAME BRANCH COMMIT UP REF STATE UPTIME
+  local MARK COLOR NAME PLAT ROLE_NAME BRANCH COMMIT UP REF STATE UPTIME GIT NEEDLE
   local UNDER_HASH_FLAG UNDER_STATE_FLAG
   local W_NAME W_PLAT W_ROLE W_REF W_UP I
   local -a HOSTS SSH_OPTS OUT_FDS
@@ -157,11 +157,16 @@ function dot_report() {
       UP=$(status_field "$LINE" upgradeable || true)
       UPTIME=$(status_field "$LINE" uptime || true)
       UPTIME=$(uptime_label "$UPTIME")
+      GIT=$(status_field "$LINE" git || true)
       NAME="${NAME:-$HOST}"
       PLAT="${PLAT:--}"
       ROLE_NAME="${ROLE_NAME:--}"
       if [[ -n "$BRANCH" && -n "$COMMIT" && "$BRANCH" != "-" && "$COMMIT" != "-" ]]; then
         REF="${BRANCH}@${COMMIT}"
+        # Dirty worktree: keep the ref readable and mark it.
+        if [[ "$GIT" == "dirty" ]]; then
+          REF="${REF}*"
+        fi
       else
         REF="-"
       fi
@@ -224,7 +229,9 @@ function dot_report() {
       "$W_PLAT" "${PLATS[$I]}" \
       "$W_ROLE" "${ROLES[$I]}"
     if [[ "${UNDER_HASHES[$I]}" == 1 ]]; then
-      print_marked_field "${REFS[$I]}" "$W_REF" "${REFS[$I]##*@}"
+      NEEDLE="${REFS[$I]##*@}"
+      NEEDLE="${NEEDLE%\*}"
+      print_marked_field "${REFS[$I]}" "$W_REF" "$NEEDLE"
     else
       printf '%-*s' "$W_REF" "${REFS[$I]}"
     fi
