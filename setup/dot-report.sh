@@ -65,6 +65,37 @@ function print_marked_field() {
   fi
 }
 
+# ok: this checkout already has origin's tip. behind: origin has commits we do not. error: could not check.
+# Uses ls-remote so we do not download objects. Fetch was the pause before the host checks.
+function upstream_status() {
+  local BRANCH="$1" LOCAL REMOTE REMOTE_SHA
+  LOCAL=$(git -C "$DOTREPO" rev-parse HEAD 2>/dev/null) || {
+    printf 'error\n'
+    return
+  }
+  REMOTE=$(GIT_TERMINAL_PROMPT=0 GIT_SSH_COMMAND="ssh -o BatchMode=yes -o ConnectTimeout=8" \
+    git -C "$DOTREPO" ls-remote origin "refs/heads/${BRANCH}" 2>/dev/null) || {
+    printf 'error\n'
+    return
+  }
+  REMOTE_SHA="${REMOTE%%$'\t'*}"
+  if [[ ! "$REMOTE_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+    printf 'error\n'
+    return
+  fi
+  if [[ "$REMOTE_SHA" == "$LOCAL" ]]; then
+    printf 'ok\n'
+    return
+  fi
+  # Have the remote tip locally and it is already in our history: we are ahead, not behind.
+  if git -C "$DOTREPO" cat-file -e "${REMOTE_SHA}^{commit}" 2>/dev/null \
+    && git -C "$DOTREPO" merge-base --is-ancestor "$REMOTE_SHA" HEAD; then
+    printf 'ok\n'
+    return
+  fi
+  printf 'behind\n'
+}
+
 # Short hashes from different clones can differ in length. Treat either as a match if one prefixes the other.
 function commits_match() {
   local LEFT="$1" RIGHT="$2"
@@ -98,26 +129,13 @@ function dot_report() {
     exit 1
   fi
 
-  # Compare to this checkout only when it already has the upstream commits. Do not pull.
-  local BEHIND COMPARE=false
+  # Local commit is instant. The upstream check is network, so run it beside the host checks.
+  local COMPARE=false FETCH_FD UPSTREAM
   REF_BRANCH=$(git -C "$DOTREPO" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "-")
   REF_COMMIT=$(git -C "$DOTREPO" rev-parse --short HEAD 2>/dev/null || echo "-")
-  if [[ "$REF_COMMIT" != "-" ]] && GIT_TERMINAL_PROMPT=0 git -C "$DOTREPO" fetch --quiet origin "$REF_BRANCH"; then
-    BEHIND=$(git -C "$DOTREPO" rev-list --count "HEAD..origin/${REF_BRANCH}" 2>/dev/null || echo unknown)
-    if [[ "$BEHIND" == "0" ]]; then
-      COMPARE=true
-    else
-      msg "!! Dotfile repo is NOT up to date on branch ${REF_BRANCH}. Commit comparison skipped. Use ${UL}${BLU}pull${UL_OFF}${YEL} to update."
-    fi
-  else
-    msg "${RED}Could not check upstream. Commit comparison skipped."
-  fi
+  msg "${BLU}Checking ${#HOSTS[@]} host(s) against commit ${REF_COMMIT}"
 
-  if [[ "$COMPARE" == true ]]; then
-    msg "${BLU}Checking ${#HOSTS[@]} host(s) against commit ${REF_COMMIT}"
-  else
-    msg "${BLU}Checking ${#HOSTS[@]} host(s) without commit comparison"
-  fi
+  exec {FETCH_FD}< <(upstream_status "$REF_BRANCH")
 
   # Non-interactive ssh does not expand the dot alias. Call the script directly.
   # Output stays in pipe buffers, not on disk.
@@ -130,6 +148,17 @@ function dot_report() {
     )
     OUT_FDS+=("$fd")
   done
+
+  UPSTREAM=$(cat <&"$FETCH_FD")
+  exec {FETCH_FD}<&-
+  UPSTREAM=$(trim_line "$UPSTREAM")
+  if [[ "$UPSTREAM" == "ok" ]]; then
+    COMPARE=true
+  elif [[ "$UPSTREAM" == "behind" ]]; then
+    msg "!! Dotfile repo is NOT up to date on branch ${REF_BRANCH}. Commit comparison skipped. Use ${UL}${BLU}pull${UL_OFF}${YEL} to update."
+  else
+    msg "${RED}Could not check upstream. Commit comparison skipped."
+  fi
 
   IDX=0
   for HOST in "${HOSTS[@]}"; do
