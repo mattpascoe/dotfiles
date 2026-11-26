@@ -278,8 +278,8 @@ function upgradeable_count() {
   local OUT
   case "$ID" in
     macos*)
-      # Auto-update dominates runtime and is not required to count outdated packages.
-      if ! OUT=$(HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_ANALYTICS=1 HOMEBREW_NO_ENV_HINTS=1 brew outdated --greedy 2>/dev/null); then
+      # Same location as BREWPATH in setup/platforms/Mac.sh. This path does not source that file.
+      if ! OUT=$(HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_ANALYTICS=1 HOMEBREW_NO_ENV_HINTS=1 /opt/homebrew/bin/brew outdated --greedy 2>/dev/null); then
         echo "?"
         return
       fi
@@ -360,11 +360,11 @@ function status_field() {
 function upgrade_label() {
   local COUNT="$1"
   case "$COUNT" in
-    0) printf 'up to date' ;;
+    0) printf 'pkgs up to date' ;;
     1) printf '1 upgrade' ;;
     *)
       if [[ "$COUNT" =~ ^[0-9]+$ ]]; then
-        printf '%s upgrades' "$COUNT"
+        printf '%s pkg upgrades' "$COUNT"
       else
         printf 'unknown'
       fi
@@ -391,7 +391,7 @@ function commits_match() {
 
 # SSH status-short for each masterlist host, in parallel, and compare commits to this repo.
 function dot_report() {
-  local LINE HOST IDX RC ERR ANY_BAD=0
+  local LINE HOST IDX RC ERR ANY_BAD=0 COMMIT_DIFFERS=false
   local REF_COMMIT REF_BRANCH fd OUTPUT PART
   local MARK COLOR NAME PLAT ROLE_NAME BRANCH COMMIT UP REF STATE
   local W_NAME W_PLAT W_ROLE W_REF I
@@ -484,6 +484,7 @@ function dot_report() {
         MARK=$'\u2716'
         COLOR="$RED"
         ANY_BAD=1
+        COMMIT_DIFFERS=true
       elif [[ "$UP" == "0" ]]; then
         MARK=$'\u2714'
         COLOR="$GRN"
@@ -526,6 +527,14 @@ function dot_report() {
       "$W_REF" "${REFS[$I]}" \
       "${STATES[$I]}"
   done
+
+  if [[ "$COMMIT_DIFFERS" == true ]]; then
+    echo
+    msg "Last 5 commits"
+    git -C "$DOTREPO" log --graph --abbrev-commit -5 \
+      --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+    echo
+  fi
 
   exit "$ANY_BAD"
 }
