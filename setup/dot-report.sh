@@ -139,7 +139,8 @@ function dot_report() {
 
   # Non-interactive ssh does not expand the dot alias. Call the script directly.
   # Output stays in pipe buffers, not on disk.
-  SSH_OPTS=(-n -o BatchMode=yes -o ConnectTimeout=8 -o ConnectionAttempts=1)
+  # -a overrides ForwardAgent in ssh config. status-short must not receive the agent.
+  SSH_OPTS=(-n -a -o ForwardAgent=no -o BatchMode=yes -o ConnectTimeout=8 -o ConnectionAttempts=1)
 
   for HOST in "${HOSTS[@]}"; do
     exec {fd}< <(
