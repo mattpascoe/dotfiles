@@ -42,7 +42,7 @@ case "$ID" in
       rm -rf "$tmpdir"
 
       # Set caps escape key
-      gsettings set org.gnome.desktop.input-sources xkb-options "['caps:escape']"
+      #gsettings set org.gnome.desktop.input-sources xkb-options "['caps:escape']"
       # Close apps like a Mac.
       gsettings set org.gnome.desktop.wm.keybindings close "['<Super>q']"
 
