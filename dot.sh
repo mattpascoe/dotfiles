@@ -316,10 +316,35 @@ function upgradeable_count() {
   fi
 }
 
-# One line: hostname= platform= role= branch= commit= upgradeable=
+# Days from `uptime`. Less than a day is 0. Missing command is -.
+function uptime_days() {
+  local RAW
+  RAW=$(uptime 2>/dev/null) || {
+    echo "-"
+    return
+  }
+  if [[ "$RAW" =~ ([0-9]+)[[:space:]]+day ]]; then
+    printf '%s\n' "${BASH_REMATCH[1]}"
+    return
+  fi
+  printf '0\n'
+}
+
+function uptime_label() {
+  local DAYS="$1"
+  if [[ -z "$DAYS" || "$DAYS" == "-" ]]; then
+    printf '%s\n' '-'
+  elif [[ "$DAYS" == 1 ]]; then
+    printf '1 day\n'
+  else
+    printf '%s days\n' "$DAYS"
+  fi
+}
+
+# One line: hostname= platform= role= branch= commit= upgradeable= uptime=
 # Local git only. No fetch, no platform-script side effects.
 function status_short() {
-  local HOST ROLE_NAME GIT_OUT BRANCH COMMIT UPGRADEABLE
+  local HOST ROLE_NAME GIT_OUT BRANCH COMMIT UPGRADEABLE UPTIME
   HOST=$(hostname -f 2>/dev/null || hostname 2>/dev/null || echo "-")
   ROLE_NAME="${ROLE:-"-"}"
   BRANCH="-"
@@ -332,8 +357,9 @@ function status_short() {
     fi
   fi
   UPGRADEABLE=$(upgradeable_count)
-  printf 'hostname=%s platform=%s role=%s branch=%s commit=%s upgradeable=%s\n' \
-    "$HOST" "${PLATFORM:-"-"}" "$ROLE_NAME" "$BRANCH" "$COMMIT" "$UPGRADEABLE"
+  UPTIME=$(uptime_days)
+  printf 'hostname=%s platform=%s role=%s branch=%s commit=%s upgradeable=%s uptime=%s\n' \
+    "$HOST" "${PLATFORM:-"-"}" "$ROLE_NAME" "$BRANCH" "$COMMIT" "$UPGRADEABLE" "$UPTIME"
 }
 
 function trim_line() {
@@ -382,6 +408,23 @@ function column_width() {
   printf '%s\n' "$WIDTH"
 }
 
+# Underline NEEDLE inside TEXT, then pad to WIDTH. Codes are not part of the width.
+function print_marked_field() {
+  local TEXT="$1" WIDTH="$2" NEEDLE="$3"
+  local BEFORE AFTER PAD
+  if [[ -n "$NEEDLE" && "$TEXT" == *"$NEEDLE"* ]]; then
+    BEFORE="${TEXT%%"$NEEDLE"*}"
+    AFTER="${TEXT#*"$NEEDLE"}"
+    printf '%s%b%s%b%s' "$BEFORE" "$UL" "$NEEDLE" "$UL_OFF" "$AFTER"
+    PAD=$((WIDTH - ${#TEXT}))
+    if [[ $PAD -gt 0 ]]; then
+      printf '%*s' "$PAD" ""
+    fi
+  else
+    printf '%-*s' "$WIDTH" "$TEXT"
+  fi
+}
+
 # Short hashes from different clones can differ in length. Treat either as a match if one prefixes the other.
 function commits_match() {
   local LEFT="$1" RIGHT="$2"
@@ -393,10 +436,11 @@ function commits_match() {
 function dot_report() {
   local LINE HOST IDX RC ERR ANY_BAD=0 COMMIT_DIFFERS=false
   local REF_COMMIT REF_BRANCH fd OUTPUT PART
-  local MARK COLOR NAME PLAT ROLE_NAME BRANCH COMMIT UP REF STATE
-  local W_NAME W_PLAT W_ROLE W_REF I
+  local MARK COLOR NAME PLAT ROLE_NAME BRANCH COMMIT UP REF STATE UPTIME
+  local UNDER_HASH_FLAG UNDER_STATE_FLAG
+  local W_NAME W_PLAT W_ROLE W_REF W_UP I
   local -a HOSTS SSH_OPTS OUT_FDS
-  local -a MARKS COLORS NAMES PLATS ROLES REFS STATES
+  local -a MARKS COLORS NAMES PLATS ROLES REFS UPTIMES STATES UNDER_HASHES UNDER_STATES
 
   if [[ ! -f "$DOTFILE_MASTERLIST" ]]; then
     msg "${RED}Does not have a masterlist defined. This should be run from a primary dotfile instance."
@@ -471,6 +515,8 @@ function dot_report() {
       BRANCH=$(status_field "$LINE" branch || true)
       COMMIT=$(status_field "$LINE" commit || true)
       UP=$(status_field "$LINE" upgradeable || true)
+      UPTIME=$(status_field "$LINE" uptime || true)
+      UPTIME=$(uptime_label "$UPTIME")
       NAME="${NAME:-$HOST}"
       PLAT="${PLAT:--}"
       ROLE_NAME="${ROLE_NAME:--}"
@@ -480,17 +526,23 @@ function dot_report() {
         REF="-"
       fi
       STATE=$(upgrade_label "$UP")
+      UNDER_HASH_FLAG=0
+      UNDER_STATE_FLAG=0
       if [[ "$COMPARE" == true ]] && ! commits_match "$REF_COMMIT" "$COMMIT"; then
         MARK=$'\u2716'
         COLOR="$RED"
         ANY_BAD=1
         COMMIT_DIFFERS=true
+        UNDER_HASH_FLAG=1
       elif [[ "$UP" == "0" ]]; then
         MARK=$'\u2714'
         COLOR="$GRN"
       else
         MARK=$'\u25cf'
         COLOR="$YEL"
+      fi
+      if [[ "$UP" != "0" ]]; then
+        UNDER_STATE_FLAG=1
       fi
     else
       ERR=$(trim_line "$ERR")
@@ -501,7 +553,10 @@ function dot_report() {
       PLAT="-"
       ROLE_NAME="-"
       REF="-"
+      UPTIME="-"
       STATE="$ERR"
+      UNDER_HASH_FLAG=0
+      UNDER_STATE_FLAG=0
       ANY_BAD=1
     fi
     MARKS+=("$MARK")
@@ -510,7 +565,10 @@ function dot_report() {
     PLATS+=("$PLAT")
     ROLES+=("$ROLE_NAME")
     REFS+=("$REF")
+    UPTIMES+=("$UPTIME")
     STATES+=("$STATE")
+    UNDER_HASHES+=("$UNDER_HASH_FLAG")
+    UNDER_STATES+=("$UNDER_STATE_FLAG")
     IDX=$((IDX + 1))
   done
 
@@ -518,14 +576,24 @@ function dot_report() {
   W_PLAT=$(column_width "${PLATS[@]}")
   W_ROLE=$(column_width "${ROLES[@]}")
   W_REF=$(column_width "${REFS[@]}")
+  W_UP=$(column_width "${UPTIMES[@]}")
   for I in "${!NAMES[@]}"; do
-    printf '%b%s%b %-*s  %-*s  %-*s  %-*s  %s\n' \
+    printf '%b%s%b %-*s  %-*s  %-*s  ' \
       "${COLORS[$I]}" "${MARKS[$I]}" "$NC" \
       "$W_NAME" "${NAMES[$I]}" \
       "$W_PLAT" "${PLATS[$I]}" \
-      "$W_ROLE" "${ROLES[$I]}" \
-      "$W_REF" "${REFS[$I]}" \
-      "${STATES[$I]}"
+      "$W_ROLE" "${ROLES[$I]}"
+    if [[ "${UNDER_HASHES[$I]}" == 1 ]]; then
+      print_marked_field "${REFS[$I]}" "$W_REF" "${REFS[$I]##*@}"
+    else
+      printf '%-*s' "$W_REF" "${REFS[$I]}"
+    fi
+    printf '  %-*s  ' "$W_UP" "${UPTIMES[$I]}"
+    if [[ "${UNDER_STATES[$I]}" == 1 ]]; then
+      printf '%b%s%b\n' "$UL" "${STATES[$I]}" "$UL_OFF"
+    else
+      printf '%s\n' "${STATES[$I]}"
+    fi
   done
 
   if [[ "$COMMIT_DIFFERS" == true ]]; then
@@ -611,7 +679,7 @@ Usage: $0 [command] [options]
 
 Commands:
   status             Show status (default if no command given)
-  status-short       One-line status: hostname platform role branch commit upgradeable
+  status-short       One-line status: hostname platform role branch commit upgradeable uptime
   report             SSH status-short for ~/.dotfile_masterlist and compare commits
   run                Run the setup process
   profile [name]     Directly execute a specific Profile or list all if no name given
