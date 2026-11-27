@@ -96,6 +96,32 @@ function link_file() {
   fi
 }
 
+# Install packages that already exist in the platform package manager. No config.
+function install_pkgs() {
+  local -a PKGS=("$@")
+  [[ ${#PKGS[@]} -eq 0 ]] && return 0
+  msg "${BLU}Installing: ${PKGS[*]}"
+  case "$ID" in
+    arch*)
+      # pacman has no install subcommand; -S is already in INSTALLER_OPTS
+      # shellcheck disable=SC2086
+      $PLATFORM_INSTALLER_BIN $INSTALLER_OPTS "${PKGS[@]}"
+      ;;
+    macos*)
+      # shellcheck disable=SC2086
+      $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS "${PKGS[@]}" 2>&1 | sed '/^To reinstall/,$d'
+      ;;
+    debian*|ubuntu*)
+      # shellcheck disable=SC2086
+      $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS "${PKGS[@]}"
+      ;;
+    *)
+      msg "${RED}-!- Package install not supported on ${ID:-unknown}."
+      return 1
+      ;;
+  esac
+}
+
 # Execute the script for each profile passed in as an array
 function run_profiles() {
   PROFILES=("${@}")

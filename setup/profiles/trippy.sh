@@ -1,20 +1,6 @@
 #!/bin/bash
 # TUI network testing tool
 
-PKG_NAME=trippy
-case "$ID" in
-  arch*)
-    # shellcheck disable=SC2086
-    $PLATFORM_INSTALLER_BIN $INSTALLER_OPTS "$PKG_NAME" ;;
-  debian*|ubuntu*)
-    # shellcheck disable=SC2086
-    $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS "$PKG_NAME" ;;
-  macos*)
-    # shellcheck disable=SC2086
-    $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS "$PKG_NAME" 2>&1|sed '/^To reinstall/,$d';;
-  *)
-    echo "-!- Install not supported."
-    ;;
-esac
+install_pkgs trippy
 
 msg "${BLU}Install complete."

@@ -65,6 +65,8 @@ intended to encompass a single installation and configuration task.
 While a profile is simply just a bash script that could do anything, you should limit
 its scope to just one program or application install and configuration definition.
 
+A profile is one shell script for one task. It might install with the system package manager, an upstream installer, or both depending on the OS. It might also link config or start a service if that tool needs it. There is no profile type to pick. Write the script the situation needs. The only convention is a shebang, a one-line description on line 2, and keeping the script to that one task. Roles are lists of those scripts, not a class system. Shared setup that is not one tool, such as base packages, stays in `COMMON.sh` or the role.
+
 You can invoke a single profile with `./dot.sh -p myprofile`
 
 # Status

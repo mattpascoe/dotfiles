@@ -16,11 +16,6 @@ PROFILES=(
   1password
 )
 
-# other things to install or setup profiles for
-# microsoft office
-# quicken
-#
-#
 # Only process if we are not checking status
 if [[ -z "$ROLE_STATUS" ]]; then
   run_profiles "${PROFILES[@]}"
@@ -32,4 +27,10 @@ if [[ -z "$ROLE_STATUS" ]]; then
   link_file ".profile"
   link_file ".vimrc"
   link_file ".zshrc"
+
+  # Homebrew cask names. macOS only.
+  case "$ID" in
+    macos*) install_pkgs microsoft-office quicken ;;
+    *) msg "${BLU}Skipping Office and Quicken. Package names are macOS only." ;;
+  esac
 fi

@@ -27,11 +27,11 @@ if [[ -z "$ROLE_STATUS" ]]; then
   link_file ".vimrc"
   link_file ".zshrc"
 
-  # TODO: Turn these into profiles
-  # shellcheck disable=SC2086
-  $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS -q \
-    quicken \
-    google-chrome
+  # Homebrew cask names. macOS only.
+  case "$ID" in
+    macos*) install_pkgs quicken google-chrome ;;
+    *) msg "${BLU}Skipping Quicken and Chrome. Package names are macOS only." ;;
+  esac
 
   # MAC OS settings that differ from the ones I set globally
   # Disable DarkMode

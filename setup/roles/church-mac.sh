@@ -24,9 +24,7 @@ if [[ -z "$ROLE_STATUS" ]]; then
   link_file ".vimrc"
   link_file ".zshrc"
 
-  # Install some apps directly with no profile layer
-  # shellcheck disable=SC2086
-  $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS vlc libreoffice
+  install_pkgs vlc libreoffice
 
   # Set up SSH service, Does require terminal app to have full disk privs
   sudo systemsetup -setremotelogin on

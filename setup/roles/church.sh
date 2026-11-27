@@ -41,7 +41,5 @@ if [[ -z "$ROLE_STATUS" ]]; then
   # Disable dim screen on idle (Power settings)
   gsettings set org.gnome.settings-daemon.plugins.power idle-dim false
 
-  # Install some apps
-  # shellcheck disable=SC2086
-  $PLATFORM_INSTALLER_BIN install $INSTALLER_OPTS vlc libreoffice
+  install_pkgs vlc libreoffice
 fi
